@@ -178,3 +178,39 @@ Provision a dedicated D1 database and deploy the operations Worker independently
 ## Next engineering phase
 
 Choose production staff identity and role authorization first. Then add rate limiting/abuse controls, privacy/retention decisions, provider webhook verification, calendar adapter contracts, operational observability, and a separately deployed authenticated CRM/PWA. Do not build a public static admin route.
+
+
+## Staff application
+
+`operations/staff-app/` is a separate React 19, TypeScript, and Vite phone-first PWA. Hash routing avoids static-host rewrite requirements. It consumes protected Worker APIs and does not duplicate CRM/scheduling rules or create a public admin route. Views include Inbox, Inquiry Detail, Schedule, Chat, Search, and Status.
+
+Development authentication accepts the provisional bearer credential only at runtime and keeps it in `sessionStorage`. Production-stage builds fail closed until an approved identity adapter exists. Responder availability is deliberate: enabling sends an immediate heartbeat, repeats at one third of the server timeout (clamped to 15–60 seconds), prevents duplicate timers, resumes after reconnect/visibility restoration, and explicitly sends unavailable when disabled. Server expiry remains authoritative.
+
+The manifest and service worker cache only the application shell. Offline CRM mutations are not queued: the app shows disconnection, disables writes, preserves recoverable input, and reports saved only after Worker success. Mobile uses bottom navigation; desktop uses a sidebar.
+
+### Staff local development
+
+Terminal 1:
+
+```bash
+cp operations/.dev.vars.example operations/.dev.vars
+npm run ops:db:reset
+npm run ops:dev
+```
+
+Terminal 2:
+
+```bash
+cp operations/staff-app/.env.example operations/staff-app/.env.local
+npm run staff:dev
+```
+
+Enter the same local `INTERNAL_API_TOKEN` at runtime and choose a synthetic responder. Run staff gates with `npm run staff:typecheck`, `npm run staff:lint`, `npm run staff:test`, `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/snap/bin/chromium npm run test:staff:e2e`, and `npm run staff:build`.
+
+### Staff deployment proposal (not performed)
+
+Deploy `operations/staff-app/dist/` to a private, separately named Cloudflare static target. Place approved identity/authorization in front of the app and protected Worker routes. Use separate development, staging, and production origins and D1 databases. Do not publish it on the marketing domain.
+
+### Abuse-protection launch gate
+
+The public inquiry API has strict validation, size limits, idempotency, and explicit CORS, but production still requires reviewed rate limiting, bot verification (Cloudflare Turnstile is a platform-native candidate), verified origin policy, monitoring, and failure behavior. No resource or keys were created. Public production submission must remain disabled until that review is complete.
