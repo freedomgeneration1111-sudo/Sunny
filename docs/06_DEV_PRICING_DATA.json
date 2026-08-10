@@ -1,0 +1,176 @@
+{
+  "meta": {
+    "company": "Focus Lab Productions",
+    "status": "development_only",
+    "currency": "USD",
+    "market": "Dallas-Fort Worth",
+    "sourceBasis": "competitive-middle values from consolidated DFW market evidence, rounded for UI prototyping",
+    "warning": "NOT CUSTOMER-APPROVED PUBLIC PRICING. Replace centrally after Sunny/customer pricing decision.",
+    "version": "2026-08-10"
+  },
+  "values": {
+    "weddingDjCore": {
+      "amount": 1700,
+      "mode": "starting",
+      "label": "Wedding DJ/MC",
+      "evidenceBand": [
+        1400,
+        2000
+      ]
+    },
+    "weddingDjCeremonyReception": {
+      "amount": 1900,
+      "mode": "starting",
+      "label": "Ceremony + Reception DJ/MC",
+      "evidenceBand": [
+        1800,
+        2000
+      ]
+    },
+    "weddingProductionEnhanced": {
+      "amount": 4600,
+      "mode": "starting",
+      "label": "DJ + Substantial Production",
+      "evidenceBand": [
+        3500,
+        5750
+      ]
+    },
+    "partyDjHourly": {
+      "amount": 225,
+      "mode": "hourly",
+      "label": "Private Event DJ/MC",
+      "evidenceBand": [
+        175,
+        250
+      ]
+    },
+    "party3h": {
+      "amount": 675,
+      "mode": "exact-dev",
+      "derivedFrom": "partyDjHourly"
+    },
+    "party4h": {
+      "amount": 900,
+      "mode": "exact-dev",
+      "derivedFrom": "partyDjHourly"
+    },
+    "party5h": {
+      "amount": 1125,
+      "mode": "exact-dev",
+      "derivedFrom": "partyDjHourly"
+    },
+    "digitalPhotoBooth": {
+      "amount": 775,
+      "mode": "starting",
+      "label": "Digital / Open-Air Booth",
+      "evidenceBand": [
+        650,
+        900
+      ]
+    },
+    "booth360": {
+      "amount": 600,
+      "mode": "starting",
+      "label": "360 Booth",
+      "evidenceBand": [
+        500,
+        700
+      ]
+    },
+    "dancingOnClouds": {
+      "amount": 525,
+      "mode": "starting",
+      "label": "Dancing on Clouds",
+      "evidenceBand": [
+        450,
+        595
+      ]
+    },
+    "coldSparks": {
+      "amount": 575,
+      "mode": "starting",
+      "label": "Cold Sparks",
+      "evidenceBand": [
+        550,
+        595
+      ]
+    },
+    "weddingPhotography": {
+      "amount": 3300,
+      "mode": "starting",
+      "label": "Wedding Photography",
+      "evidenceBand": [
+        2700,
+        3900
+      ]
+    },
+    "weddingVideography": {
+      "amount": 2700,
+      "mode": "starting",
+      "label": "Wedding Videography",
+      "evidenceBand": [
+        2400,
+        3000
+      ]
+    },
+    "photoVideoBundle": {
+      "amount": 5600,
+      "mode": "starting",
+      "label": "Photo + Video",
+      "evidenceBand": [
+        4700,
+        6500
+      ]
+    },
+    "southAsianMediaDevelopmentAnchor": {
+      "amount": 7500,
+      "mode": "custom-anchor-dev",
+      "label": "South Asian Celebration Media",
+      "evidenceBand": [
+        6500,
+        8500
+      ],
+      "note": "Broad competitive-middle anchor across single-to-multi-day media evidence; do not present as a universal package."
+    },
+    "corporateDjHourly": {
+      "amount": 175,
+      "mode": "starting-hourly",
+      "label": "Corporate DJ/Entertainment",
+      "evidenceBand": [
+        150,
+        175
+      ],
+      "confidence": "medium"
+    },
+    "corporateProductionHalfDay": {
+      "amount": 1900,
+      "mode": "custom-anchor-dev",
+      "label": "Corporate Production Half-Day",
+      "confidence": "low-market/high-vendor",
+      "note": "Use for layout only until Focus Lab internal scope/pricing is set."
+    },
+    "corporateProductionFullDay": {
+      "amount": 5000,
+      "mode": "custom-anchor-dev",
+      "label": "Corporate Production Full-Day",
+      "evidenceBand": [
+        4600,
+        5500
+      ],
+      "confidence": "low-market/high-vendor"
+    }
+  },
+  "customQuoteCategories": [
+    "multi-day or multi-venue South Asian celebrations",
+    "LED walls, stage design and advanced production",
+    "large or technically unusual venues",
+    "custom dance floors and large production builds",
+    "complex live performers or live sound",
+    "multi-room corporate AV",
+    "destination/travel-heavy events",
+    "unusual crew scaling or specialized insurance/COI requirements",
+    "restrictive venue load-in, power, rigging or effects conditions",
+    "unusual same-day or highly expedited media deliverables"
+  ]
+}

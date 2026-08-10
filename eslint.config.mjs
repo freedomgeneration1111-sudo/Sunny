@@ -7,7 +7,10 @@ const compat = new FlatCompat({
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
   {
-    ignores: [".next/**", "out/**", "node_modules/**"],
+    // Next.js generates next-env.d.ts and may rewrite it during dev/build.
+    // Keep the framework-generated declaration out of application linting,
+    // matching Next.js' documented flat-config defaults.
+    ignores: [".next/**", "out/**", "node_modules/**", "next-env.d.ts"],
   },
 ];
 

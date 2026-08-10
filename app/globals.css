@@ -1,74 +1,32 @@
 @import "tailwindcss";
-
 @theme {
-  --color-ink: #17131a;
-  --color-ivory: #fbf5ea;
-  --color-pomegranate: #c51d5d;
-  --color-marigold: #f2a516;
-  --color-jade: #08776f;
-  --color-cobalt: #3557d5;
-
-  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
-  --font-body: var(--font-public-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-accent: var(--font-fraunces), ui-serif, Georgia, serif;
-
-  --animate-cue-reveal: cue-reveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
-  --animate-headline-in: headline-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+ --color-canvas:#f7f5f1; --color-canvas-alt:#ece9e3; --color-surface:#ffffff; --color-surface-elevated:#e2ded7;
+ --color-ink:#111214; --color-ink-muted:#5d6064; --color-border:#c9c5bd;
+ --color-brand-primary:#f47a00; --color-brand-primary-hover:#d95f00; --color-brand-accent:#ff9c20; --color-on-brand:#f5f5f3;
+ --color-focus:#f47a00; --color-success:#237a4b; --color-error:#b42318;
+ --font-display:var(--font-inter),Inter,Arial,sans-serif; --font-body:var(--font-inter),Inter,Arial,sans-serif;
+ --radius-control:12px; --radius-card:18px; --radius-media:24px;
 }
-
-@keyframes cue-reveal {
-  from {
-    opacity: 0;
-    transform: scale(0.92);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes headline-in {
-  from {
-    opacity: 0;
-    transform: translateY(0.6em);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
+:root { --section-y:72px; --header-h:68px; }
+@media (min-width:768px){:root{--section-y:88px;--header-h:76px}}
+@media (min-width:1024px){:root{--section-y:120px;--header-h:80px}}
 @layer base {
-  html {
-    scroll-behavior: smooth;
-  }
-
-  body {
-    @apply bg-ivory text-ink font-body antialiased;
-  }
-
-  ::selection {
-    background: var(--color-pomegranate);
-    color: var(--color-ivory);
-  }
-
-  :focus-visible {
-    outline: 2px solid var(--color-pomegranate);
-    outline-offset: 3px;
-  }
+ html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 16px)} body{@apply bg-canvas font-body text-ink antialiased;overflow-x:hidden} ::selection{background:var(--color-brand-primary);color:var(--color-on-brand)}
+ :focus-visible{outline:3px solid var(--color-focus);outline-offset:3px} button,a{touch-action:manipulation} h1,h2,h3{text-wrap:balance} p{text-wrap:pretty}
 }
+@media(max-width:767px){figure[data-mobile-aspect="4/5"]{aspect-ratio:4/5!important}figure[data-mobile-aspect="4/3"]{aspect-ratio:4/3!important}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+@keyframes cinematic-drift {
+ from{transform:scale(1.025) translate3d(0,0,0)}
+ to{transform:scale(1.075) translate3d(-1.25%,.5%,0)}
+}
+.cinematic-poster{animation:cinematic-drift 18s ease-in-out infinite alternate;transform-origin:68% 48%}
+.cinematic-video{background:var(--color-ink)}
+@media(max-width:767px){
+ .cinematic-poster{object-position:72% center!important;animation-duration:22s}
+}
+@media(prefers-reduced-motion:reduce){
+ .cinematic-poster{animation:none!important;transform:none!important}
+ .cinematic-video{display:none!important}
 }

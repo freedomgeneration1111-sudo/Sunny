@@ -1,46 +1,5 @@
-import type { Metadata } from "next";
-import { Bricolage_Grotesque, Public_Sans, Fraunces } from "next/font/google";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { config } from "@/lib/config";
-import "./globals.css";
-
-const bricolage = Bricolage_Grotesque({
-  subsets: ["latin"],
-  variable: "--font-bricolage",
-  display: "swap",
-});
-
-const publicSans = Public_Sans({
-  subsets: ["latin"],
-  variable: "--font-public-sans",
-  display: "swap",
-});
-
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  style: ["italic"],
-  variable: "--font-fraunces",
-  display: "swap",
-});
-
-export const metadata: Metadata = {
-  title: `${config.businessName} — Event Media + Entertainment, Dallas–Fort Worth`,
-  description: config.shortStatement,
-  robots: {
-    index: false,
-    follow: false,
-  },
-};
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en" className={`${bricolage.variable} ${publicSans.variable} ${fraunces.variable}`}>
-      <body className="flex min-h-screen flex-col">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
-      </body>
-    </html>
-  );
-}
+import type { Metadata, Viewport } from "next"; import { Inter } from "next/font/google"; import { Header } from "@/components/layout/Header"; import { Footer } from "@/components/layout/Footer"; import { config } from "@/lib/config"; import "./globals.css";
+const inter=Inter({subsets:["latin"],variable:"--font-inter",display:"swap"});
+export const metadata:Metadata={title:{default:`${config.businessName} — DFW Weddings & Events`,template:`%s | ${config.businessName}`},description:config.shortStatement,robots:{index:false,follow:false},icons:{icon:"/brand/favicon.svg"}};
+export const viewport:Viewport={themeColor:"#111214"};
+export default function RootLayout({children}:{children:React.ReactNode}){return <html lang="en" className={inter.variable}><body className="flex min-h-screen flex-col"><a href="#main-content" className="fixed left-3 top-3 z-[100] -translate-y-20 rounded-control bg-brand-primary px-4 py-3 font-bold text-on-brand focus:translate-y-0">Skip to content</a><Header/><main id="main-content" className="flex-1">{children}</main><Footer/></body></html>}
