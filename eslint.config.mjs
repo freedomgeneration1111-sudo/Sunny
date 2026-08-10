@@ -11,8 +11,9 @@ const eslintConfig = [
     // Wrangler generates operations/worker-configuration.d.ts from the checked-in Worker config.
     // Keep the framework-generated declaration out of application linting,
     // matching Next.js' documented flat-config defaults.
-    ignores: [".next/**", "out/**", "node_modules/**", "next-env.d.ts", "operations/worker-configuration.d.ts"],
+    ignores: [".next/**", "out/**", "node_modules/**", "next-env.d.ts", "operations/worker-configuration.d.ts", "operations/staff-app/dist/**"],
   },
 ];
 
+eslintConfig.push({ files: ["operations/staff-app/**/*.{ts,tsx}"], rules: { "@next/next/no-img-element": "off" } });
 export default eslintConfig;
