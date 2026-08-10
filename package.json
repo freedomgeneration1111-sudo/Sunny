@@ -8,14 +8,25 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "playwright test"
+    "test": "npm run test:public && npm run test:operations",
+    "test:public": "playwright test",
+    "test:operations": "vitest run --config operations/vitest.config.mts",
+    "ops:dev": "wrangler dev --config operations/wrangler.jsonc",
+    "ops:types": "wrangler types --config operations/wrangler.jsonc operations/worker-configuration.d.ts",
+    "ops:db:migrate": "wrangler d1 migrations apply focus-lab-operations-local --local --config operations/wrangler.jsonc",
+    "ops:db:seed": "wrangler d1 execute focus-lab-operations-local --local --config operations/wrangler.jsonc --file operations/seeds/development.sql",
+    "ops:db:reset": "node operations/scripts/reset-local-db.mjs && npm run ops:db:migrate && npm run ops:db:seed",
+    "ops:db:inspect": "wrangler d1 execute focus-lab-operations-local --local --config operations/wrangler.jsonc --command=\"SELECT id, workflow_state, created_at FROM inquiries ORDER BY created_at DESC LIMIT 20\""
   },
   "dependencies": {
     "next": "^15.5.23",
     "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react-dom": "19.0.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.21.0",
+    "@cloudflare/workers-types": "^5.20260810.1",
     "@eslint/eslintrc": "^3.2.0",
     "@playwright/test": "^1.62.1",
     "@tailwindcss/postcss": "^4.0.0",
@@ -28,6 +39,7 @@
     "postcss": "^8.4.49",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.7.0",
+    "vitest": "^4.1.10",
     "wrangler": "^4.120.0"
   }
 }

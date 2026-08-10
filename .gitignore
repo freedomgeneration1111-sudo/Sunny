@@ -4,6 +4,10 @@ out/
 .env
 .env.local
 .env.*.local
+.dev.vars
+**/.dev.vars
+.wrangler/
+**/.wrangler/
 .DS_Store
 *.log
 test-results/
