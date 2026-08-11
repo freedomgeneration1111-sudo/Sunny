@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { useCallback,useRef,useState,type FormEvent } from "react";
 import { track } from "@/lib/analytics";
-import { inquirySubmissionEnabled,submitInquiry,turnstileSiteKey } from "@/lib/operations-api";
+import { customerInquiryError,inquirySubmissionEnabled,submitInquiry,turnstileSiteKey } from "@/lib/operations-api";
 import { TurnstileWidget } from "@/components/forms/TurnstileWidget";
 
 type State = { eventType:string;date:string;location:string;services:string[];guests:string;budget:string;name:string;email:string;phone:string;contact:string;note:string };
@@ -43,7 +43,7 @@ export function CheckAvailabilityForm() {
       setSubmission({ kind:"success",message:result.message });
       track("inquiry_submit_success");
     } catch (error) {
-      setSubmission({ kind:"error",message:error instanceof Error ? error.message : "The inquiry could not be sent. Please try again." });
+      setSubmission({ kind:"error",message:customerInquiryError(error) });
       setTurnstileReset((value)=>value+1);
       track("inquiry_submit_error",{ reason:"request_failed" });
     }

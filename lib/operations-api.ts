@@ -14,6 +14,14 @@ export type ChatStatus = {
 export type InquiryClientConfig = { apiUrl:string;enabled:boolean };
 
 export const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
+export const inquiryFailureMessage = `We couldn't send your inquiry. Please try again. Your information has been kept on this page.`;
+const inquiryRateLimitMessage = "Too many attempts. Please wait a minute and try again.";
+const inquiryValidationMessage = "Please review your details and complete the security check, then try again.";
+
+export function customerInquiryError(error:unknown){
+  if(error instanceof Error&&(error.message===inquiryRateLimitMessage||error.message===inquiryValidationMessage))return error.message;
+  return inquiryFailureMessage;
+}
 
 const apiUrl = process.env.NEXT_PUBLIC_INQUIRY_API_URL?.replace(/\/$/, "") ?? "";
 const submissionRequested = process.env.NEXT_PUBLIC_INQUIRY_SUBMISSION_ENABLED === "true";
@@ -30,16 +38,21 @@ export async function submitInquiryWithConfig(
 ): Promise<InquirySubmissionResult> {
   const baseUrl = config.apiUrl.replace(/\/$/, "");
   if (!config.enabled || !baseUrl) throw new Error("Inquiry transmission is not configured.");
-  const response = await fetcher(`${baseUrl}/v1/inquiries`,{
-    method: "POST",headers: { "Content-Type": "application/json","Idempotency-Key": idempotencyKey },body: JSON.stringify(input),
-  });
+  let response: Response;
+  try {
+    response = await fetcher(`${baseUrl}/v1/inquiries`,{
+      method: "POST",headers: { "Content-Type": "application/json","Idempotency-Key": idempotencyKey },body: JSON.stringify(input),
+    });
+  } catch {
+    throw new Error(inquiryFailureMessage);
+  }
   const body: unknown = await response.json().catch(() => null);
   if (!response.ok) {
-    if (response.status === 429) throw new Error("Too many attempts. Please wait a minute and try again.");
-    if (response.status === 400 || response.status === 422) throw new Error("Please review your details and complete the security check, then try again.");
-    throw new Error("The inquiry could not be sent. Please try again.");
+    if (response.status === 429) throw new Error(inquiryRateLimitMessage);
+    if (response.status === 400 || response.status === 422) throw new Error(inquiryValidationMessage);
+    throw new Error(inquiryFailureMessage);
   }
-  if (!isInquiryResult(body)) throw new Error("The inquiry service returned an unexpected response.");
+  if (!isInquiryResult(body)) throw new Error(inquiryFailureMessage);
   return body;
 }
 

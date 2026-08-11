@@ -2,6 +2,14 @@
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "focus-lab-public-staging",
   "compatibility_date": "2026-08-10",
+  "main": "operations/src/public-site.ts",
   "workers_dev": true,
-  "assets": { "directory": "./out" }
+  "assets": {
+    "directory": "./out",
+    "binding": "ASSETS",
+    "run_worker_first": ["/v1/inquiries", "/v1/chat/status", "/health"]
+  },
+  "services": [
+    { "binding": "OPERATIONS_API", "service": "focus-lab-api-staging" }
+  ]
 }

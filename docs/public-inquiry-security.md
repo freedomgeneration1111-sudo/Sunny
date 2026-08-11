@@ -11,12 +11,23 @@ Rate limiting is deliberately simple: 10 attempts per hashed connecting-IP key i
 ## Staging resources (2026-08-11)
 
 - Public static site: `focus-lab-public-staging` — `https://focus-lab-public-staging.freedomgeneration1111.workers.dev`
-- Public API Worker: `focus-lab-api-staging` — `https://focus-lab-api-staging.freedomgeneration1111.workers.dev`
+- Browser-facing API path: `https://focus-lab-public-staging.freedomgeneration1111.workers.dev/v1/inquiries` (same origin)
+- Operations API Worker: `focus-lab-api-staging`; invoked from the public Worker through the `OPERATIONS_API` service binding
 - D1: existing isolated `focuslab-crm-staging` (`9a7e55cb-7b26-4521-b48d-bd607e1b207c`)
 - Turnstile: managed `focuslab-inquiry-staging`, restricted to the public staging hostname
 - Staff Access Worker remains separate and unchanged. The public API Worker serves no staff assets; internal routes still fail closed without a valid Access configuration/assertion.
 
 The Turnstile secret is a Wrangler secret and is not committed. The site key is public and supplied only at build time. No production resource or production D1 was touched.
+
+## Real-browser staging correction (2026-08-11)
+
+The first real Firefox submissions failed before D1 persistence and exposed Firefox's raw `NetworkError` string. Diagnosis confirmed the deployed client targeted the intended separate API hostname. An exact OPTIONS preflight reached the API and returned `204` with the configured staging origin, POST method, `Content-Type` and `Idempotency-Key` headers. Invalid/validation/success/server paths are covered by Worker-runtime CORS assertions.
+
+The reproducible transport failure occurred before Worker execution: the separate API `workers.dev` hostname resolved to Cloudflare `188.114.96.6/188.114.97.6`, connections timed out, and a live Worker tail received no request. A health request succeeded only when DNS selected a different reachable edge. This explains a fetch-level `NetworkError`, absence of D1 records, and absence of an HTTP/CORS error response.
+
+Staging now uses a same-origin public facade. The browser posts to the already-loaded public hostname; that Worker forwards `/v1/inquiries`, `/v1/chat/status`, and `/health` through a Cloudflare service binding to the unchanged operations API Worker. Static assets remain asset-first. The standalone API still retains explicit CORS for direct/future origins, but the staging browser path no longer depends on a second DNS/TLS connection or CORS preflight.
+
+All client fetch rejections and unexpected API responses are mapped to: “We couldn't send your inquiry. Please try again. Your information has been kept on this page.” Only explicitly approved validation/rate-limit messages may pass through. Raw browser exception text is never rendered.
 
 ## Local configuration
 

@@ -23,3 +23,9 @@ test("configured inquiry UI shows a safe failure and preserves entries",async({p
 });
 
 test("honeypot is excluded from keyboard and accessibility navigation",async({page})=>{await openReadyForm(page);const trap=page.locator('input[name="website"]');await expect(trap).toHaveAttribute("tabindex","-1");await expect(trap.locator("xpath=../..")).toHaveAttribute("aria-hidden","true");});
+
+
+test("browser network failures never expose raw exception text",async({page})=>{
+  await page.route("https://api.example.test/v1/inquiries",route=>route.abort("failed"));
+  await openReadyForm(page);await page.getByRole("button",{name:"Send Inquiry"}).click();const alert=page.locator("form [role=alert]");await expect(alert).toContainText("We couldn't send your inquiry. Please try again. Your information has been kept on this page.");await expect(alert).not.toContainText("NetworkError");await expect(page.getByLabel("Name")).toHaveValue("Synthetic Browser Customer");
+});

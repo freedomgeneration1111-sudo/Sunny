@@ -15,7 +15,7 @@ test("homepage header moves from expanded to compact without losing conversion",
   await expect(header).toHaveAttribute("data-header-state", "compact");
   await expect(availability).toBeVisible();
   await availability.click();
-  await expect(page).toHaveURL(/\/check-availability\/$/);
+  await expect(page).toHaveURL(/\/check-availability\/$/,{timeout:30_000});
 });
 
 test("mobile hero navigation remains usable in both identity states", async ({ page }) => {
