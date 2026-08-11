@@ -117,7 +117,7 @@ There is no MDM or remote-wipe capability in this project.
 
 The service worker caches only the app shell, manifest, approved mark, and hashed frontend assets. It bypasses `/v1/*`, `/cdn-cgi/access/*`, cross-origin requests, mutations, non-success responses, and authentication redirects. Navigations are network-first with only the static shell as offline fallback. CRM API responses, customer data, Access pages, and auth errors are not cached.
 
-Offline mode is shell-only. No CRM data is deliberately persisted, no mutations are queued, and “Saved” appears only after server confirmation.
+Offline mode is shell-only. No CRM data is deliberately persisted, no mutations are queued, and “Saved” appears only after server confirmation. A browser may keep a fetch pending and deliver it when connectivity returns; that incidental behavior is not supported offline synchronization and must not be described as a queue.
 
 ## Manual Android PWA validation
 
@@ -200,8 +200,9 @@ Staging also proved that selective `assets.run_worker_first` patterns cannot enf
 - During the physical Android session, a synthetic internal note and self-assignment persisted, and both audit activities attribute the authenticated responder as actor.
 - “Messaging not configured” remains the correct truthful UI because no customer messaging transport exists.
 - Desktop browser validation has not yet been performed.
-- iPhone Safari and installed Home Screen PWA validation have not yet been performed.
+- Physical iPhone Safari and installed Home Screen PWA validation passed: Access authentication carried into standalone mode, background/return worked, and force-close/reopen restored the session. During Airplane Mode, WebKit kept one note request pending until connectivity returned; D1 then stored one note and one correctly attributed activity. This is incidental browser delivery, not supported offline synchronization.
 - Access revocation and D1 deactivation remain to be validated.
+- Internal-note POSTs are not idempotent. Exactly-once protection is deferred unless a future retry mechanism or durable outbox is deliberately introduced.
 
 ### Approved tester mapping (not committed)
 
@@ -221,7 +222,7 @@ The code first matches normalized `verified_email`, validates the active D1 role
 
 ### Physical iPhone validation record
 
-Record device model, iOS version, test date/time, authentication method, and results separately for Safari and the installed Home Screen PWA. Test initial login, current-user load, inquiry read, synthetic internal note, self-assignment, workflow mutation, availability heartbeat, 30–60 second background/foreground, force-close/reopen, temporary session expiry or revocation, clean reauthentication, airplane-mode shell behavior, failed offline mutation, reconnect, and explicit logout. Private CRM responses must not appear from Cache Storage.
+Physical iPhone validation is complete for Safari authentication, Add to Home Screen, session transfer into standalone mode, 30–60 second background/return, and force-close/reopen. Airplane Mode testing showed that WebKit may retain an in-flight mutation until connectivity returns; the UI remained “Saving…” and only confirmed success after D1 persistence. No application queue, IndexedDB outbox, Background Sync, or supported offline-write behavior exists. Access revocation and explicit logout remain separate pending checks. Private CRM responses must not appear from Cache Storage.
 
 ### Android validation record
 

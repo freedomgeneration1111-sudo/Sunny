@@ -186,7 +186,7 @@ Choose production staff identity and role authorization first. Then add rate lim
 
 Development authentication accepts the provisional bearer credential only at runtime and keeps it in `sessionStorage`. Production bootstraps automatically from a validated Cloudflare Access assertion and active D1 staff mapping; it never offers the development bearer path. Responder availability is deliberate: enabling sends an immediate heartbeat, repeats at one third of the server timeout (clamped to 15–60 seconds), prevents duplicate timers, resumes after reconnect/visibility restoration, and explicitly sends unavailable when disabled. Server expiry remains authoritative.
 
-The manifest and service worker cache only the application shell. Offline CRM mutations are not queued: the app shows disconnection, disables writes, preserves recoverable input, and reports saved only after Worker success. Mobile uses bottom navigation; desktop uses a sidebar.
+The manifest and service worker cache only the application shell. Offline CRM mutations are not queued: the app shows disconnection when the browser reports it, disables writes, preserves recoverable input, and reports saved only after Worker success. WebKit may incidentally retain an in-flight request until connectivity returns; this is not supported offline synchronization. Internal-note idempotency is deferred unless deliberate retry or queue behavior is introduced later. Mobile uses bottom navigation; desktop uses a sidebar.
 
 ### Staff local development
 

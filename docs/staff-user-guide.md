@@ -17,4 +17,4 @@ Status: internal development prototype. Authentication, messaging synchronizatio
 
 ## Offline and failure behavior
 
-The app shell may remain visible offline, but edits are not queued. A change is shown as saved only after Worker confirmation, and recoverable note errors retain entered text. Never place tokens in source or client build variables.
+The app shell may remain visible offline, but edits are not queued. A change is shown as saved only after Worker confirmation, and recoverable note errors retain entered text. A browser may incidentally keep a request pending until connectivity returns; staff must not treat that as supported offline synchronization. Never place tokens in source or client build variables.
