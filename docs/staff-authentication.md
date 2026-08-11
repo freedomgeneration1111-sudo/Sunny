@@ -196,7 +196,11 @@ Staging also proved that selective `assets.run_worker_first` patterns cannot enf
 - Unauthenticated `/v1/internal/me` returns the same Access boundary, proving the same-origin internal API is covered.
 - The Access application cookie advertises a 24-hour expiry.
 - Development bearer authentication is disabled because the deployed environment is `staging` with `STAFF_AUTH_MODE=access`.
-- Authenticated current-user, audit, role, presence, revocation, and installed-PWA behavior require the approved tester to complete the next login/device steps.
+- Real desktop login succeeded: the PWA loaded `Test Responder C` as `admin`, and the signed Access subject bound to the pre-authorized D1 responder without exposing the subject value.
+- A synthetic internal note and self-assignment persisted, and both audit activities attribute the authenticated responder as actor.
+- The explicit Available control persisted an authenticated heartbeat and produced a current live responder state.
+- “Messaging not configured” remains the correct truthful UI because no customer messaging transport exists.
+- Access revocation, D1 deactivation, and installed-iPhone PWA behavior remain to be validated.
 
 ### Approved tester mapping (not committed)
 
