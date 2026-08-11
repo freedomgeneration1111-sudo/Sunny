@@ -184,7 +184,7 @@ Choose production staff identity and role authorization first. Then add rate lim
 
 `operations/staff-app/` is a separate React 19, TypeScript, and Vite phone-first PWA. Hash routing avoids static-host rewrite requirements. It consumes protected Worker APIs and does not duplicate CRM/scheduling rules or create a public admin route. Views include Inbox, Inquiry Detail, Schedule, Chat, Search, and Status.
 
-Development authentication accepts the provisional bearer credential only at runtime and keeps it in `sessionStorage`. Production-stage builds fail closed until an approved identity adapter exists. Responder availability is deliberate: enabling sends an immediate heartbeat, repeats at one third of the server timeout (clamped to 15–60 seconds), prevents duplicate timers, resumes after reconnect/visibility restoration, and explicitly sends unavailable when disabled. Server expiry remains authoritative.
+Development authentication accepts the provisional bearer credential only at runtime and keeps it in `sessionStorage`. Production bootstraps automatically from a validated Cloudflare Access assertion and active D1 staff mapping; it never offers the development bearer path. Responder availability is deliberate: enabling sends an immediate heartbeat, repeats at one third of the server timeout (clamped to 15–60 seconds), prevents duplicate timers, resumes after reconnect/visibility restoration, and explicitly sends unavailable when disabled. Server expiry remains authoritative.
 
 The manifest and service worker cache only the application shell. Offline CRM mutations are not queued: the app shows disconnection, disables writes, preserves recoverable input, and reports saved only after Worker success. Mobile uses bottom navigation; desktop uses a sidebar.
 
@@ -214,3 +214,7 @@ Deploy `operations/staff-app/dist/` to a private, separately named Cloudflare st
 ### Abuse-protection launch gate
 
 The public inquiry API has strict validation, size limits, idempotency, and explicit CORS, but production still requires reviewed rate limiting, bot verification (Cloudflare Turnstile is a platform-native candidate), verified origin policy, monitoring, and failure behavior. No resource or keys were created. Public production submission must remain disabled until that review is complete.
+
+## Production staff authentication phase
+
+The implemented production identity boundary and required Cloudflare configuration are documented in [staff-authentication.md](./staff-authentication.md). Cloudflare Access authenticates identity; D1 active state and roles authorize application actions. Same-origin staff assets and `/v1/internal/*` are adopted for the future `staff.gofocuslab.com` topology. No Access application, domain, or production resource was created.
