@@ -7,9 +7,18 @@
   "assets": {
     "directory": "./out",
     "binding": "ASSETS",
-    "run_worker_first": ["/v1/inquiries", "/v1/chat/status", "/health"]
+    "run_worker_first": [
+      "/v1/inquiries",
+      "/v1/chat/status",
+      "/v1/chat/conversations",
+      "/v1/chat/conversations/*",
+      "/health"
+    ]
   },
   "services": [
-    { "binding": "OPERATIONS_API", "service": "focus-lab-api-staging" }
+    {
+      "binding": "OPERATIONS_API",
+      "service": "focus-lab-api-staging"
+    }
   ]
 }
