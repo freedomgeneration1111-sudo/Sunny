@@ -29,6 +29,10 @@ Staging now uses a same-origin public facade. The browser posts to the already-l
 
 All client fetch rejections and unexpected API responses are mapped to: “We couldn't send your inquiry. Please try again. Your information has been kept on this page.” Only explicitly approved validation/rate-limit messages may pass through. Raw browser exception text is never rendered.
 
+## Real-browser validation result (2026-08-11)
+
+Human validation is complete: a normal-browser submission through the staging public facade succeeded and the inquiry appeared in the staging staff CRM/D1. This closes the production-safe inquiry-submission engineering phase for staging. Production remains disabled and was not deployed.
+
 ## Local configuration
 
 Public build values (not secrets):

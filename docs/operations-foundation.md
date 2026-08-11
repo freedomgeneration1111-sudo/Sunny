@@ -64,7 +64,7 @@ No code in this foundation defines deposits, cancellation terms, taxes, travel, 
 - `assignments`: optional many-to-many internal assignment.
 - `internal_notes`: separate from customer-visible communication.
 - `activities`: append-only history for important inquiry/event state changes.
-- `conversations`: provider-neutral conversation metadata; message bodies are not implemented.
+- `conversations`: provider-neutral thread metadata. Native website message history now lives in `conversation_messages`; external channels remain adapters.
 - `responder_presence`: explicit availability heartbeat and expiry, not generic phone connectivity.
 
 IDs use `crypto.randomUUID()` with entity prefixes. Timestamps are server-created ISO-8601 UTC text. Foreign keys and common date/state/contact lookup indexes are defined in `0001_operations_foundation.sql`.
