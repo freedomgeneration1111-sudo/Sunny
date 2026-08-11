@@ -25,6 +25,7 @@
     "test:staff:e2e": "playwright test --config operations/staff-app/playwright.config.ts"
   },
   "dependencies": {
+    "jose": "^6.2.8",
     "next": "^15.5.23",
     "react": "19.0.0",
     "react-dom": "19.0.0",
