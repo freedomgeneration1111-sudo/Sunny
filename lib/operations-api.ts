@@ -8,7 +8,7 @@ export type InquirySubmissionResult = {
   status: "received_for_review"; message: string;
 };
 export type ChatStatus = {
-  state: "live" | "async" | "unavailable"; label: "Live Chat" | "Send us a DM" | "Messaging unavailable";
+  state: "live" | "async" | "unavailable"; label: "Live Chat" | "Send us a Message" | "Send us a DM" | "Messaging unavailable";
   destinationUrl: string | null; checkedAt: string;
 };
 export type InquiryClientConfig = { apiUrl:string;enabled:boolean };
