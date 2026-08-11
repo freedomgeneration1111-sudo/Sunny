@@ -152,7 +152,7 @@ Repeat the Android sequence using Safari “Add to Home Screen,” standalone la
 
 ## Phase 1B staging validation
 
-Status as of 2026-08-10: the isolated Worker and D1 resources exist, but the staff shell remains hostname-gated until Cloudflare Access is enabled. No production resource or route was changed.
+Status as of 2026-08-11: the isolated Worker, D1 database, staff shell, and same-origin API are deployed behind Cloudflare Access. The exact-email policy and 24-hour session are user-confirmed. An unauthenticated edge check redirects both `/` and `/v1/internal/me` to the expected Access team domain and AUD. The first authenticated login and physical-device validation remain pending. No production resource or route was changed.
 
 ### Staging resources
 
@@ -163,9 +163,13 @@ Status as of 2026-08-10: the isolated Worker and D1 resources exist, but the sta
 | D1 database | `focuslab-crm-staging` |
 | D1 ID | `9a7e55cb-7b26-4521-b48d-bd607e1b207c` |
 | Auth mode | `access` (no development-token fallback) |
+| Access issuer | `https://freedomgeneration1111.cloudflareaccess.com` |
+| Access AUD | `295ea7bd524addc2c13be76f041dc72e23fde3fd4a8c4d1c98ae456b8e160000` |
+| Access session | 24 hours |
+| Independent MFA | Deliberately deferred; not a blocker |
 | Staff shell/API topology | Same origin: `/` and `/v1/internal/*` |
 
-Migrations `0001_operations_foundation.sql` and `0002_staff_access_identity.sql` are applied. The database contains only the checked-in synthetic development records: one synthetic responder for each application role and six synthetic inquiries. A real tester email must be inserted manually into this staging database and must never be committed to seed files.
+Migrations `0001_operations_foundation.sql` and `0002_staff_access_identity.sql` are applied. The database contains only the checked-in synthetic development records: one synthetic responder for each application role and six synthetic inquiries. The approved tester email is mapped only in remote staging D1 to the synthetic admin responder; it is not present in committed seed files. The stable Access subject remains unbound until the first successfully validated login.
 
 ### Required Cloudflare dashboard action
 
@@ -183,7 +187,16 @@ Migrations `0001_operations_foundation.sql` and `0002_staff_access_identity.sql`
 
 Cloudflare's current Workers documentation identifies Worker-target Access as the safest direct protection for a Worker and permits Access protection on `workers.dev`. The Worker still validates the assertion independently; the Access edge policy is not the application authorization boundary.
 
-Staging also proved that selective `assets.run_worker_first` patterns cannot enforce a hostname gate for ordinary static files: matching assets are served before the Worker runs. The configuration now uses `run_worker_first: true`, as Cloudflare documents for middleware/authentication checks, so every staff asset request reaches `isStaffAssetHost` before `env.ASSETS.fetch`. Until Access values are supplied, the staging hostname remains an invalid placeholder and the real `workers.dev` route returns the Worker 404 instead of the staff shell.
+Staging also proved that selective `assets.run_worker_first` patterns cannot enforce a hostname gate for ordinary static files: matching assets are served before the Worker runs. The configuration now uses `run_worker_first: true`, as Cloudflare documents for middleware/authentication checks, so every staff asset request reaches `isStaffAssetHost` before `env.ASSETS.fetch`. The exact staging hostname, issuer, and AUD are now deployed; Access intercepts unauthenticated shell and internal-API requests before they reach the Worker.
+
+### Verified staging results
+
+- Worker deployment version `675ad0ee-d9df-4c9b-b099-443a426c692e` is active at the staging `workers.dev` hostname.
+- Unauthenticated `/` returns an Access `302` to the configured team-domain login using the expected AUD.
+- Unauthenticated `/v1/internal/me` returns the same Access boundary, proving the same-origin internal API is covered.
+- The Access application cookie advertises a 24-hour expiry.
+- Development bearer authentication is disabled because the deployed environment is `staging` with `STAFF_AUTH_MODE=access`.
+- Authenticated current-user, audit, role, presence, revocation, and installed-PWA behavior require the approved tester to complete the next login/device steps.
 
 ### Approved tester mapping (not committed)
 
