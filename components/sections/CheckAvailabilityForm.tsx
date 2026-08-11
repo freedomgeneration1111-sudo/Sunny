@@ -1,9 +1,10 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useRef,useState,type FormEvent } from "react";
+import { useCallback,useRef,useState,type FormEvent } from "react";
 import { track } from "@/lib/analytics";
-import { inquirySubmissionEnabled,submitInquiry } from "@/lib/operations-api";
+import { inquirySubmissionEnabled,submitInquiry,turnstileSiteKey } from "@/lib/operations-api";
+import { TurnstileWidget } from "@/components/forms/TurnstileWidget";
 
 type State = { eventType:string;date:string;location:string;services:string[];guests:string;budget:string;name:string;email:string;phone:string;contact:string;note:string };
 type SubmissionState = { kind:"idle"|"demo"|"submitting"|"success"|"error";message?:string };
@@ -19,6 +20,10 @@ export function CheckAvailabilityForm() {
   const [step,setStep] = useState<1|2|3>(1);
   const [form,setForm] = useState<State>(() => ({ ...initial,services: carried }));
   const [submission,setSubmission] = useState<SubmissionState>({ kind:"idle" });
+  const [turnstileToken,setTurnstileToken] = useState("");
+  const [website,setWebsite] = useState("");
+  const [turnstileReset,setTurnstileReset] = useState(0);
+  const handleTurnstileToken = useCallback((token:string)=>setTurnstileToken(token),[]);
   const idempotencyKey = useRef<string | null>(null);
   const next = (nextStep:2|3) => { track("inquiry_step_complete",{ step:nextStep-1 });setStep(nextStep); };
   const toggle = (service:string) => setForm((current) => ({ ...current,services:current.services.includes(service) ? current.services.filter((item) => item!==service) : [...current.services,service] }));
@@ -34,11 +39,12 @@ export function CheckAvailabilityForm() {
     track("inquiry_submit_attempt");
     idempotencyKey.current ??= crypto.randomUUID();
     try {
-      const result = await submitInquiry(form,idempotencyKey.current);
+      const result = await submitInquiry({ ...form,turnstileToken,website },idempotencyKey.current);
       setSubmission({ kind:"success",message:result.message });
       track("inquiry_submit_success");
     } catch (error) {
       setSubmission({ kind:"error",message:error instanceof Error ? error.message : "The inquiry could not be sent. Please try again." });
+      setTurnstileReset((value)=>value+1);
       track("inquiry_submit_error",{ reason:"request_failed" });
     }
   }
@@ -62,7 +68,9 @@ export function CheckAvailabilityForm() {
         <div className="grid gap-5 sm:grid-cols-2"><label className="text-sm font-bold">Email<input required name="email" type="email" autoComplete="email" spellCheck={false} value={form.email} onChange={(event) => setForm((current) => ({ ...current,email:event.target.value }))} className={input}/></label><label className="text-sm font-bold">Phone (optional)<input name="phone" type="tel" autoComplete="tel" value={form.phone} onChange={(event) => setForm((current) => ({ ...current,phone:event.target.value }))} className={input}/></label></div>
         <label className="block text-sm font-bold">Preferred contact<select name="contact" value={form.contact} onChange={(event) => setForm((current) => ({ ...current,contact:event.target.value }))} className={input}><option value="email">Email</option><option value="phone">Phone</option></select></label>
         <label className="block text-sm font-bold">Anything else? (optional)<textarea name="note" rows={4} value={form.note} onChange={(event) => setForm((current) => ({ ...current,note:event.target.value }))} className={`${input} py-3`}/></label>
-        <div className="flex gap-3"><button type="button" onClick={() => setStep(2)} className={`${chip} border-border`}>Back</button><button disabled={submission.kind==="submitting"||submission.kind==="success"} type="submit" className="min-h-12 rounded-control bg-brand-primary px-6 font-bold text-on-brand disabled:opacity-50">{submission.kind==="submitting"?"Sending…":inquirySubmissionEnabled?"Send Inquiry":"Review Demo Submission"}</button></div>
+        <div aria-hidden="true" className="absolute -left-[10000px] h-px w-px overflow-hidden"><label>Website<input name="website" tabIndex={-1} autoComplete="off" value={website} onChange={(event)=>setWebsite(event.target.value)}/></label></div>
+        {inquirySubmissionEnabled ? <TurnstileWidget siteKey={turnstileSiteKey} onToken={handleTurnstileToken} resetSignal={turnstileReset}/> : null}
+        <div className="flex gap-3"><button type="button" onClick={() => setStep(2)} className={`${chip} border-border`}>Back</button><button disabled={submission.kind==="submitting"||submission.kind==="success"||(inquirySubmissionEnabled&&!turnstileToken)} type="submit" className="min-h-12 rounded-control bg-brand-primary px-6 font-bold text-on-brand disabled:opacity-50">{submission.kind==="submitting"?"Sending…":inquirySubmissionEnabled?"Send Inquiry":"Review Demo Submission"}</button></div>
         {submission.kind==="demo" ? <div role="status" aria-live="polite" className="rounded-card border border-brand-primary bg-brand-primary/10 p-5"><strong>Demo only—no inquiry was sent.</strong><p className="mt-2 text-sm text-ink-muted">Your entries remain on this page for review. Production submission is intentionally disabled.</p></div> : null}
         {submission.kind==="success" ? <div role="status" aria-live="polite" className="rounded-card border border-brand-primary bg-brand-primary/10 p-5"><strong>Inquiry received for review.</strong><p className="mt-2 text-sm text-ink-muted">{submission.message}</p></div> : null}
         {submission.kind==="error" ? <div role="alert" className="rounded-card border border-red-700 bg-red-50 p-5 text-red-950"><strong>Your inquiry was not sent.</strong><p className="mt-2 text-sm">{submission.message}</p></div> : null}

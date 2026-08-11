@@ -1,6 +1,7 @@
 export type InquirySubmission = {
   eventType: string; date: string; location: string; services: string[]; guests: string;
   budget: string; name: string; email: string; phone: string; contact: string; note: string;
+  turnstileToken: string; website: string;
 };
 export type InquirySubmissionResult = {
   ok: true; inquiryId: string; eventId: string; createdAt: string;
@@ -12,8 +13,11 @@ export type ChatStatus = {
 };
 export type InquiryClientConfig = { apiUrl:string;enabled:boolean };
 
+export const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
+
 const apiUrl = process.env.NEXT_PUBLIC_INQUIRY_API_URL?.replace(/\/$/, "") ?? "";
-const publicConfig: InquiryClientConfig = { apiUrl,enabled:process.env.NEXT_PUBLIC_INQUIRY_SUBMISSION_ENABLED === "true" && Boolean(apiUrl) };
+const submissionRequested = process.env.NEXT_PUBLIC_INQUIRY_SUBMISSION_ENABLED === "true";
+const publicConfig: InquiryClientConfig = { apiUrl,enabled:submissionRequested && Boolean(apiUrl) && Boolean(turnstileSiteKey) };
 export const inquirySubmissionEnabled = publicConfig.enabled;
 export const operationsApiConfigured = Boolean(apiUrl);
 
@@ -31,10 +35,9 @@ export async function submitInquiryWithConfig(
   });
   const body: unknown = await response.json().catch(() => null);
   if (!response.ok) {
-    const message = typeof body === "object" && body && "error" in body
-      && typeof body.error === "object" && body.error && "message" in body.error && typeof body.error.message === "string"
-      ? body.error.message : "The inquiry could not be sent. Please try again.";
-    throw new Error(message);
+    if (response.status === 429) throw new Error("Too many attempts. Please wait a minute and try again.");
+    if (response.status === 400 || response.status === 422) throw new Error("Please review your details and complete the security check, then try again.");
+    throw new Error("The inquiry could not be sent. Please try again.");
   }
   if (!isInquiryResult(body)) throw new Error("The inquiry service returned an unexpected response.");
   return body;

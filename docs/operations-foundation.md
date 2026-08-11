@@ -71,7 +71,7 @@ IDs use `crypto.randomUUID()` with entity prefixes. Timestamps are server-create
 
 ## Inquiry lifecycle
 
-`POST /v1/inquiries` accepts the existing website fields. A valid `Idempotency-Key` is mandatory. The Worker validates and normalizes input, reuses a contact by normalized email when one exists, creates a non-capacity-blocking event opportunity, creates the inquiry/services/activity in a D1 batch, and returns `received_for_review`. The response explicitly says that receipt is not an availability confirmation.
+`POST /v1/inquiries` accepts the existing website fields. A valid `Idempotency-Key` and server-verified Turnstile token are mandatory. An offscreen, non-focusable honeypot rejects obvious bots, and a Cloudflare Worker rate-limit binding allows 10 attempts per IP-derived hashed key per 60 seconds per Cloudflare location. The limiter is intentionally a permissive abuse-control layer rather than billing-grade accounting. The Worker validates and normalizes input, reuses a contact by normalized email when one exists, creates a non-capacity-blocking event opportunity, creates the inquiry/services/activity in a D1 batch, and returns `received_for_review`. The response explicitly says that receipt is not an availability confirmation.
 
 An inquiry record does not consume capacity. A protected staff workflow must explicitly set the associated event's `blocks_capacity` field. No email or notification is claimed or sent.
 
@@ -104,7 +104,7 @@ Both `live` and `async` resolve to the same configured shared destination. A res
 - Secrets belong in `operations/.dev.vars` locally and Wrangler secrets remotely; never use `NEXT_PUBLIC_*` for secrets.
 - CORS origins are explicit configuration.
 
-Before production, decide staff authentication/authorization, abuse protection/rate limits, privacy notice and consent text, retention/deletion rules, backup recovery exercises, secret rotation, monitoring/alerts, and legal access controls. No compliance certification is claimed.
+Before production, complete the inquiry activation checklist below and decide privacy notice and consent text, retention/deletion rules, backup recovery exercises, secret rotation, monitoring/alerts, and legal access controls. No compliance certification is claimed.
 
 ## Configuration
 
@@ -113,6 +113,7 @@ Public browser build (`.env.local`, never secret):
 ```dotenv
 NEXT_PUBLIC_INQUIRY_API_URL=http://localhost:8787
 NEXT_PUBLIC_INQUIRY_SUBMISSION_ENABLED=true
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=<public-site-key>
 ```
 
 Worker non-secret vars in `operations/wrangler.jsonc`:
@@ -120,12 +121,15 @@ Worker non-secret vars in `operations/wrangler.jsonc`:
 - `PUBLIC_SITE_ORIGIN`: comma-separated exact allowed origins.
 - `CONCURRENT_EVENT_CAPACITY`: positive integer, development default `1`.
 - `PRESENCE_TIMEOUT_SECONDS`: positive seconds, development default `120`.
+- `TURNSTILE_EXPECTED_HOSTNAME`: exact public hostname accepted from Siteverify.
+- `INQUIRY_RATE_LIMITER`: Worker binding configured for 10 attempts per 60 seconds.
 
 Worker secrets/provider configuration in `operations/.dev.vars` locally or Wrangler secrets/config in a future environment:
 
 - `INTERNAL_API_TOKEN`: provisional internal protection; required for protected operations.
 - `MESSAGING_PROVIDER`: provider adapter identifier.
 - `MESSAGING_DESTINATION_URL`: verified HTTPS shared business destination. If missing/invalid, chat is unavailable.
+- `TURNSTILE_SECRET_KEY`: server-only widget secret used by Siteverify; required outside the explicitly isolated development test mode.
 
 The final production split between secret and non-secret provider settings should be decided with the selected provider. Never place a credential in `NEXT_PUBLIC_*`.
 
@@ -213,7 +217,7 @@ Deploy `operations/staff-app/dist/` to a private, separately named Cloudflare st
 
 ### Abuse-protection launch gate
 
-The public inquiry API has strict validation, size limits, idempotency, and explicit CORS, but production still requires reviewed rate limiting, bot verification (Cloudflare Turnstile is a platform-native candidate), verified origin policy, monitoring, and failure behavior. No resource or keys were created. Public production submission must remain disabled until that review is complete.
+The public inquiry API now has strict validation, size limits, idempotency, explicit CORS, a honeypot, mandatory server-side Turnstile Siteverify, and a Worker rate-limit binding. Staging resources are isolated in `focus-lab-api-staging`, `focus-lab-public-staging`, the existing `focuslab-crm-staging` D1 database, and the `focuslab-inquiry-staging` managed widget. Production submission remains disabled until a separate production widget/API/D1 are provisioned, exact production origins and hostname validation are configured, secrets are installed, monitoring is reviewed, a synthetic end-to-end submission is verified, and launch approval is explicit. The staff Access/PWA validation is accepted; delayed-connectivity availability display remains a low-priority UX issue to watch and does not change D1 authority.
 
 ## Production staff authentication phase
 

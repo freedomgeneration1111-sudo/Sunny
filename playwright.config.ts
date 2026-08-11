@@ -20,7 +20,7 @@ export default defineConfig({
     { name: "mobile-chromium", use: { ...devices["Pixel 5"], ...browserOverride } },
   ],
   webServer: {
-    command: "npm run dev",
+    command: "NEXT_PUBLIC_INQUIRY_API_URL=https://api.example.test NEXT_PUBLIC_INQUIRY_SUBMISSION_ENABLED=true NEXT_PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA npm run dev",
     url: "http://127.0.0.1:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
