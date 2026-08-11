@@ -67,7 +67,7 @@ ACCESS_AUD=<Access application AUD tag>
 
 ## Same-origin decision: adopted
 
-Cloudflare [Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/) supports a Worker plus static assets as one deployment and `run_worker_first` routing for `/v1/*`. A custom domain invokes the same Worker for all hostname paths, as described in [Custom Domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/). Therefore the intended topology is:
+Cloudflare [Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/) supports a Worker plus static assets as one deployment; `run_worker_first: true` ensures the Worker hostname gate runs before any staff asset is served. A custom domain invokes the same Worker for all hostname paths, as described in [Custom Domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/). Therefore the intended topology is:
 
 ```text
 staff.gofocuslab.com/                  -> staff PWA assets
@@ -147,3 +147,66 @@ Repeat the Android sequence using Safari “Add to Home Screen,” standalone la
 - Authorization is role-based but not scoped by assigned inquiry; responders can read the operational inbox by design. Revisit if the team grows.
 - Device posture and managed-device requirements are deferred.
 - Privacy retention, monitoring, incident response, and backup policy remain unresolved.
+
+## Phase 1B staging validation
+
+Status as of 2026-08-10: the isolated Worker and D1 resources exist, but the staff shell remains hostname-gated until Cloudflare Access is enabled. No production resource or route was changed.
+
+### Staging resources
+
+| Resource | Value |
+|---|---|
+| Worker | `focus-lab-operations-staging` |
+| Temporary HTTPS hostname | `focus-lab-operations-staging.freedomgeneration1111.workers.dev` |
+| D1 database | `focuslab-crm-staging` |
+| D1 ID | `9a7e55cb-7b26-4521-b48d-bd607e1b207c` |
+| Auth mode | `access` (no development-token fallback) |
+| Staff shell/API topology | Same origin: `/` and `/v1/internal/*` |
+
+Migrations `0001_operations_foundation.sql` and `0002_staff_access_identity.sql` are applied. The database contains only the checked-in synthetic development records: one synthetic responder for each application role and six synthetic inquiries. A real tester email must be inserted manually into this staging database and must never be committed to seed files.
+
+### Required Cloudflare dashboard action
+
+1. Open **Workers & Pages** in the Cloudflare dashboard.
+2. Select **focus-lab-operations-staging**.
+3. Open **Settings > Domains & Routes**.
+4. On the `workers.dev` route, select **Enable Cloudflare Access**.
+5. Select/manage the generated Access application. Confirm it targets the staging Worker only (including its `workers.dev` route), not another Worker or production hostname.
+6. Create one **Allow** policy containing only the explicitly approved tester email. Do not use `Everyone`, a broad email domain, or a bypass policy.
+7. Configure a temporary short staging policy/application session suitable for expiry testing. Keep the normal production recommendation at eight hours; the short duration is only for this validation.
+8. In **Zero Trust > Access controls > Access settings**, enable Independent MFA, then require Independent MFA on the staging application policy. Prefer passkey/platform biometric or a security key when the enrolled device supports it, with TOTP as a recovery option. This is not considered active until the tester completes a real MFA challenge.
+9. Copy the staging application's **Application Audience (AUD) tag**.
+10. Copy the Zero Trust team domain as an exact HTTPS issuer, for example `https://example.cloudflareaccess.com` with no trailing slash.
+11. Return the exact AUD and issuer to the engineering setup process. They are identifiers, not secrets, but must be exact. Configure them as `ACCESS_AUD` and `ACCESS_TEAM_DOMAIN` in the staging Worker environment before exposing the staff shell.
+
+Cloudflare's current Workers documentation identifies Worker-target Access as the safest direct protection for a Worker and permits Access protection on `workers.dev`. The Worker still validates the assertion independently; the Access edge policy is not the application authorization boundary.
+
+Staging also proved that selective `assets.run_worker_first` patterns cannot enforce a hostname gate for ordinary static files: matching assets are served before the Worker runs. The configuration now uses `run_worker_first: true`, as Cloudflare documents for middleware/authentication checks, so every staff asset request reaches `isStaffAssetHost` before `env.ASSETS.fetch`. Until Access values are supplied, the staging hostname remains an invalid placeholder and the real `workers.dev` route returns the Worker 404 instead of the staff shell.
+
+### Approved tester mapping (not committed)
+
+After the tester supplies the exact authenticated email, bind it to one synthetic staging responder with a remote D1 command. Start with the admin role for the complete validation flow, then use the synthetic manager/responder mappings for role tests. Never add the email to `operations/seeds/development.sql`.
+
+The code first matches normalized `verified_email`, validates the active D1 role, and then binds the signed Access `sub` on first successful authentication. Confirm both `verified_email` and `access_subject` after first login without printing the JWT.
+
+### Staging release order
+
+1. Enable Access and the narrow allow policy while the shell is still hostname-gated.
+2. Configure exact `ACCESS_TEAM_DOMAIN` and `ACCESS_AUD` for the staging Worker.
+3. Add the approved tester email to staging D1.
+4. Deploy the configuration whose `STAFF_HOSTNAME` is the exact staging hostname.
+5. Verify unauthenticated requests stop at Access.
+6. Authenticate on desktop and verify `/v1/internal/me`, CRM mutations, audit actor, role enforcement, presence, and logout/revocation.
+7. Complete the physical Safari and installed iPhone PWA checklist below; do not mark physical-device validation passed from emulation alone.
+
+### Physical iPhone validation record
+
+Record device model, iOS version, test date/time, authentication method, MFA method, and results separately for Safari and the installed Home Screen PWA. Test initial login, current-user load, inquiry read, synthetic internal note, self-assignment, workflow mutation, availability heartbeat, 30–60 second background/foreground, force-close/reopen, temporary session expiry or revocation, clean reauthentication, airplane-mode shell behavior, failed offline mutation, reconnect, and explicit logout. Private CRM responses must not appear from Cache Storage.
+
+### Android validation record
+
+If physical Android hardware is available, repeat the sequence in Chrome and the installed PWA. Record Android and Chrome versions. Browser emulation is useful regression coverage but is not physical installed-PWA evidence.
+
+### Rollback/delete staging resources
+
+Before deletion, export only non-sensitive validation notes needed for review. Remove the staging Access application/policy, disable its `workers.dev` route, delete Worker `focus-lab-operations-staging`, and delete D1 database `focuslab-crm-staging`. Verify names and IDs before every destructive command. Never apply this cleanup procedure to a production-named resource.
