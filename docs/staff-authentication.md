@@ -6,7 +6,7 @@ Status: code foundation implemented; Cloudflare dashboard resources and real sta
 
 ```text
 staff.gofocuslab.com (Cloudflare Access self-hosted application)
-  -> Independent MFA and explicit identity allow policy
+  -> explicit per-user identity allow policy
   -> Cf-Access-Jwt-Assertion
   -> same Worker serves static PWA and /v1/internal/*
   -> Worker verifies RS256 signature, issuer, AUD and expiry via rotating Access JWKS
@@ -16,6 +16,8 @@ staff.gofocuslab.com (Cloudflare Access self-hosted application)
 ```
 
 Cloudflare Access authenticates who the person is. D1 authorizes whether that identity is active Focus Lab staff and what application operations are permitted. Merely reaching an Access-protected hostname is not trusted. The Worker validates `Cf-Access-Jwt-Assertion` independently, following Cloudflare's current [JWT validation guidance](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/authorization-cookie/validating-json/). Plain email headers and unsigned token decoding are never authentication.
+
+For the current small trusted staff group, the approved policy is Cloudflare Access with an exact per-user email allowlist, Google or email OTP authentication, D1 active-user and role authorization, and a 24-hour session. Independent MFA is deferred. Its absence is not a blocker for staging or initial production. Stronger authentication can later be scoped to privileged admin or destructive operations after those operations exist and their risk is reviewed.
 
 Access signing keys rotate. `jose` remote JWKS resolution reads `<team-domain>/cdn-cgi/access/certs`, selects by `kid`, and refreshes keys when required; the endpoint itself is served through Cloudflare. Configuration supplies the exact HTTPS issuer/team domain and immutable application AUD.
 
@@ -84,13 +86,13 @@ The same operations Worker may own both custom domains; hostname gating prevents
 2. Attach only explicit approved staff identities or a narrowly maintained Access group. Do not use an everyone/public allow rule.
 3. Copy the Application Audience (AUD) tag into the Worker environment configuration.
 4. Set the exact team domain issuer, including `https://` and no trailing slash.
-5. Enable Independent MFA at the organization level, then require it for this application. Current supported methods include TOTP, biometrics/passkeys, and WebAuthn security keys. Prefer biometrics/passkeys or security keys; retain TOTP as recovery fallback. See [Independent MFA](https://developers.cloudflare.com/cloudflare-one/access-controls/access-settings/independent-mfa/).
-6. For initial review, use an 8-hour application/policy session and require Independent MFA on every new Access login. This is a security recommendation for review, not an implemented business policy.
+5. Allow Google authentication where it is already configured, or enable Access email one-time PIN (OTP) as the low-friction fallback. Restrict application access with exact per-user email entries, regardless of login method.
+6. Use a 24-hour application/policy session for staging and initial production. Exercise reauthentication through explicit session revocation rather than shortening normal user sessions.
 7. Add `staff.gofocuslab.com` and `api.gofocuslab.com` as Worker custom domains only after staging review. Do not use `workers.dev` for production.
 8. Create real D1 responder mappings through a controlled administrative process before granting Access policy membership.
 9. Revoke test tokens/sessions after staging exercises.
 
-MFA is not configured merely because this document exists.
+Cloudflare Independent MFA is intentionally deferred and is not a staging or initial-production blocker. Stronger authentication may later be required specifically for privileged admin or destructive operations if their risk warrants it.
 
 ## Session expiration and reauthentication
 
@@ -105,7 +107,7 @@ For a lost phone, stolen laptop, compromised account, departure, or temporary su
 1. Remove/disable the person in the Access allow policy or identity provider and revoke the user session in Zero Trust.
 2. Set the corresponding D1 responder `active=0`; the Worker then denies even a still-valid cryptographic assertion.
 3. If appropriate, explicitly clear responder presence and review recent activity/audit records.
-4. Remove compromised Independent MFA authenticators and require re-enrollment.
+4. Revoke the affected Google/identity-provider session where applicable and verify that the approved-email Access policy remains correct.
 5. Rotate secrets only if the person actually possessed a secret; normal staff PWA users do not receive Worker secrets.
 6. Preserve and review audit history according to the future retention policy.
 
@@ -121,7 +123,7 @@ Offline mode is shell-only. No CRM data is deliberately persisted, no mutations 
 
 Use a staging Access application and synthetic D1 data only:
 
-1. In Chrome, visit the staging staff hostname and complete IdP plus Independent MFA.
+1. In Chrome, visit the staging staff hostname and authenticate with the configured Google or email OTP method.
 2. Confirm `/v1/internal/me` loads the expected synthetic role automatically; no token field appears.
 3. Install the PWA and launch it in standalone mode.
 4. Read inbox/detail, add a synthetic note, and toggle presence; confirm authenticated audit identity.
@@ -141,7 +143,7 @@ Repeat the Android sequence using Safari “Add to Home Screen,” standalone la
 
 ## Remaining threats and staging blockers
 
-- Access application, policies, MFA, custom domains, and real staff mappings do not yet exist.
+- Access application, exact-email policies, custom domains, and real staff mappings are not yet verified from this environment.
 - Real-device installed-PWA behavior remains unverified.
 - Staff administration/offboarding is currently a database/dashboard procedure.
 - Authorization is role-based but not scoped by assigned inquiry; responders can read the operational inbox by design. Revisit if the team grows.
@@ -173,8 +175,8 @@ Migrations `0001_operations_foundation.sql` and `0002_staff_access_identity.sql`
 4. On the `workers.dev` route, select **Enable Cloudflare Access**.
 5. Select/manage the generated Access application. Confirm it targets the staging Worker only (including its `workers.dev` route), not another Worker or production hostname.
 6. Create one **Allow** policy containing only the explicitly approved tester email. Do not use `Everyone`, a broad email domain, or a bypass policy.
-7. Configure a temporary short staging policy/application session suitable for expiry testing. Keep the normal production recommendation at eight hours; the short duration is only for this validation.
-8. In **Zero Trust > Access controls > Access settings**, enable Independent MFA, then require Independent MFA on the staging application policy. Prefer passkey/platform biometric or a security key when the enrolled device supports it, with TOTP as a recovery option. This is not considered active until the tester completes a real MFA challenge.
+7. Set the application and policy session duration to 24 hours. Test reauthentication through explicit Access session revocation; do not shorten the normal session merely for testing.
+8. Select Google login if it is already configured, or configure email OTP under **Zero Trust > Integrations > Identity providers**. Independent MFA is deliberately not required.
 9. Copy the staging application's **Application Audience (AUD) tag**.
 10. Copy the Zero Trust team domain as an exact HTTPS issuer, for example `https://example.cloudflareaccess.com` with no trailing slash.
 11. Return the exact AUD and issuer to the engineering setup process. They are identifiers, not secrets, but must be exact. Configure them as `ACCESS_AUD` and `ACCESS_TEAM_DOMAIN` in the staging Worker environment before exposing the staff shell.
@@ -201,7 +203,7 @@ The code first matches normalized `verified_email`, validates the active D1 role
 
 ### Physical iPhone validation record
 
-Record device model, iOS version, test date/time, authentication method, MFA method, and results separately for Safari and the installed Home Screen PWA. Test initial login, current-user load, inquiry read, synthetic internal note, self-assignment, workflow mutation, availability heartbeat, 30–60 second background/foreground, force-close/reopen, temporary session expiry or revocation, clean reauthentication, airplane-mode shell behavior, failed offline mutation, reconnect, and explicit logout. Private CRM responses must not appear from Cache Storage.
+Record device model, iOS version, test date/time, authentication method, and results separately for Safari and the installed Home Screen PWA. Test initial login, current-user load, inquiry read, synthetic internal note, self-assignment, workflow mutation, availability heartbeat, 30–60 second background/foreground, force-close/reopen, temporary session expiry or revocation, clean reauthentication, airplane-mode shell behavior, failed offline mutation, reconnect, and explicit logout. Private CRM responses must not appear from Cache Storage.
 
 ### Android validation record
 
