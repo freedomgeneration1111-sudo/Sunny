@@ -1,5 +1,14 @@
 import type { Metadata } from "next";
-import { EventPage } from "@/components/sections/EventPage";
-import { commercialPages } from "@/lib/content/commercial";
-export const metadata: Metadata = { title: "Weddings", description: "Coordinate wedding entertainment, production, photography, and video around one DFW event plan." };
-export default function WeddingsPage() { return <EventPage page={commercialPages.weddings} />; }
+import { PlanningGuidePage } from "@/components/sections/PlanningGuidePage";
+import { weddingGuide } from "@/lib/content/planningGuides";
+
+export const metadata: Metadata = {
+  title: "Complete DFW Wedding Planning Guide",
+  description:
+    "Build a wedding timeline that survives a real venue: ceremony sound, the cocktail-hour squeeze, the five reception transitions, coverage hours, and a run-of-show checklist.",
+  alternates: { canonical: "/weddings/" },
+};
+
+export default function WeddingsPage() {
+  return <PlanningGuidePage guide={weddingGuide} />;
+}

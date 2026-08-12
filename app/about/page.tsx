@@ -6,7 +6,7 @@ import { Section } from "@/components/ui/Section";
 import { Eyebrow, Lead, SectionHeading } from "@/components/ui/Typography";
 import { config } from "@/lib/config";
 
-export const metadata: Metadata = { title: "Our Approach", description: "How Focus Lab coordinates event media, entertainment, and production around one shared plan." };
+export const metadata: Metadata = { title: "Our Approach", description: "How Focus Lab coordinates event media, entertainment, and production around one shared plan.", alternates: { canonical: "/about/" } };
 
 export default function AboutPage() {
   return (

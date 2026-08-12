@@ -12,3 +12,44 @@ summary::-webkit-details-marker { display: none; }
   from { opacity: 0; transform: translateY(.5rem); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/*
+ * Print: the planning guides are meant to be taken to a venue walkthrough.
+ * Strip the app chrome, force black on white, and keep checklist items whole.
+ * Intentionally CSS-only — no PDF pipeline.
+ */
+@media print {
+  header,
+  footer,
+  aside[aria-label="Event plan summary"],
+  [data-testid="chat-teaser"],
+  .public-chat-backdrop,
+  nav[aria-label="Guide contents"] {
+    display: none !important;
+  }
+
+  html { scroll-behavior: auto; }
+
+  body {
+    padding-bottom: 0 !important;
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 11pt;
+  }
+
+  section {
+    padding-block: 1.25rem !important;
+    background: #fff !important;
+    color: #000 !important;
+    break-inside: auto;
+  }
+
+  section h1, section h2, section h3, section h4 { break-after: avoid; }
+
+  li, article, figure { break-inside: avoid; }
+
+  a { text-decoration: underline; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: .85em; }
+
+  img { max-width: 100% !important; }
+}

@@ -1,0 +1,10 @@
+# Cloudflare Workers Static Assets redirect rules.
+# Next copies public/ into out/ verbatim, so this ships with the export.
+#
+# /parties and /corporate previously existed as re-export duplicates of the
+# canonical /events/* routes, which published byte-identical pages at two URLs.
+# The duplicates are gone; these 301s preserve any existing inbound links.
+/parties/    /events/parties/    301
+/parties     /events/parties/    301
+/corporate/  /events/corporate/  301
+/corporate   /events/corporate/  301

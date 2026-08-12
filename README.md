@@ -56,12 +56,28 @@ architecture is deliberately changed and every route is retested.
 
 ## Sources of truth
 
+## Public architecture
+
+The homepage is the complete customer journey — a visitor can identify their
+event, explore services, build a plan, see pricing, and reach Check Availability
+without leaving `/`. The supporting routes (`/weddings`,
+`/south-asian-weddings`, `/events/*`, `/guides/*`) are a **knowledge layer**:
+substantial planning guides for depth, search, and sharing.
+
+See `docs/02_ARCHITECTURE_AND_CONTENT_HIERARCHY.md` for the anchor contract and
+`docs/12_ONE_ANCHOR_DECISION.md` for why the earlier hub-and-spoke model was
+replaced.
+
 | Concern | Source |
 |---|---|
 | Business identity, service area, contacts, publication toggles | `lib/config.ts` |
-| Commercial page copy and hierarchy | `lib/content/commercial.ts` and `lib/content/*.ts` |
+| Service inventory (the only place a service is defined) | `lib/plan.ts` |
+| Homepage event section copy | `lib/content/eventSections.ts` |
+| Knowledge-layer planning guides | `lib/content/planningGuides.ts` |
+| Focused checklists | `lib/content/guides.ts` |
+| Shared FAQs | `lib/content/commercial.ts` |
 | Prices and approval state | `docs/06_DEV_PRICING_DATA.json` and `lib/pricing.ts` |
-| Plan-builder inventory | `lib/plan.ts` |
+| Structural UX reference (not visual/pricing authority) | `docs/reference/Focuslab-One-Anchor-Wireframe.html` |
 | Media paths, alt text, crop intent, and truth class | `lib/media.ts` |
 | Generated-image prompts and provenance | `docs/07_IMAGE_ASSET_MANIFEST.json` |
 | Cloudflare deployment | `wrangler.jsonc` |

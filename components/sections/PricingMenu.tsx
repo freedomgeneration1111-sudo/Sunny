@@ -8,32 +8,40 @@ import { planItems, type PlanItemId } from "@/lib/plan";
 
 const groups = [
   {
-    slug: "sound-and-hosting",
-    title: "Sound & Hosting",
-    body: "Wedding, private-event, and professional-event starting points. Choose the event shape that most closely matches the room.",
-    ids: [
-      "wedding-dj-core",
-      "wedding-dj-ceremony",
-      "wedding-production",
-      "party-3h",
-      "party-4h",
-      "party-5h",
-      "corporate-dj",
-      "corporate-half-day",
-      "corporate-full-day",
-    ],
+    slug: "weddings",
+    title: "Weddings",
+    body: "Single-day wedding starting points, from a reception-only plan to a ceremony and reception that share one timeline.",
+    ids: ["wedding-dj-core", "wedding-dj-ceremony", "wedding-production", "ceremony-sound"],
+  },
+  {
+    slug: "shaadi",
+    title: "Shaadi Celebrations",
+    body: "Multi-event celebrations are scoped around the events your family is actually planning. These are entry points, not a fixed sequence.",
+    ids: ["sa-single-event", "sa-wedding-reception", "sa-full-celebration", "sa-baraat", "south-asian-media"],
+  },
+  {
+    slug: "parties",
+    title: "Parties & Celebrations",
+    body: "Birthdays, showers, anniversaries, graduations, and family celebrations. Time block first, then anything you want documented.",
+    ids: ["party-3h", "party-4h", "party-5h", "party-photography", "party-highlight-video"],
+  },
+  {
+    slug: "corporate",
+    title: "Corporate & Community",
+    body: "Organised around the job the room has to do — entertainment, AV, documentation, or a combination.",
+    ids: ["corporate-dj", "corporate-av-basic", "corporate-half-day", "corporate-full-day", "corporate-media", "corporate-livestream"],
   },
   {
     slug: "photo-video",
     title: "Photo + Video",
-    body: "Photography, filmmaking, combined coverage, and a custom-scope reference for multi-event South Asian celebrations.",
-    ids: ["photography", "videography", "photo-video", "south-asian-media"],
+    body: "Photography, filmmaking, combined coverage, and the sessions or short-form edits that sit either side of the event.",
+    ids: ["photography", "videography", "photo-video", "engagement-session", "social-content"],
   },
   {
     slug: "enhancements",
     title: "Enhancements",
-    body: "Optional guest experiences and venue-dependent effects that can be considered after the event foundation is clear.",
-    ids: ["digital-booth", "booth-360", "clouds", "cold-sparks"],
+    body: "Optional guest experiences and venue-dependent effects to consider once the event foundation is clear. Every effect needs venue approval.",
+    ids: ["digital-booth", "booth-360", "clouds", "cold-sparks", "uplighting", "monogram", "led-wall"],
   },
 ] as const satisfies ReadonlyArray<{
   slug: string;
@@ -55,7 +63,7 @@ export function PricingMenu() {
   return (
     <div>
       <div className="rounded-card border-2 border-brand-primary bg-brand-primary/10 p-4 text-sm font-extrabold text-ink">
-        Prototype review pricing · Provisional and not approved for production publication.
+        Prototype review pricing · Provisional and not approved for production publication. Items marked <span className="text-brand-primary">Draft</span> were created for layout review; their scope and price are not decided.
       </div>
 
       <div className="mt-10 space-y-14">

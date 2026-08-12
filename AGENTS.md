@@ -17,10 +17,18 @@
 - Use the official repo-local Cloudflare skills in `.agents/skills/` for Cloudflare work. Consult current official Cloudflare documentation and the installed Wrangler schema rather than relying on memory.
 - Do not deploy, change Cloudflare resources, or modify production settings without explicit user authorization.
 
+## Public architecture
+
+- **The homepage is the complete customer journey**; the supporting routes are a knowledge layer. See `docs/02_ARCHITECTURE_AND_CONTENT_HIERARCHY.md` and the decision record in `docs/12_ONE_ANCHOR_DECISION.md`.
+- The homepage anchor order is a structural contract asserted by `tests/redesign-baseline.spec.ts`. The four `#paths` cards scroll to sections; they must never navigate to another route.
+- `docs/reference/Focuslab-One-Anchor-Wireframe.html` is the structural UX reference only — not a visual, copy, or pricing authority.
+
 ## Sources of truth
 
+- `lib/plan.ts` is the **only** place a service is defined. Adding or removing one is a single entry there plus a price in `docs/06_DEV_PRICING_DATA.json`. No component may hardcode a service or a price.
 - `lib/config.ts` is the source of truth for business name, contact details, service area, social links, and the development-label toggle. Do not duplicate these values in components.
-- `lib/content/*.ts` is the source of truth for page copy.
+- `lib/content/*.ts` is the source of truth for page copy. `eventSections.ts` drives the homepage, `planningGuides.ts` the knowledge layer, `guides.ts` the focused checklists.
+- Draft business content invented for layout review carries `draft: true` and renders a visible `Draft` badge. Never quietly promote draft content to verified truth.
 - `lib/media.ts` is the source of truth for media metadata, intended use, alt text, aspect ratio, and replacement status.
 - `public/images/` contains runtime image assets. `LOGOS/` is source/legacy collateral and is not served by the site unless deliberately moved into the runtime asset system.
 - `next.config.ts` and `wrangler.jsonc` are authoritative for build and deployment behavior. Keep README deployment instructions consistent with them.
@@ -28,8 +36,9 @@
 
 ## Product truth and media safety
 
-- The site is a prototype. Preserve `noindex, nofollow` until the business identity, claims, contact routes, imagery, and launch approval are verified.
-- Never present proxy imagery as real company work. New or replacement media must have an accurate `proxy`, `needed`, or `real` status in `lib/media.ts`.
+- Indexing is stage-based, not blanket. Review builds (`NEXT_PUBLIC_PUBLICATION_STAGE=review`) apply global `noindex, nofollow`, and the staging facade also sends `X-Robots-Tag`. Production-capable commercial routes must NOT carry a permanent route-level robots block. Unpublished or private surfaces — `/work`, `/chat-preview`, `/conversation` — stay explicitly noindexed.
+- Every indexable route declares a self-referencing `alternates.canonical`. Do not create a second route that renders the same page; use `public/_redirects` if a path must be preserved.
+- Never present proxy or AI imagery as real company work. Media in `lib/media.ts` must carry an accurate truth class: `ai-brand`, `authentic-approved`, `authentic-pending`, or `development-placeholder`.
 - Do not disable development labels while proxy assets, missing assets, or unverified claims remain.
 - Do not fabricate experience, awards, testimonials, client names, event counts, response times, pricing, cultural expertise, or other business claims.
 - Do not create public individual team-member marketing, names, biographies, portraits, or experience claims without explicit, verified source material and approval. Keep the team treatment role-based or marked as pending until then.

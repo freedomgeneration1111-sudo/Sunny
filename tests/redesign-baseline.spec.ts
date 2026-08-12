@@ -32,6 +32,54 @@ const indexableRoutes = [
   "/guides/enhancements-venue-approval/",
 ] as const;
 
+/** The structural contract of the one-anchor homepage, in page order. */
+const homepageAnchors = [
+  "hero",
+  "trust-strip",
+  "paths",
+  "weddings",
+  "shaadi",
+  "parties",
+  "corporate",
+  "why-one-crew",
+  "capabilities",
+  "pricing-menu",
+  "how-it-works",
+  "cta",
+] as const;
+
+test("the homepage carries every one-anchor section", async ({ page }) => {
+  await page.goto("/");
+  for (const anchor of homepageAnchors) {
+    await expect(page.locator(`#${anchor}`), `#${anchor} should exist on the homepage`).toHaveCount(1);
+  }
+});
+
+test("event path cards scroll within the page instead of navigating away", async ({ page }) => {
+  await page.goto("/");
+  const cards = page.locator("#paths a[href]");
+  await expect(cards).toHaveCount(4);
+  for (const href of await cards.evaluateAll((links) => links.map((link) => link.getAttribute("href")))) {
+    expect(href, "event path cards must be in-page anchors").toMatch(/^#(weddings|shaadi|parties|corporate)$/);
+  }
+
+  await cards.filter({ hasText: "Shaadi" }).click();
+  await expect(page).toHaveURL(/#shaadi$/);
+  await expect(page.locator("#shaadi")).toBeInViewport();
+});
+
+test("primary navigation targets homepage anchors", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/");
+  const nav = page.getByRole("navigation", { name: "Primary" });
+  for (const label of ["Weddings", "Shaadi", "Parties", "Corporate", "Pricing"]) {
+    await expect(nav.getByRole("link", { name: label, exact: true })).toHaveAttribute("href", /^#/);
+  }
+  // From a supporting page the same links must cross-navigate back to the homepage.
+  await page.goto("/guides/");
+  await expect(nav.getByRole("link", { name: "Weddings", exact: true })).toHaveAttribute("href", "/#weddings");
+});
+
 test("redesigned routes do not overflow the viewport", async ({ page }) => {
   for (const route of publicRoutes) {
     await page.goto(route);
@@ -47,6 +95,21 @@ test("production-capable public routes have no permanent robots block", async ({
   for (const route of indexableRoutes) {
     await page.goto(route);
     await expect(page.locator("meta[name=robots]"), route + " should be indexable outside review builds").toHaveCount(0);
+  }
+});
+
+test("every indexable route declares a self-referencing canonical", async ({ page }) => {
+  for (const route of indexableRoutes) {
+    await page.goto(route);
+    await expect(page.locator("link[rel=canonical]"), route + " should declare one canonical").toHaveCount(1);
+    await expect(page.locator("link[rel=canonical]")).toHaveAttribute("href", new RegExp(`${route}$`));
+  }
+});
+
+test("the duplicate event routes no longer publish a second copy", async ({ request }) => {
+  for (const duplicate of ["/parties/", "/corporate/"]) {
+    const response = await request.get(duplicate, { maxRedirects: 0 });
+    expect(response.status(), `${duplicate} must not serve a duplicate page`).not.toBe(200);
   }
 });
 

@@ -1,39 +1,112 @@
 # 02 — Architecture & Content Hierarchy
 
+> **Superseded model:** this document previously specified a hub-and-spoke
+> homepage whose event cards navigated out to separate pages. That model is no
+> longer the target. See `docs/12_ONE_ANCHOR_DECISION.md` for the decision
+> record, and `docs/reference/Focuslab-One-Anchor-Wireframe.html` for the
+> structural reference.
+
+## The architecture in one sentence
+
+**The homepage is the complete customer journey. The supporting routes are a
+knowledge layer.**
+
+A visitor should be able to arrive, understand Focus Lab, identify their event,
+explore the relevant services, build a plan, see pricing, ask a question, and
+reach Check Availability **without leaving the homepage**.
+
 ## Canonical routes
 
-- `/`
-- `/weddings`
-- `/south-asian-weddings`
-- `/events/parties`
-- `/events/corporate`
-- `/services/photo-video`
-- `/services/entertainment-production`
-- `/pricing`
-- `/about`
-- `/check-availability`
-- `/work` — buildable but publication-gated
+| Route | Role |
+|---|---|
+| `/` | **Primary conversion surface.** The whole journey. |
+| `/weddings` | Knowledge layer — Complete DFW Wedding Planning Guide |
+| `/south-asian-weddings` | Knowledge layer — Complete Shaadi Planning Guide |
+| `/events/parties` | Knowledge layer — Party & Celebration Planning Guide |
+| `/events/corporate` | Knowledge layer — Corporate Event & AV Planning Guide |
+| `/guides` | Index of focused single-topic checklists |
+| `/guides/<slug>` | Six focused checklists |
+| `/services/photo-video` | Capability page |
+| `/services/entertainment-production` | Capability page |
+| `/pricing` | Secondary shareable/searchable pricing surface |
+| `/check-availability` | Inquiry flow → CRM |
+| `/about` | Approach |
+| `/work` | Buildable but publication-gated and `noindex` |
 
-Preserve existing working routes when equivalent; if canonical route names replace old ones, add redirects rather than breaking continuity.
+Supporting routes stay **real, crawlable pages**. Never redirect them to
+homepage fragments — homepage anchors are for UX, supporting pages are for
+depth, search, and sharing.
+
+`/parties` and `/corporate` were re-export duplicates of the `/events/*` routes
+and have been deleted. `public/_redirects` 301s them to the canonical paths.
+Every indexable route now declares a self-referencing `alternates.canonical`.
+
+## Homepage anchor contract
+
+The homepage section order is a structural contract, mirrored by the header nav
+and asserted in `tests/redesign-baseline.spec.ts`:
+
+```
+#hero → #trust-strip → #paths → #weddings → #shaadi → #parties
+→ #corporate → #why-one-crew → #capabilities → #pricing-menu
+→ #how-it-works → #cta
+```
+
+`#questions` (FAQ) sits between `#how-it-works` and `#cta`.
+
+The four cards in `#paths` are the customer's mental map. They are **in-page
+anchor links** that scroll to the substantial sections below. They must never
+navigate to another route.
 
 ## Primary navigation
 
-Desktop:
+Weddings · Shaadi · Parties · Corporate · Pricing → homepage anchors
+(`#weddings`, `#shaadi`, `#parties`, `#corporate`, `#pricing-menu`). From any
+other route the same links resolve to `/#anchor`.
 
-- Weddings
-- South Asian Weddings
-- Events ▾
-  - Parties & Celebrations
-  - Corporate & Community
-- Services ▾
-  - Photo + Video
-  - Entertainment + Production
-- Pricing
-- **Check Availability**
-
+Guides → `/guides` (real route). Check Availability → `/check-availability`.
 `Work` appears only when `workPublished === true`.
 
-`About` belongs in footer/contextual links rather than occupying high-value primary-nav space.
+## Section rhythm
+
+Each event section owns a distinct layout so the page does not read as one
+repeated card grid:
+
+| Section | Rhythm |
+|---|---|
+| `#weddings` | Horizontal ceremony→reception timeline spine |
+| `#shaadi` | Event-sequence rail (examples, never a required order) + continuity argument |
+| `#parties` | Duration-first — the three time blocks are the largest elements |
+| `#corporate` | Stacked job-to-be-done rows; deliberately not wedding-shaped |
+
+Section themes alternate `default` / `alt` / `dark` / `brand` so the page
+breathes.
+
+## Sources of truth
+
+| Concern | Source |
+|---|---|
+| Service inventory | `lib/plan.ts` — **the only place a service is defined** |
+| Prices | `docs/06_DEV_PRICING_DATA.json` → `lib/pricing.ts` |
+| Homepage event section copy | `lib/content/eventSections.ts` |
+| Knowledge-layer guides | `lib/content/planningGuides.ts` |
+| Focused checklists | `lib/content/guides.ts` |
+| Shared FAQs | `lib/content/commercial.ts` |
+| Media + provenance | `lib/media.ts`, `docs/07_IMAGE_ASSET_MANIFEST.json` |
+| Business identity + toggles | `lib/config.ts` |
+
+Adding or removing a service is **one entry in `lib/plan.ts` plus one price in
+`docs/06`**. No component may hardcode a service or a price.
+
+## Draft content
+
+Much of the current service inventory and copy is first-draft development
+content created so the design could be evaluated. Draft plan items carry
+`draft: true` and render a visible `Draft` badge. Pricing remains
+`development_only`, and `lib/pricing.ts` throws if a production build is
+attempted before it is approved.
+
+A separate offer/pricing sprint replaces the draft inventory with the real one.
 
 ## Global commercial page rhythm
 
@@ -45,128 +118,26 @@ Desktop:
 6. Risk reduction / process / FAQ
 7. Action
 
-Authentic proof can be inserted between 4 and 5 when available. The page must remain complete without fake proof.
+Authentic proof can be inserted between 4 and 5 when available. The page must
+remain complete without fake proof.
 
-## Home
+## Knowledge-layer page shape
 
-1. Header
-2. Hero — DFW + One Crew / Zero Handoffs + CTA
-3. Credibility strip — factual only
-4. Event chooser — 4 buyer paths
-5. Why One Crew — coordination explanation
-6. Capability system — Photo/Film + Entertainment/Production
-7. Pricing preview — market-median DEV values
-8. How it works — 3 steps
-9. FAQ
-10. Final CTA
-11. Footer
+Rendered by `components/sections/PlanningGuidePage.tsx`:
 
-When authentic work is available, insert a Work/Event Story section after capabilities.
+hero → intro + reading time + contents nav → 7–8 numbered chapters
+(prose, cards, checklists, contextual plan items) → related focused guides →
+FAQ → CTA → link back to the matching homepage anchor.
 
-## Weddings
-
-1. Wedding hero
-2. One wedding plan / coordinated timeline
-3. Choose your path: entertainment / media / both
-4. Wedding entertainment collections
-5. Photo/video coverage architecture
-6. Enhancements
-7. Pricing anchor + builder CTA
-8. Process
-9. FAQ
-10. Final CTA
-
-## South Asian Weddings
-
-1. Hero
-2. Cultural fluency / languages
-3. Event-sequence model
-4. "Built around your events, not a generic ritual checklist"
-5. Entertainment + production modules
-6. Photo/video coverage architecture
-7. Single Event / Wedding Day + Reception / Full Celebration pricing model
-8. Multi-event planning process
-9. FAQ
-10. CTA
-
-## Parties & Celebrations
-
-1. Hero
-2. Event examples
-3. 3h / 4h / 5h choice
-4. Base inclusions
-5. Enhancements
-6. Optional photo/video
-7. Overtime/pricing clarity
-8. FAQ
-9. CTA
-
-## Corporate & Community
-
-1. Hero
-2. Entertainment vs Production/Media chooser
-3. Event examples
-4. Entertainment block pricing
-5. Half-day / full-day / custom production framework
-6. Logistics/reliability checklist
-7. Inquiry requirements
-8. FAQ
-9. CTA
-
-## Photo + Video
-
-1. Hero
-2. Photo / Video / Both selector
-3. Coverage ladder
-4. Crew/deliverable scaling
-5. Why combined coverage helps
-6. Optional sessions / social content
-7. Pricing
-8. FAQ
-9. CTA
-
-## Entertainment + Production
-
-1. Hero
-2. DJ/MC + sound foundation
-3. Wedding / Party / Corporate selector
-4. Core packages/time blocks
-5. Enhancement grid
-6. Custom-production boundary
-7. Venue/safety note
-8. Pricing
-9. FAQ
-10. CTA
-
-## Pricing
-
-1. Hero
-2. Transparency principle
-3. One complete visible pricing menu, grouped as Sound & Hosting, Photo + Video, and Enhancements
-4. Package/time-block cards with no tabbed or hidden categories
-5. Add-to-Plan controls
-6. Development subtotal with custom-scope items kept separate
-7. Custom-scope bridge
-8. What changes price
-9. FAQ
-10. Check Availability with prefilled selections
-
-## About / Our Approach
-
-1. Hero
-2. One shared event plan
-3. Cultural fluency + languages
-4. Experience framing without unsupported numbers
-5. How Focus Lab works with planners/venues/vendors
-6. Service area/travel
-7. CTA
+Guides are print-friendly via a `@media print` block in `app/redesign.css`
+(chrome hidden, black on white, checklist items kept whole). There is
+deliberately no PDF pipeline.
 
 ## Check Availability
 
 Step 1: event type, date, venue/city
-
 Step 2: services, guest count, optional budget/context
-
 Step 3: name, email, phone, preferred contact method, optional note
 
-No technical-production interrogation before basic lead capture.
+Plan selections carry in via `?interest=<planItemId>` and remain editable. No
+technical-production interrogation before basic lead capture.

@@ -159,6 +159,111 @@
         5500
       ],
       "confidence": "low-market/high-vendor"
+    },
+    "saSingleEvent": {
+      "amount": 2400,
+      "mode": "starting",
+      "label": "Single Celebration Coverage",
+      "confidence": "draft",
+      "note": "DRAFT placeholder created for design layout. Replace in the offer/pricing sprint."
+    },
+    "saWeddingReception": {
+      "amount": 4200,
+      "mode": "starting",
+      "label": "Wedding Day + Reception",
+      "confidence": "draft",
+      "note": "DRAFT placeholder created for design layout. Replace in the offer/pricing sprint."
+    },
+    "saFullCelebration": {
+      "amount": 9500,
+      "mode": "custom-anchor-dev",
+      "label": "Full Celebration Week",
+      "confidence": "draft",
+      "note": "DRAFT placeholder. Multi-event scope is always custom; never present as a package."
+    },
+    "saBaraat": {
+      "amount": 950,
+      "mode": "starting",
+      "label": "Baraat Procession Sound",
+      "confidence": "draft",
+      "note": "DRAFT placeholder created for design layout. Replace in the offer/pricing sprint."
+    },
+    "partyPhotography": {
+      "amount": 850,
+      "mode": "starting",
+      "label": "Celebration Photography",
+      "confidence": "draft",
+      "note": "DRAFT placeholder created for design layout. Replace in the offer/pricing sprint."
+    },
+    "partyHighlightVideo": {
+      "amount": 700,
+      "mode": "starting",
+      "label": "Social Highlight Video",
+      "confidence": "draft",
+      "note": "DRAFT placeholder created for design layout. Replace in the offer/pricing sprint."
+    },
+    "corporateAvBasic": {
+      "amount": 1200,
+      "mode": "starting",
+      "label": "Meeting AV Package",
+      "confidence": "draft",
+      "note": "DRAFT placeholder created for design layout. Replace in the offer/pricing sprint."
+    },
+    "corporateMedia": {
+      "amount": 2200,
+      "mode": "starting",
+      "label": "Corporate Photo + Video",
+      "confidence": "draft",
+      "note": "DRAFT placeholder created for design layout. Replace in the offer/pricing sprint."
+    },
+    "corporateLivestream": {
+      "amount": 3200,
+      "mode": "custom-anchor-dev",
+      "label": "Livestream + Hybrid Capture",
+      "confidence": "draft",
+      "note": "DRAFT placeholder. Encoder, bandwidth and platform requirements are always scoped."
+    },
+    "engagementSession": {
+      "amount": 650,
+      "mode": "starting",
+      "label": "Engagement / Portrait Session",
+      "confidence": "draft",
+      "note": "DRAFT placeholder created for design layout. Replace in the offer/pricing sprint."
+    },
+    "socialContent": {
+      "amount": 900,
+      "mode": "starting",
+      "label": "Same-Week Social Content",
+      "confidence": "draft",
+      "note": "DRAFT placeholder created for design layout. Replace in the offer/pricing sprint."
+    },
+    "ceremonySound": {
+      "amount": 550,
+      "mode": "starting",
+      "label": "Ceremony Sound System",
+      "confidence": "draft",
+      "note": "DRAFT placeholder created for design layout. Replace in the offer/pricing sprint."
+    },
+    "uplighting": {
+      "amount": 450,
+      "mode": "starting",
+      "label": "Room Uplighting",
+      "confidence": "draft",
+      "note": "DRAFT placeholder created for design layout. Replace in the offer/pricing sprint."
+    },
+    "monogram": {
+      "amount": 350,
+      "mode": "starting",
+      "label": "Custom Monogram Projection",
+      "confidence": "draft",
+      "note": "DRAFT placeholder created for design layout. Replace in the offer/pricing sprint."
+    },
+    "ledWall": {
+      "amount": 3500,
+      "mode": "custom-anchor-dev",
+      "label": "LED Wall",
+      "confidence": "draft",
+      "note": "DRAFT placeholder. Size, rigging and venue power always drive real scope."
     }
   },
   "customQuoteCategories": [

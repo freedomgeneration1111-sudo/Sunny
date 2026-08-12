@@ -20,6 +20,8 @@
     "ops:staging:migrate": "wrangler d1 migrations apply focuslab-crm-staging --remote --env staging --config operations/wrangler.jsonc",
     "ops:staging:seed": "wrangler d1 execute focuslab-crm-staging --remote --env staging --config operations/wrangler.jsonc --file operations/seeds/development.sql",
     "ops:staging:deploy": "npm run staff:build:staging && wrangler deploy --env staging --config operations/wrangler.jsonc",
+    "public:staging:build": "NEXT_PUBLIC_PUBLICATION_STAGE=review next build",
+    "public:staging:deploy": "wrangler deploy --config wrangler.staging.jsonc",
     "staff:dev": "vite --config operations/staff-app/vite.config.mts",
     "staff:build": "vite build --config operations/staff-app/vite.config.mts",
     "staff:build:staging": "VITE_APP_STAGE=staging VITE_AUTH_MODE=access vite build --config operations/staff-app/vite.config.mts",

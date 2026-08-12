@@ -1,1 +1,0 @@
-export { metadata } from "@/app/events/parties/page";export { default } from "@/app/events/parties/page";

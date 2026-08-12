@@ -9,8 +9,6 @@ const importantRoutes = [
   "/services/photo-video/",
   "/services/entertainment-production/",
   "/pricing/",
-  "/parties/",
-  "/corporate/",
   "/work/",
   "/about/",
   "/check-availability/",

@@ -21,12 +21,13 @@ test("event plan uses session storage and remains editable in the existing inqui
 test("pricing is one complete visible menu without tabs or hidden categories", async ({ page }) => {
   await page.goto("/pricing/");
   await expect(page.getByRole("tablist")).toHaveCount(0);
-  await expect(page.getByRole("heading", { name: "Sound & Hosting" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Weddings", exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Shaadi Celebrations" })).toBeVisible();
   await expect(page.locator("#pricing-photo-video")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Enhancements" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "3-Hour Party" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Corporate Production Full-Day" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Add to Plan" })).toHaveCount(17);
+  await expect(page.getByRole("button", { name: "Add to Plan" })).toHaveCount(32);
 });
 
 test("custom-priced selections never create a false exact subtotal", async ({ page }) => {

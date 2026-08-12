@@ -9,7 +9,7 @@ import { Eyebrow, Lead, SectionHeading } from "@/components/ui/Typography";
 import { commonFaqs } from "@/lib/content/commercial";
 import { developmentPricing } from "@/lib/pricing";
 
-export const metadata: Metadata = { title: "Pricing Planner", description: "Explore provisional starting anchors and carry event selections into availability." };
+export const metadata: Metadata = { title: "Pricing Planner", description: "Explore provisional starting anchors and carry event selections into availability.", alternates: { canonical: "/pricing/" } };
 
 export default function PricingPage() {
   return (

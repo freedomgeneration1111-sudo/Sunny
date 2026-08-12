@@ -7,42 +7,31 @@ import { BrandLogo } from "@/components/brand/BrandLogo";
 import { PublicChatTrigger } from "@/components/operations/NativeChatPanel";
 import { config } from "@/lib/config";
 
-const groups = [
-  {
-    label: "Events",
-    items: [
-      { href: "/events/parties", label: "Parties & Celebrations" },
-      { href: "/events/corporate", label: "Corporate & Community" },
-    ],
-  },
-  {
-    label: "Services",
-    items: [
-      { href: "/services/photo-video", label: "Photo + Video" },
-      {
-        href: "/services/entertainment-production",
-        label: "Entertainment + Production",
-      },
-    ],
-  },
+/**
+ * Primary navigation is anchor-first. The homepage carries the whole customer
+ * journey, so these links scroll within `/` and cross-navigate to `/#anchor`
+ * from anywhere else. `Guides` and `Check Availability` stay real routes.
+ */
+const anchorNav = [
+  { anchor: "weddings", label: "Weddings" },
+  { anchor: "shaadi", label: "Shaadi" },
+  { anchor: "parties", label: "Parties" },
+  { anchor: "corporate", label: "Corporate" },
+  { anchor: "pricing-menu", label: "Pricing" },
 ] as const;
 
-const direct = [
-  { href: "/weddings", label: "Weddings" },
-  { href: "/south-asian-weddings", label: "South Asian Weddings" },
-] as const;
+const routeNav = [{ href: "/guides", label: "Guides" }] as const;
 
 export function Header() {
   const path = usePathname();
   const isHome = path === "/";
   const [heroTop, setHeroTop] = useState(isHome);
   const [mobile, setMobile] = useState(false);
-  const [open, setOpen] = useState<string | null>(null);
+  const [activeAnchor, setActiveAnchor] = useState<string | null>(null);
   const menuButton = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     setMobile(false);
-    setOpen(null);
     setHeroTop(isHome);
   }, [isHome, path]);
 
@@ -60,11 +49,35 @@ export function Header() {
     return () => observer.disconnect();
   }, [isHome]);
 
+  // Scroll-spy: mark whichever anchored section currently owns the viewport.
+  useEffect(() => {
+    if (!isHome) {
+      setActiveAnchor(null);
+      return;
+    }
+
+    const sections = anchorNav
+      .map((item) => document.getElementById(item.anchor))
+      .filter((element): element is HTMLElement => element !== null);
+    if (!sections.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+        if (visible[0]) setActiveAnchor(visible[0].target.id);
+      },
+      { rootMargin: "-22% 0px -60% 0px" },
+    );
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, [isHome]);
+
   useEffect(() => {
     const close = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setMobile(false);
-        setOpen(null);
         menuButton.current?.focus();
       }
     };
@@ -72,14 +85,15 @@ export function Header() {
     return () => document.removeEventListener("keydown", close);
   }, []);
 
-  const active = (href: string) => path === href || path.startsWith(`${href}/`);
+  const anchorHref = (anchor: string) => (isHome ? `#${anchor}` : `/#${anchor}`);
+  const routeActive = (href: string) => path === href || path.startsWith(`${href}/`);
   const expanded = isHome && heroTop && !mobile;
   const headerTone = expanded
     ? "border-transparent bg-transparent text-on-brand"
     : "border-border/70 bg-canvas/95 text-ink shadow-[0_8px_28px_rgba(17,18,20,.08)] backdrop-blur";
   const navHover = expanded
-    ? "hover:text-brand-accent aria-[current=page]:text-brand-accent"
-    : "hover:text-brand-primary aria-[current=page]:text-brand-primary";
+    ? "hover:text-brand-accent aria-[current=true]:text-brand-accent aria-[current=page]:text-brand-accent"
+    : "hover:text-brand-primary aria-[current=true]:text-brand-primary aria-[current=page]:text-brand-primary";
 
   return (
     <header
@@ -110,55 +124,33 @@ export function Header() {
         </Link>
 
         <nav aria-label="Primary" className="hidden items-center gap-5 xl:flex">
-          {direct.map((item) => (
+          {anchorNav.map((item) => (
             <Link
-              key={item.href}
-              href={item.href}
-              aria-current={active(item.href) ? "page" : undefined}
+              key={item.anchor}
+              href={anchorHref(item.anchor)}
+              aria-current={activeAnchor === item.anchor ? true : undefined}
               className={`text-sm font-semibold transition-colors ${navHover}`}
             >
               {item.label}
             </Link>
           ))}
-          {groups.map((group) => (
-            <div key={group.label} className="relative">
-              <button
-                type="button"
-                aria-expanded={open === group.label}
-                onClick={() => setOpen(open === group.label ? null : group.label)}
-                className={`min-h-12 text-sm font-semibold transition-colors ${navHover}`}
-              >
-                {group.label} <span aria-hidden="true">⌄</span>
-              </button>
-              {open === group.label ? (
-                <div className="absolute left-0 top-full w-72 rounded-card border border-border bg-surface p-2 text-ink shadow-xl">
-                  <ul>
-                    {group.items.map((item) => (
-                      <li key={item.href}>
-                        <Link
-                          href={item.href}
-                          className="block rounded-control px-4 py-3 text-sm font-semibold hover:bg-canvas-alt"
-                        >
-                          {item.label}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
-            </div>
+          {routeNav.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              aria-current={routeActive(item.href) ? "page" : undefined}
+              className={`text-sm font-semibold transition-colors ${navHover}`}
+            >
+              {item.label}
+            </Link>
           ))}
-          <Link
-            href="/pricing"
-            aria-current={active("/pricing") ? "page" : undefined}
-            className={`text-sm font-semibold transition-colors ${navHover}`}
-          >
-            Pricing
-          </Link>
           {config.workPublished ? <Link href="/work">Work</Link> : null}
         </nav>
 
-        <div className="flex shrink-0 items-center gap-2"><PublicChatTrigger className={`hidden min-h-12 items-center rounded-control border px-4 text-sm font-bold transition-colors xl:inline-flex ${expanded?"border-on-brand/45 text-on-brand hover:border-on-brand":"border-border bg-transparent text-ink hover:border-ink"}`}/>
+        <div className="flex shrink-0 items-center gap-2">
+          <PublicChatTrigger
+            className={`hidden min-h-12 items-center rounded-control border px-4 text-sm font-bold transition-colors xl:inline-flex ${expanded ? "border-on-brand/45 text-on-brand hover:border-on-brand" : "border-border bg-transparent text-ink hover:border-ink"}`}
+          />
           <Link
             href="/check-availability"
             className="hidden min-h-12 items-center rounded-control bg-brand-primary px-5 text-sm font-bold text-on-brand transition-colors hover:bg-brand-primary-hover sm:inline-flex"
@@ -186,32 +178,46 @@ export function Header() {
           className="max-h-[calc(100svh-var(--header-h))] overscroll-contain overflow-y-auto border-t border-border bg-canvas px-5 py-5 text-ink xl:hidden"
         >
           <div className="grid gap-1">
-            {direct.map((item) => (
-              <Link key={item.href} href={item.href} className="rounded-control px-3 py-3 font-semibold hover:bg-canvas-alt">
+            <p className="px-3 pb-1 text-xs font-bold uppercase tracking-widest text-ink-muted">
+              Your event
+            </p>
+            {anchorNav.map((item) => (
+              <Link
+                key={item.anchor}
+                href={anchorHref(item.anchor)}
+                onClick={() => setMobile(false)}
+                className="rounded-control px-3 py-3 font-semibold hover:bg-canvas-alt"
+              >
                 {item.label}
               </Link>
             ))}
-            {groups.map((group) => (
-              <div key={group.label}>
-                <p className="px-3 pt-4 text-xs font-bold uppercase tracking-widest text-ink-muted">
-                  {group.label}
-                </p>
-                {group.items.map((item) => (
-                  <Link key={item.href} href={item.href} className="block rounded-control px-3 py-3 font-semibold hover:bg-canvas-alt">
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
+            <p className="px-3 pt-4 text-xs font-bold uppercase tracking-widest text-ink-muted">
+              Planning resources
+            </p>
+            {routeNav.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMobile(false)}
+                className="rounded-control px-3 py-3 font-semibold hover:bg-canvas-alt"
+              >
+                {item.label}
+              </Link>
             ))}
-            <Link href="/pricing" className="rounded-control px-3 py-3 font-semibold hover:bg-canvas-alt">
-              Pricing
-            </Link>
-            <Link href="/about" className="rounded-control px-3 py-3 font-semibold hover:bg-canvas-alt">
+            <Link
+              href="/about"
+              onClick={() => setMobile(false)}
+              className="rounded-control px-3 py-3 font-semibold hover:bg-canvas-alt"
+            >
               Our Approach
             </Link>
-            <PublicChatTrigger onOpen={()=>setMobile(false)} className="mt-3 min-h-12 rounded-control border border-border px-4 py-3 text-center font-bold text-ink hover:border-ink"/>
+            <PublicChatTrigger
+              onOpen={() => setMobile(false)}
+              className="mt-3 min-h-12 rounded-control border border-border px-4 py-3 text-center font-bold text-ink hover:border-ink"
+            />
             <Link
               href="/check-availability"
+              onClick={() => setMobile(false)}
               className="mt-3 rounded-control bg-brand-primary px-4 py-4 text-center font-bold text-on-brand hover:bg-brand-primary-hover"
             >
               Check Availability

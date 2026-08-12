@@ -10,7 +10,7 @@ type HomeHeroProps = {
 export function HomeHero({ asset }: HomeHeroProps) {
   return (
     <section
-      id="home-hero"
+      id="hero"
       aria-labelledby="home-hero-title"
       className="relative isolate flex min-h-[100svh] overflow-hidden bg-ink text-on-brand"
     >
