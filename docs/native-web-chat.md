@@ -2,7 +2,7 @@
 
 ## Status
 
-Core native web chat passed physical desktop and iPhone validation on 2026-08-11: bidirectional realtime delivery, rapid ordered messages without observed duplicates, reconnect/history recovery, mobile staff open/reply, and foreground notification audio all passed. Android-specific validation is deferred and is not a blocker. The validated customer drawer is now integrated into the isolated staging public header as a secondary action; production is not deployed.
+Core native web chat and the integrated public-site experience passed physical desktop and iPhone validation on 2026-08-12: bidirectional realtime delivery, rapid ordered messages without observed duplicates, reconnect/history recovery, mobile staff open/reply, foreground notification audio, live public chat, async message completion, desktop header placement, mobile menu/drawer/keyboard behavior, and preservation of Check Availability as the primary CTA all passed. Android-specific validation is deferred and is not a blocker. Production is not deployed.
 
 ## Architecture
 
@@ -69,7 +69,7 @@ npx wrangler deploy --config wrangler.staging.jsonc
 
 ## Accepted physical validation
 
-Desktop staff, physical iPhone staff, customer-to-staff and staff-to-customer realtime delivery, rapid ordering, duplicate behavior, refresh/reconnect history, mobile open/reply, and desktop/iPhone foreground chimes are accepted. Do not reopen the core transport without regression evidence. Android validation remains deferred.
+Desktop and physical iPhone staff/public chat, customer-to-staff and staff-to-customer realtime delivery, rapid ordering, duplicate behavior, refresh/reconnect history, mobile open/reply, foreground chimes, async completion, public header/menu integration, and mobile drawer behavior are accepted. Do not reopen the core transport or public integration without regression evidence. Android validation remains deferred.
 
 ## Public integration behavior
 
