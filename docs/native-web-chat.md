@@ -2,7 +2,7 @@
 
 ## Status
 
-Implemented on `feat/operations-foundation` and intended for isolated staging only. The public drawer is an integration-ready component and is deliberately not inserted into the marketing header during the parallel visual review. Production is not deployed.
+Core native web chat passed physical desktop and iPhone validation on 2026-08-11: bidirectional realtime delivery, rapid ordered messages without observed duplicates, reconnect/history recovery, mobile staff open/reply, and foreground notification audio all passed. Android-specific validation is deferred and is not a blocker. The validated customer drawer is now integrated into the isolated staging public header as a secondary action; production is not deployed.
 
 ## Architecture
 
@@ -67,17 +67,13 @@ npm run ops:staging:deploy
 npx wrangler deploy --config wrangler.staging.jsonc
 ```
 
-## Physical validation still required
+## Accepted physical validation
 
-1. Make a staging responder confirmed Live.
-2. In a normal/private customer browser, start a chat and verify the first message appears promptly in the staff PWA.
-3. Confirm the new-conversation chime plays once in the foreground after a normal user interaction.
-4. Reply in staff PWA and verify the visitor receives it without refresh.
-5. Send a second visitor message and confirm the shorter chime/unread count.
-6. Disable sounds and confirm visual unread remains without audio.
-7. Background and reopen the iPhone Home Screen PWA; foreground reconnect should recover from D1 history. Background/closed OS notification is expected **not** to work until push provisioning is implemented.
-8. Disable responder availability and confirm a fresh visitor sees `Send us a Message`, not `Live Chat`.
-9. Refresh the customer browser and confirm the session-scoped resume behavior; closing the entire tab/session intentionally ends current continuity until a notification transport is selected.
+Desktop staff, physical iPhone staff, customer-to-staff and staff-to-customer realtime delivery, rapid ordering, duplicate behavior, refresh/reconnect history, mobile open/reply, and desktop/iPhone foreground chimes are accepted. Do not reopen the core transport without regression evidence. Android validation remains deferred.
+
+## Public integration behavior
+
+A single shared public chat provider supplies desktop-header and mobile-menu triggers and one drawer/socket lifecycle. The opened mode snapshots server-confirmed presence. Live mode keeps realtime history and reply continuity. Async mode persists through the same CRM model but ends in a clear received state that tells the customer they may leave; it does not imply an active waiting room. Check Availability remains the dominant structured-inquiry CTA.
 
 ## Deferred
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { BrandLogo } from "@/components/brand/BrandLogo";
+import { PublicChatTrigger } from "@/components/operations/NativeChatPanel";
 import { config } from "@/lib/config";
 
 const groups = [
@@ -157,7 +158,7 @@ export function Header() {
           {config.workPublished ? <Link href="/work">Work</Link> : null}
         </nav>
 
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2"><PublicChatTrigger className={`hidden min-h-12 items-center rounded-control border px-4 text-sm font-bold transition-colors xl:inline-flex ${expanded?"border-on-brand/45 text-on-brand hover:border-on-brand":"border-border bg-transparent text-ink hover:border-ink"}`}/>
           <Link
             href="/check-availability"
             className="hidden min-h-12 items-center rounded-control bg-brand-primary px-5 text-sm font-bold text-on-brand transition-colors hover:bg-brand-primary-hover sm:inline-flex"
@@ -208,6 +209,7 @@ export function Header() {
             <Link href="/about" className="rounded-control px-3 py-3 font-semibold hover:bg-canvas-alt">
               Our Approach
             </Link>
+            <PublicChatTrigger onOpen={()=>setMobile(false)} className="mt-3 min-h-12 rounded-control border border-border px-4 py-3 text-center font-bold text-ink hover:border-ink"/>
             <Link
               href="/check-availability"
               className="mt-3 rounded-control bg-brand-primary px-4 py-4 text-center font-bold text-on-brand hover:bg-brand-primary-hover"
