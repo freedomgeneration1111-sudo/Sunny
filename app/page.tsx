@@ -1,6 +1,6 @@
 import { TrackedLink } from "@/components/analytics/TrackedLink";
 import { MediaFrame } from "@/components/media/MediaFrame";
-import { PlanItemCard } from "@/components/planning/PlanItemCard";
+import { PricingPlanner } from "@/components/sections/PricingPlanner";
 import { FAQList } from "@/components/sections/FAQList";
 import { HomeHero } from "@/components/sections/HomeHero";
 import { Button } from "@/components/ui/Button";
@@ -92,18 +92,14 @@ export default function HomePage() {
         </Container>
       </Section>
 
-      <Section theme="alt" id="pricing-preview">
+      <Section theme="alt" id="pricing-menu">
         <Container>
           <div className="grid gap-6 lg:grid-cols-[.75fr_1.25fr] lg:items-end">
             <div><Eyebrow>Build your event</Eyebrow><SectionHeading className="mt-4">Put a starting plan together.</SectionHeading></div>
             <Lead>These provisional anchors are visible for customer review. Select a useful direction and carry it into availability.</Lead>
           </div>
-          <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            <PlanItemCard id="wedding-dj-core" />
-            <PlanItemCard id="photo-video" />
-            <PlanItemCard id="party-4h" />
-          </div>
-          <Button href="/pricing" variant="secondary" className="mt-8">See the full pricing planner <span className="ml-2" aria-hidden="true">→</span></Button>
+          <div className="mt-10"><PricingPlanner /></div>
+          <Button href="/pricing" variant="secondary" className="mt-8">Open the self-contained pricing page <span className="ml-2" aria-hidden="true">→</span></Button>
         </Container>
       </Section>
 

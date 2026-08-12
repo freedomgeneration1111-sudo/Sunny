@@ -18,9 +18,13 @@ const chipClass = "min-h-12 rounded-control border px-4 py-3 text-sm font-extrab
 
 export function CheckAvailabilityForm() {
   const params = useSearchParams();
-  const { selected } = usePlan();
-  const carriedIds = useMemo(() => [...new Set([...params.getAll("interest"), ...selected])].filter(isPlanItemId), [params, selected]);
+  const { selected, remove } = usePlan();
+  const queryIds = useMemo(() => params.getAll("interest").filter(isPlanItemId), [params]);
+  const carriedIds = useMemo(() => [...new Set([...queryIds, ...selected])], [queryIds, selected]);
   const carriedLabels = useMemo(() => carriedIds.map((id) => planItems[id].label), [carriedIds]);
+  const [removedQueryIds,setRemovedQueryIds] = useState<string[]>([]);
+  const visibleCarriedIds = useMemo(() => carriedIds.filter((id) => !removedQueryIds.includes(id)), [carriedIds, removedQueryIds]);
+  const visibleCarriedLabels = useMemo(() => visibleCarriedIds.map((id) => planItems[id].label), [visibleCarriedIds]);
   const [step,setStep] = useState<1|2|3>(1);
   const [form,setForm] = useState<State>(() => ({ ...base, eventType: params.get("event") ?? "", services: carriedLabels }));
   const [submission,setSubmission] = useState<SubmissionState>({ kind:"idle" });
@@ -31,10 +35,17 @@ export function CheckAvailabilityForm() {
   const handleTurnstileToken = useCallback((token:string)=>setTurnstileToken(token),[]);
 
   useEffect(() => {
-    if (!carriedLabels.length) return;
-    setForm((current) => ({ ...current, services: [...new Set([...current.services, ...carriedLabels])] }));
-  }, [carriedLabels]);
+    setForm((current) => ({
+      ...current,
+      services: [...new Set([...current.services.filter((label) => !carriedLabels.some((carried) => carried === label)), ...visibleCarriedLabels])],
+    }));
+  }, [carriedLabels, visibleCarriedLabels]);
 
+  const removeCarried = (id: (typeof carriedIds)[number]) => {
+    remove(id);
+    setRemovedQueryIds((current) => current.includes(id) ? current : [...current, id]);
+    setForm((current) => ({ ...current, services: current.services.filter((service) => service !== planItems[id].label) }));
+  };
   const next = (nextStep:2|3) => { track("inquiry_step_complete",{ step:nextStep-1 }); setStep(nextStep); };
   const toggle = (service:string) => setForm((current) => ({ ...current, services: current.services.includes(service) ? current.services.filter((item) => item!==service) : [...current.services,service] }));
 
@@ -58,7 +69,7 @@ export function CheckAvailabilityForm() {
   return (
     <div className="max-w-4xl">
       {!inquirySubmissionEnabled ? <div className="mb-8 rounded-card border-2 border-brand-primary bg-brand-primary/10 p-4 text-sm font-extrabold">Demo inquiry · Nothing is transmitted. A submission backend and verified contact route are still required.</div> : null}
-      {carriedLabels.length ? <aside className="mb-8 rounded-card border border-border bg-surface p-5"><p className="text-xs font-extrabold uppercase tracking-[.14em] text-brand-primary">Carried from your plan</p><ul className="mt-3 flex flex-wrap gap-2">{carriedLabels.map((label) => <li key={label} className="rounded-full bg-canvas-alt px-3 py-2 text-xs font-bold">{label}</li>)}</ul></aside> : null}
+      {visibleCarriedIds.length ? <aside className="mb-8 rounded-card border border-border bg-surface p-5"><p className="text-xs font-extrabold uppercase tracking-[.14em] text-brand-primary">Carried from your plan</p><ul className="mt-3 flex flex-wrap gap-2">{visibleCarriedIds.map((id) => <li key={id} className="inline-flex items-center gap-2 rounded-full bg-canvas-alt pl-3 text-xs font-bold"><span>{planItems[id].label}</span><button type="button" onClick={() => removeCarried(id)} aria-label={`Remove ${planItems[id].label}`} className="grid h-10 w-10 place-items-center rounded-full text-lg text-ink-muted hover:bg-border hover:text-ink">×</button></li>)}</ul></aside> : null}
       <div role="progressbar" aria-label="Inquiry progress" aria-valuemin={1} aria-valuemax={3} aria-valuenow={step} className="mb-10 grid grid-cols-3 gap-2">{[1,2,3].map((item) => <span key={item} className={`h-2 rounded-full ${item<=step?"bg-brand-primary":"bg-border"}`}/>)}</div>
       <form onSubmit={submit}>
         {step===1 ? <fieldset className="space-y-7"><legend className="text-3xl font-extrabold">Start with the event.</legend>

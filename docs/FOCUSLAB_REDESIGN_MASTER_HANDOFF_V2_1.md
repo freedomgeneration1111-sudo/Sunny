@@ -325,10 +325,10 @@ When authentic work is available, insert a Work/Event Story section after capabi
 
 1. Hero
 2. Transparency principle
-3. Event-type tabs
-4. Package/time-block cards
-5. Build Your Event selector
-6. Estimated starting range
+3. One complete visible pricing menu, grouped as Sound & Hosting, Photo + Video, and Enhancements
+4. Package/time-block cards with no tabbed or hidden categories
+5. Add-to-Plan controls
+6. Development subtotal with custom-scope items kept separate
 7. Custom-scope bridge
 8. What changes price
 9. FAQ

@@ -10,6 +10,32 @@ import "./globals.css";
 import "./redesign.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
-export const metadata: Metadata = { metadataBase: new URL("https://prototype.focuslab.local"), title: { default: `${config.businessName} — DFW Weddings & Events`, template: `%s | ${config.businessName}` }, description: config.shortStatement, robots: { index: false, follow: false }, icons: { icon: "/brand/favicon.svg" } };
+const isReviewBuild = process.env.NEXT_PUBLIC_PUBLICATION_STAGE === "review";
+
+export const metadata: Metadata = {
+  metadataBase: new URL("https://gofocuslab.com"),
+  title: { default: `${config.businessName} — DFW Weddings & Events`, template: `%s | ${config.businessName}` },
+  description: config.shortStatement,
+  robots: isReviewBuild ? { index: false, follow: false } : undefined,
+  icons: { icon: "/brand/favicon.svg" },
+};
+
 export const viewport: Viewport = { themeColor: "#111214", colorScheme: "light" };
-export default function RootLayout({ children }: { children: React.ReactNode }) { return <html lang="en" className={inter.variable}><body className="flex min-h-screen flex-col"><PublicChatProvider><PlanProvider><a href="#main-content" className="fixed left-3 top-3 z-[100] -translate-y-20 rounded-control bg-brand-primary px-4 py-3 font-bold text-on-brand focus:translate-y-0">Skip to content</a><Header/><main id="main-content" className="flex-1">{children}</main><Footer/><ChatTeaser/></PlanProvider></PublicChatProvider></body></html>; }
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className={inter.variable}>
+      <body className="flex min-h-screen flex-col">
+        <PublicChatProvider>
+          <PlanProvider>
+            <a href="#main-content" className="fixed left-3 top-3 z-[100] -translate-y-20 rounded-control bg-brand-primary px-4 py-3 font-bold text-on-brand focus:translate-y-0">Skip to content</a>
+            <Header />
+            <main id="main-content" className="flex-1">{children}</main>
+            <Footer />
+            <ChatTeaser />
+          </PlanProvider>
+        </PublicChatProvider>
+      </body>
+    </html>
+  );
+}

@@ -5,7 +5,7 @@ entertainment, and production company serving Dallas–Fort Worth.
 
 ## Prototype safeguards
 
-- `noindex, nofollow` remains set in `app/layout.tsx`.
+- Review builds (`NEXT_PUBLIC_PUBLICATION_STAGE=review`) receive global `noindex, nofollow` metadata, and the staging facade also sends an `X-Robots-Tag` header. Production-capable commercial routes do not carry a permanent route-level robots block; unpublished/private surfaces such as `/work`, `/chat-preview`, and `/conversation` remain explicitly noindexed.
 - The generated photography is classified as `ai-brand` in `lib/media.ts`.
   It is brand-supporting imagery, never portfolio, client, testimonial, or
   case-study proof. Exact prompts and source filenames are preserved in

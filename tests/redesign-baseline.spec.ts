@@ -11,6 +11,25 @@ const publicRoutes = [
   "/events/corporate/",
   "/about/",
   "/check-availability/",
+  "/guides/",
+] as const;
+
+const indexableRoutes = [
+  "/",
+  "/weddings/",
+  "/south-asian-weddings/",
+  "/events/parties/",
+  "/events/corporate/",
+  "/services/photo-video/",
+  "/services/entertainment-production/",
+  "/pricing/",
+  "/guides/",
+  "/guides/wedding-day-coordination-checklist/",
+  "/guides/shaadi-week-timeline/",
+  "/guides/mehndi-baraat-valima-venue-checklist/",
+  "/guides/corporate-av-checklist/",
+  "/guides/photo-video-coverage-map/",
+  "/guides/enhancements-venue-approval/",
 ] as const;
 
 test("redesigned routes do not overflow the viewport", async ({ page }) => {
@@ -21,6 +40,13 @@ test("redesigned routes do not overflow the viewport", async ({ page }) => {
       content: document.documentElement.scrollWidth,
     }));
     expect(widths.content, `${route} should fit the viewport`).toBeLessThanOrEqual(widths.viewport);
+  }
+});
+
+test("production-capable public routes have no permanent robots block", async ({ page }) => {
+  for (const route of indexableRoutes) {
+    await page.goto(route);
+    await expect(page.locator("meta[name=robots]"), route + " should be indexable outside review builds").toHaveCount(0);
   }
 });
 

@@ -14,6 +14,13 @@ const importantRoutes = [
   "/work/",
   "/about/",
   "/check-availability/",
+  "/guides/",
+  "/guides/wedding-day-coordination-checklist/",
+  "/guides/shaadi-week-timeline/",
+  "/guides/mehndi-baraat-valima-venue-checklist/",
+  "/guides/corporate-av-checklist/",
+  "/guides/photo-video-coverage-map/",
+  "/guides/enhancements-venue-approval/",
 ] as const;
 
 async function expectPageShell(page: Page) {
@@ -28,6 +35,8 @@ test("important routes render", async ({ page }) => {
     const response = await page.goto(route);
     expect(response?.ok(), `${route} should return a successful response`).toBeTruthy();
     await expectPageShell(page);
+    const customerFacingText = (await page.locator("main").innerText()).replace(/\s+/g, " ").trim();
+    expect(customerFacingText.length, route + " should contain substantive customer-facing content").toBeGreaterThan(250);
   }
 });
 
