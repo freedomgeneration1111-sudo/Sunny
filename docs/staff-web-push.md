@@ -1,5 +1,15 @@
 # Staff Web Push
 
+## Physical validation
+
+Staff Web Push was accepted on 2026-08-12 after physical staging validation:
+
+- Desktop Firefox: deliberate opt-in, server-generated test notification, background customer push, notification click to the correct conversation, and foreground duplicate suppression passed.
+- Installed Android staff PWA: deliberate opt-in, server-generated test notification, background customer push, and notification click to the correct conversation passed.
+- Physical iPhone Web Push validation is deferred until the device is available and is not a blocker.
+
+The core Web Push phase is closed unless later testing reveals a regression.
+
 ## Scope and architecture
 
 Staff Web Push is an alerting convenience layered after the accepted native chat persistence and realtime path. D1 conversations, unread state, history recovery, and foreground chimes remain authoritative.

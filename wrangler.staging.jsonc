@@ -10,6 +10,7 @@
     "run_worker_first": [
       "/v1/inquiries",
       "/v1/chat/status",
+      "/v1/chat/resume",
       "/v1/chat/conversations",
       "/v1/chat/conversations/*",
       "/health"
