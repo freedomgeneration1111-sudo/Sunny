@@ -2,9 +2,14 @@
   "meta": {
     "company": "Focus Lab Productions",
     "purpose": "layout-first AI brand imagery manifest",
-    "status": "briefs_approved_for_layout_placeholders_not_final_generation_prompts",
+    "status": "generated_and_integrated",
     "truthClass": "ai-brand",
-    "rule": "Never use these assets as portfolio/client/testimonial/case-study proof. Final generation prompt must be stored on each asset after composition approval."
+    "rule": "Never use these assets as portfolio/client/testimonial/case-study proof. Final generation prompt must be stored on each asset after composition approval.",
+    "generatedAt": "2026-08-12",
+    "generationTool": "OpenAI image generation (built-in)",
+    "sourceDirectory": "/home/moses/.codex/generated_images/019ff619-14c5-78e0-99ba-5bc77034a33b",
+    "generationSettings": "Built-in image generation defaults; the tool returned no seed or model controls.",
+    "runtimeOptimization": "ImageMagick WebP, metadata stripped, quality 86"
   },
   "assets": [
     {
@@ -30,7 +35,10 @@
         "orange color wash",
         "uncanny hands/faces"
       ],
-      "prompt": null
+      "prompt": "Use case: photorealistic-natural\nAsset type: Focus Lab Productions homepage hero, wide cinematic website banner\nPrimary request: Create a believable high-end documentary photograph of an active Dallas–Fort Worth wedding reception celebration that communicates one coordinated event crew without depicting identifiable staff.\nScene/backdrop: Contemporary indoor reception venue, premium but approachable, guests gathered around a couple during an energetic entrance or dance-floor moment; tasteful DJ and architectural lighting atmosphere visible in the room.\nSubject: Diverse adult couple and guests in candid motion and genuine interaction, realistic skin texture and anatomy.\nStyle/medium: Photorealistic editorial event photography, natural color, controlled highlights, 35mm documentary feel.\nComposition/framing: Wide 16:10 landscape. Keep the left 35 percent visually calm and darker for white headline overlay. Place the main emotional interaction center-right; composition must also crop well to 4:5 around the couple and nearest guests.\nLighting/mood: Warm cinematic practicals, confident, alive, joyful, premium but not opulent; subtle amber/orange environmental echo only.\nConstraints: No text, no watermark, no logos, no recognizable venue, no fake company branding, no unsafe effects, no posed catalog portrait, no impossible lighting rig, no orange color wash, no uncanny hands or faces.",
+      "runtimeSrc": "/images/generated/home-hero-01.webp",
+      "sourceImage": "exec-b09521bc-5284-4ff2-84d1-315cd994d1da.png",
+      "generationStatus": "generated"
     },
     {
       "id": "HOME-EVENT-SA-01",
@@ -52,7 +60,10 @@
         "stereotyped costume mashup",
         "portfolio caption context"
       ],
-      "prompt": null
+      "prompt": "Use case: photorealistic-natural\nAsset type: Focus Lab homepage South Asian Weddings category card\nPrimary request: Contemporary South Asian wedding celebration with candid family energy and culturally coherent attire and decor.\nScene/backdrop: Warm festive indoor DFW reception or pre-wedding celebration, no identifiable venue.\nSubject: Pakistani, Indian, or fusion diaspora family and couple interacting joyfully; natural faces, hands, fabrics, and jewelry.\nStyle/medium: Photorealistic high-end documentary event photography, vivid but natural color.\nComposition/framing: Vertical 4:5 portrait card, clear central emotional interaction, crop-safe with no text overlay.\nLighting/mood: Warm, colorful, joyful, vivid, human.\nConstraints: One coherent event context; no incompatible ritual mashup, no stereotypes, no text, signage, logos, watermark, uncanny anatomy, or portfolio framing.",
+      "runtimeSrc": "/images/generated/home-event-sa-01.webp",
+      "sourceImage": "exec-bcd48ed4-e6ee-4836-9621-c3d97acef3e0.png",
+      "generationStatus": "generated"
     },
     {
       "id": "HOME-EVENT-WEDDING-01",
@@ -74,7 +85,10 @@
         "empty posed ballroom",
         "visible brand marks"
       ],
-      "prompt": null
+      "prompt": "Use case: photorealistic-natural\nAsset type: Focus Lab homepage Weddings category card\nPrimary request: Modern Dallas–Fort Worth wedding reception candid with a couple and guests.\nScene/backdrop: Contemporary approachable reception venue, tasteful dance-floor atmosphere.\nSubject: Diverse adult couple sharing a spontaneous joyful moment with guests nearby.\nStyle/medium: Photorealistic editorial wedding documentary photography with realistic skin texture.\nComposition/framing: Vertical 4:5 portrait card, emotionally legible center composition, no text overlay required.\nLighting/mood: Soft warm reception practicals, romantic but energetic.\nConstraints: No ultra-luxury fantasy, no empty posed ballroom, no brand marks, no watermark, no unsafe effects, no uncanny hands or faces.",
+      "runtimeSrc": "/images/generated/home-event-wedding-01.webp",
+      "sourceImage": "exec-9257da21-b35a-445c-8278-d5fb91c2ff3e.png",
+      "generationStatus": "generated"
     },
     {
       "id": "HOME-EVENT-PARTY-01",
@@ -96,7 +110,10 @@
         "alcohol as focal point",
         "brand signage"
       ],
-      "prompt": null
+      "prompt": "Use case: photorealistic-natural\nAsset type: Focus Lab homepage Parties category card\nPrimary request: Private adult birthday or engagement celebration dance-floor moment with DJ lighting.\nScene/backdrop: Polished private event venue with a believable medium-size guest group, not a nightclub.\nSubject: Diverse DFW adult guests dancing and interacting candidly.\nStyle/medium: Photorealistic documentary event photography, accessible and social.\nComposition/framing: Vertical 4:5 portrait card, active group centered and crop-safe.\nLighting/mood: Colorful but realistic practical lighting, upbeat and polished.\nConstraints: No nightclub branding, alcohol focal point, teen prom look, text, signage, logos, watermark, unsafe lighting, or uncanny anatomy.",
+      "runtimeSrc": "/images/generated/home-event-party-01.webp",
+      "sourceImage": "exec-89aa8c70-499b-4d95-aaa3-877beccfbe6c.png",
+      "generationStatus": "generated"
     },
     {
       "id": "HOME-EVENT-CORP-01",
@@ -115,10 +132,13 @@
       "culturalNotes": "diverse attendees",
       "exclusions": [
         "fake company logos",
-        "conference-stock handshake clich\u00e9",
+        "conference-stock handshake cliché",
         "legible signage"
       ],
-      "prompt": null
+      "prompt": "Use case: photorealistic-natural\nAsset type: Focus Lab homepage Corporate and Community category card\nPrimary request: Professional gala or community event with stage, audience, and event-production context.\nScene/backdrop: Clean modern event hall with a presenter or program moment and diverse attendees, no identifiable company or venue.\nSubject: Audience engaged with a stage program; production environment visible but technically plausible.\nStyle/medium: Photorealistic editorial event photography.\nComposition/framing: Vertical 4:5 portrait card, polished central stage-and-audience relationship.\nLighting/mood: Clean professional event lighting, credible and energetic.\nConstraints: No fake logos or legible slides, no handshake-stock-photo cliché, no wedding cues, no text, watermark, impossible rigging, or uncanny faces.",
+      "runtimeSrc": "/images/generated/home-event-corp-01.webp",
+      "sourceImage": "exec-abbcbfd8-3d75-4574-9dfa-f385dc3527fc.png",
+      "generationStatus": "generated"
     },
     {
       "id": "HOME-CAPTURE-01",
@@ -140,7 +160,10 @@
         "watermark",
         "fake camera UI"
       ],
-      "prompt": null
+      "prompt": "Use case: photorealistic-natural\nAsset type: Focus Lab homepage Photo and Video capability editorial image\nPrimary request: Close documentary view of event coverage in action, with a photographer framing a meaningful guest interaction.\nScene/backdrop: Warm contemporary celebration, softly layered guests and architecture.\nSubject: Camera and photographer shown from behind or in partial profile, with believable grip and settings; the candid human moment remains visible.\nStyle/medium: Photorealistic editorial behind-the-scenes event photography, natural color and texture.\nComposition/framing: Horizontal 3:2 landscape, strong layered depth, crop-safe 4:3; no text overlay needed.\nLighting/mood: Observant, intimate, calm, cinematic.\nConstraints: No equipment logos, no fake controls, no posed studio setup, no public individual team-member portrait, no text, watermark, or malformed hands.",
+      "runtimeSrc": "/images/generated/home-capture-01.webp",
+      "sourceImage": "exec-2b7f02c8-bec4-4ac1-9c24-360c5cd54a66.png",
+      "generationStatus": "generated"
     },
     {
       "id": "HOME-PRODUCTION-01",
@@ -162,7 +185,10 @@
         "unsafe effects",
         "festival stadium scale"
       ],
-      "prompt": null
+      "prompt": "Use case: photorealistic-natural\nAsset type: Focus Lab homepage Entertainment and Production capability editorial image\nPrimary request: A finished event room where architectural uplighting, a compact DJ position, and an inviting dance floor feel coordinated.\nScene/backdrop: Modern medium-size DFW reception room, premium but attainable and ready for guests.\nSubject: The atmosphere and spatial design are primary; a few naturally moving guests may establish scale.\nStyle/medium: Photorealistic architectural event photography with documentary warmth.\nComposition/framing: Horizontal 3:2 landscape, clean room geometry and crop-safe 4:3; no text overlay.\nLighting/mood: Polished, warm, anticipatory, cinematic with restrained amber and blue accents.\nConstraints: No impossible truss or ceiling load, no unsafe effects, no showroom perfection, no fake logos, no text, watermark, or orange wash.",
+      "runtimeSrc": "/images/generated/home-production-01.webp",
+      "sourceImage": "exec-5e234db7-58ef-441a-a99b-70c2c18eba4d.png",
+      "generationStatus": "generated"
     },
     {
       "id": "WEDDINGS-HERO-01",
@@ -184,7 +210,10 @@
         "fake venue logo",
         "excessive luxury props"
       ],
-      "prompt": null
+      "prompt": "Use case: photorealistic-natural\nAsset type: Focus Lab Weddings page full-bleed hero\nPrimary request: Modern Dallas–Fort Worth wedding reception first-dance or entrance moment with couple, nearest guests, and a coordinated reception atmosphere.\nScene/backdrop: Contemporary premium but approachable indoor venue; tasteful sound and lighting atmosphere.\nSubject: Diverse adult couple in a genuine emotional and energetic moment, guests reacting naturally.\nStyle/medium: Photorealistic high-end documentary wedding photography, realistic skin texture, natural color, controlled highlights.\nComposition/framing: Wide 16:9 landscape with the left 35 percent calm and darker for headline overlay; place couple and emotional action on the right. Must crop well to 4:5 around couple and nearest guests.\nLighting/mood: Warm, elegant, emotional, energetic.\nConstraints: No posed bridal editorial, no ultra-luxury fantasy, no fake venue logo, no text, watermark, unsafe effects, impossible rigging, or uncanny anatomy.",
+      "runtimeSrc": "/images/generated/weddings-hero-01.webp",
+      "sourceImage": "exec-cfb9b1aa-5e42-4919-bbf1-68a41648a83a.png",
+      "generationStatus": "generated"
     },
     {
       "id": "WEDDINGS-COORDINATION-01",
@@ -205,7 +234,10 @@
         "staged corporate team shot",
         "visible branding"
       ],
-      "prompt": null
+      "prompt": "Use case: photorealistic-natural\nAsset type: Focus Lab Weddings coordination editorial image\nPrimary request: A coordinated reception transition as an MC cues the room and the couple prepares to enter or begin a key moment.\nScene/backdrop: Contemporary approachable wedding reception, guests attentive and timing visibly organized.\nSubject: Couple and nearest guests carry the emotion; the MC is role-based and secondary, shown naturally with a believable wireless microphone.\nStyle/medium: Photorealistic documentary wedding photography.\nComposition/framing: Horizontal 3:2 landscape with layered room context, crop-safe 4:3.\nLighting/mood: Anticipatory, calm, warm, human.\nConstraints: No invented named staff, no staff portrait, no fake logo, no text, watermark, awkward microphone, posed catalog scene, or uncanny anatomy.",
+      "runtimeSrc": "/images/generated/weddings-coordination-01.webp",
+      "sourceImage": "exec-17633ce0-8184-45a5-af75-00d62c745d07.png",
+      "generationStatus": "generated"
     },
     {
       "id": "SA-HERO-01",
@@ -228,7 +260,10 @@
         "text/signage",
         "unsafe effects"
       ],
-      "prompt": null
+      "prompt": "Use case: photorealistic-natural\nAsset type: Focus Lab South Asian Weddings page full-bleed hero\nPrimary request: Contemporary culturally coherent South Asian wedding celebration with couple and family participation in one believable event context.\nScene/backdrop: Elegant modern DFW diaspora reception or wedding celebration, rich decor and tasteful production atmosphere without identifiable venue.\nSubject: Pakistani, Indian, or fusion couple and family sharing a joyful candid moment; accurate contemporary attire and natural interaction.\nStyle/medium: Photorealistic cinematic documentary event photography with believable skin, fabric, jewelry, and lighting.\nComposition/framing: Wide 16:9 landscape, calm darker left safe zone for headline, main couple and family energy right-center; crop-safe 4:5 around the emotional group.\nLighting/mood: Rich warm event lighting, joyful, culturally fluent, premium.\nConstraints: One coherent context; no haldi/mehndi/baraat/ceremony ritual mashup, no costume inaccuracies, no text, signage, logos, watermark, unsafe effects, or uncanny hands/faces.",
+      "runtimeSrc": "/images/generated/south-asian-hero-01.webp",
+      "sourceImage": "exec-0183c033-74eb-4417-9094-508534cd2f9e.png",
+      "generationStatus": "generated"
     },
     {
       "id": "SA-BARAAT-01",
@@ -250,7 +285,10 @@
         "unsafe traffic setting",
         "ritual mashup"
       ],
-      "prompt": null
+      "prompt": "Use case: photorealistic-natural\nAsset type: Focus Lab South Asian wedding sequence — baraat editorial image\nPrimary request: One culturally coherent modern baraat entrance with joyful family participation.\nScene/backdrop: Outdoor venue arrival in the Dallas–Fort Worth area, celebratory but believable and safe.\nSubject: Pakistani, Indian, or fusion groom and family moving together with joyful candid reactions; contemporary attire accurately rendered.\nStyle/medium: Photorealistic documentary event photography with vibrant natural color.\nComposition/framing: Horizontal 3:2 landscape, crop-safe 4:5 around the central group.\nLighting/mood: Daylight or golden-hour energy, vivid, communal, joyous.\nConstraints: This is a baraat only; do not mix mehndi, ceremony, or reception rituals; no stereotypes, animals, unsafe pyrotechnics, text, signage, logos, watermark, or uncanny anatomy.",
+      "runtimeSrc": "/images/generated/sa-baraat-01.webp",
+      "sourceImage": "exec-3a3fb11a-b6d1-4ac7-9883-afa56df3e121.png",
+      "generationStatus": "generated"
     },
     {
       "id": "SA-MEHNDI-01",
@@ -266,13 +304,16 @@
       "content": "colorful mehndi/sangeet-style celebration with candid family interaction",
       "lighting": "festive warm + jewel tones",
       "mood": "playful, intimate",
-      "culturalNotes": "coherent d\u00e9cor/attire",
+      "culturalNotes": "coherent décor/attire",
       "exclusions": [
         "close-up malformed henna hands",
         "generic Bollywood stage text",
         "logos"
       ],
-      "prompt": null
+      "prompt": "Use case: photorealistic-natural\nAsset type: Focus Lab South Asian wedding sequence — mehndi editorial image\nPrimary request: One culturally coherent contemporary mehndi celebration centered on color, family interaction, and the intimate application of henna.\nScene/backdrop: Warm indoor or courtyard pre-wedding gathering in a modern DFW diaspora setting.\nSubject: Pakistani, Indian, or fusion bride-to-be with close family or friends in candid interaction; henna and attire details are accurate and natural.\nStyle/medium: Photorealistic documentary event photography with vivid natural color and believable skin and fabric.\nComposition/framing: Horizontal 3:2 landscape, crop-safe 4:5 around the intimate central group.\nLighting/mood: Joyful, colorful, close, human.\nConstraints: This is a mehndi only; do not mix baraat, ceremony, or reception rituals; no stereotypes, legible signage, logos, text, watermark, malformed hands, or uncanny faces.",
+      "runtimeSrc": "/images/generated/sa-mehndi-01.webp",
+      "sourceImage": "exec-f5d87651-cf14-4a28-87ee-168de7be56ff.png",
+      "generationStatus": "generated"
     },
     {
       "id": "SA-RECEPTION-01",
@@ -294,7 +335,10 @@
         "unsafe sparks",
         "fake signage"
       ],
-      "prompt": null
+      "prompt": "Use case: photorealistic-natural\nAsset type: Focus Lab South Asian wedding sequence — reception editorial image\nPrimary request: Contemporary South Asian wedding reception dance-floor celebration with a couple and family reacting naturally.\nScene/backdrop: Elegant modern DFW diaspora reception with tasteful architectural lighting and no identifiable venue.\nSubject: Pakistani, Indian, or fusion couple and nearby family in one genuine candid moment; contemporary formal attire rendered accurately.\nStyle/medium: Photorealistic cinematic documentary event photography, natural skin and controlled highlights.\nComposition/framing: Wide 16:10 landscape with central-right emotional group, crop-safe 4:5 around the couple and nearest family.\nLighting/mood: Warm, rich, energetic, celebratory.\nConstraints: Reception only; no unrelated ritual mashup, no text, signage, logos, watermark, unsafe effects, or uncanny hands/faces.",
+      "runtimeSrc": "/images/generated/sa-reception-01.webp",
+      "sourceImage": "exec-d7c820c9-ea11-49b2-bdeb-943ab999f2c9.png",
+      "generationStatus": "generated"
     },
     {
       "id": "PARTY-HERO-01",
@@ -307,7 +351,7 @@
       "subjectPlacementDesktop": "right-center",
       "negativeSpaceDesktop": "left safe zone",
       "mobileCrop": "preserve dancing group",
-      "content": "80\u2013150 guest private party/engagement/birthday with DJ and dance floor",
+      "content": "80–150 guest private party/engagement/birthday with DJ and dance floor",
       "lighting": "energetic practicals",
       "mood": "fun, social, polished",
       "culturalNotes": "diverse audience",
@@ -316,7 +360,10 @@
         "alcohol focal point",
         "teen-only prom look"
       ],
-      "prompt": null
+      "prompt": "Use case: photorealistic-natural\nAsset type: Focus Lab Parties and Celebrations page split hero\nPrimary request: Believable 80–150 guest adult birthday, engagement, or private celebration with DJ and active dance floor.\nScene/backdrop: Polished private-event venue in DFW, energetic but clearly not a public nightclub.\nSubject: Diverse adult guests dancing in candid interaction, one central group carrying the emotion.\nStyle/medium: Photorealistic premium documentary event photography, natural skin and movement.\nComposition/framing: Wide 16:9 landscape with primary group right-center and a calmer left third; also crop-safe 4:5 around the dancing group.\nLighting/mood: Energetic practical lighting, fun, social, polished.\nConstraints: No nightclub branding, alcohol focal point, teen prom feel, text, signage, logos, watermark, unsafe lighting, or uncanny anatomy.",
+      "runtimeSrc": "/images/generated/party-hero-01.webp",
+      "sourceImage": "exec-41cd330d-dc05-4d28-b1a2-789e7ad893f4.png",
+      "generationStatus": "generated"
     },
     {
       "id": "CORP-HERO-01",
@@ -338,7 +385,10 @@
         "handshake stock photo",
         "wedding cues"
       ],
-      "prompt": null
+      "prompt": "Use case: photorealistic-natural\nAsset type: Focus Lab Corporate and Community Events page full-bleed hero\nPrimary request: Professional gala, nonprofit fundraiser, or community program with a presenter, engaged audience, and a credible production environment.\nScene/backdrop: Contemporary DFW event hall, polished but not extravagant, no identifiable company or venue.\nSubject: Diverse adult attendees engaged with a live program; a presenter and production context are visible without dominating.\nStyle/medium: Photorealistic editorial event photography, clean natural color, technically believable.\nComposition/framing: Wide 16:9 landscape with a calmer darker left third for headline overlay; place stage-and-audience relationship right-center. Crop-safe 4:5 around presenter and front audience.\nLighting/mood: Confident, organized, professional, energetic.\nConstraints: No fake logos, no legible presentation text, no corporate handshake cliché, no wedding cues, no watermark, impossible rigging, or uncanny faces.",
+      "runtimeSrc": "/images/generated/corporate-hero-01.webp",
+      "sourceImage": "exec-9a1aa8c8-8775-4364-81f0-4191c0afc669.png",
+      "generationStatus": "generated"
     },
     {
       "id": "PHOTO-VIDEO-HERO-01",
@@ -360,7 +410,10 @@
         "fake Focus Lab uniform",
         "watermark"
       ],
-      "prompt": null
+      "prompt": "Use case: photorealistic-natural\nAsset type: Focus Lab Photo and Video page split hero\nPrimary request: Documentary event coverage in progress, showing a photographer and videographer coordinating around a real celebration moment.\nScene/backdrop: Warm contemporary reception with guests in candid motion, no identifiable venue.\nSubject: Two unobtrusive event-media professionals working from complementary angles; cameras and posture must be technically plausible, with the guest moment still emotionally important.\nStyle/medium: Photorealistic behind-the-scenes editorial photography, natural skin and equipment detail.\nComposition/framing: Wide 16:9 landscape with action concentrated right-center and a quieter left third; crop-safe 4:5 around the media team and guest moment.\nLighting/mood: Observant, calm, cinematic, human.\nConstraints: No visible brand marks on equipment, no fake camera controls, no studio pose, no red-carpet press line, no text, watermark, flash obstruction, or uncanny hands.",
+      "runtimeSrc": "/images/generated/photo-video-hero-01.webp",
+      "sourceImage": "exec-54af3109-8ae2-4a9c-a990-73583cde868a.png",
+      "generationStatus": "generated"
     },
     {
       "id": "PHOTO-VIDEO-DETAIL-01",
@@ -381,7 +434,10 @@
         "album mockup with fake branding",
         "portfolio claim"
       ],
-      "prompt": null
+      "prompt": "Use case: photorealistic-natural\nAsset type: Focus Lab Photo and Video detail editorial image\nPrimary request: An intimate documentary close-up of hands, fabric, jewelry, and a small emotional gesture during an event.\nScene/backdrop: Softly blurred contemporary celebration environment.\nSubject: Natural adult hands adjusting jewelry or holding a loved one's hand; textiles and details are believable and culturally neutral.\nStyle/medium: Photorealistic macro editorial event photography, tactile texture, shallow depth of field.\nComposition/framing: Horizontal 3:2 landscape, crop-safe 4:3 with clear detail hierarchy.\nLighting/mood: Quiet, observant, warm, emotionally specific.\nConstraints: No product-advertising arrangement, no brand marks, no text, watermark, duplicated jewelry, malformed fingers, or uncanny skin.",
+      "runtimeSrc": "/images/generated/photo-video-detail-01.webp",
+      "sourceImage": "exec-ed8e20e9-fa6b-48bc-87f0-246074ef0642.png",
+      "generationStatus": "generated"
     },
     {
       "id": "PRODUCTION-HERO-01",
@@ -404,7 +460,10 @@
         "laser into faces",
         "fake logos"
       ],
-      "prompt": null
+      "prompt": "Use case: photorealistic-natural\nAsset type: Focus Lab Entertainment and Production page full-bleed hero\nPrimary request: A technically credible event-production atmosphere combining DJ, architectural uplighting, and a carefully controlled dance-floor moment.\nScene/backdrop: Modern indoor DFW reception or gala venue, premium but achievable, no identifiable venue.\nSubject: Active adult guests with the production environment supporting the room; equipment is visible only where believable.\nStyle/medium: Photorealistic high-end documentary event photography with natural color and controlled highlight rolloff.\nComposition/framing: Wide 16:9 landscape with the left 35 percent calm and darker for headline; production and guest energy right-center. Crop-safe 4:5 around the dance-floor group and lighting atmosphere.\nLighting/mood: Cinematic, confident, energetic, polished.\nConstraints: No impossible truss or unsafe effects, no overloaded ceiling, no fake logos, no text, watermark, orange wash, empty showroom, or uncanny anatomy.",
+      "runtimeSrc": "/images/generated/production-hero-01.webp",
+      "sourceImage": "exec-cb8ea224-e2a9-416a-b043-4a08df17aae0.png",
+      "generationStatus": "generated"
     },
     {
       "id": "PRODUCTION-EFFECTS-01",
@@ -426,7 +485,10 @@
         "smoke obscuring exits",
         "impossible effect geometry"
       ],
-      "prompt": null
+      "prompt": "Use case: photorealistic-natural\nAsset type: Focus Lab Entertainment and Production effects editorial image\nPrimary request: A technically plausible first-dance moment using low-lying cloud and a restrained pair of venue-approved cold-spark effects.\nScene/backdrop: Modern indoor reception venue with clear floor space, visible safe separation, and no ceiling conflict.\nSubject: Adult couple dancing naturally; effects support the moment without obscuring faces or exits.\nStyle/medium: Photorealistic high-end documentary event photography with accurate light and atmospheric behavior.\nComposition/framing: Horizontal 3:2 landscape, crop-safe 4:5 around the couple and effects.\nLighting/mood: Cinematic, controlled, celebratory, elegant.\nConstraints: Show safe professional placement and believable effect scale; no overhead fire, open flame, dense smoke, blocked exits, impossible sparks, logos, text, watermark, or uncanny anatomy.",
+      "runtimeSrc": "/images/generated/production-effects-01.webp",
+      "sourceImage": "exec-a456ab7e-77eb-42c4-a9a8-c4d6952d9611.png",
+      "generationStatus": "generated"
     },
     {
       "id": "GLOBAL-CTA-01",
@@ -448,7 +510,8 @@
         "busy faces behind text",
         "legible signage"
       ],
-      "prompt": null
+      "prompt": null,
+      "generationStatus": "not_generated_optional_design_uses_brand_surface"
     }
   ]
 }

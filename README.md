@@ -1,113 +1,85 @@
-# Sunny Lab — Prototype Website
+# Focus Lab Productions — Website Prototype
 
-Visual prototype for the FocusLab event-media build. Placeholder brand name
-only — see **Rename procedure** below.
+Next.js 15 static-export prototype for Focus Lab Productions, an event media,
+entertainment, and production company serving Dallas–Fort Worth.
 
-## ⚠️ Prototype status
+## Prototype safeguards
 
-- **Form is not connected.** `/check-availability` is client-side only and
-  transmits nothing anywhere. Do not treat submissions as real leads.
-- **All photography is AI-generated proxy imagery**, watermarked with a
-  `PROXY · REPLACE` corner badge. None of it is real company work.
-- **The About page team section has no real people in it.** Six role slots
-  show `ASSET NEEDED` placeholders (Name/Specialty/Experience all marked
-  "pending") instead of invented names, bios, or photos — see
-  `components/sections/TeamSlot.tsx` if you want to understand why before
-  changing it.
-- `noindex, nofollow` is set in `app/layout.tsx`. Don't remove it before
-  this is a real, verified public site.
+- `noindex, nofollow` remains set in `app/layout.tsx`.
+- The generated photography is classified as `ai-brand` in `lib/media.ts`.
+  It is brand-supporting imagery, never portfolio, client, testimonial, or
+  case-study proof. Exact prompts and source filenames are preserved in
+  `docs/07_IMAGE_ASSET_MANIFEST.json`.
+- Work stays unpublished until authentic, approved project media exists.
+- Pricing is development data and remains visibly labeled until approved.
+- Inquiry submission is demo-only unless the public operations API and
+  Turnstile configuration are explicitly enabled.
+- Contact and social routes are hidden until verified in `lib/config.ts`.
+- Development labels must remain enabled while any asset, price, claim, or
+  public route is still pending verification.
 
-## Requirements
+## Requirements and local development
 
-- Node.js 20+ (built and tested on Node 22)
+- Node.js 20 or newer (currently tested on Node.js 22)
 - npm
-
-## Local development
 
 ```bash
 npm install
 npm run dev        # http://localhost:3000
-npm run typecheck  # tsc --noEmit
-npm run lint       # eslint
-npm run build      # production build + static export to /out
+npm run typecheck  # TypeScript
+npm run lint       # ESLint
+npm test           # public Playwright + operations + staff tests
+npm run build      # static export to out/
 ```
 
-`npm run build` writes the deployable site to `out/`. There is no `next start`
-step for deployment — Cloudflare Pages serves the `out/` folder as static
-files directly.
+`npm run build` produces the entire public site in `out/`. There is no
+application server or `next start` deployment step.
 
-## Deploying to Cloudflare Pages
+## Cloudflare Workers Static Assets
 
-1. Push this project to a GitHub or GitLab repo (Cloudflare Pages connects
-   to Git — there's no drag-and-drop for a project this size once it's past
-   a single upload).
-2. In Cloudflare: **Workers & Pages → Create → Pages → Connect to Git**.
-3. Framework preset: **Next.js (Static HTML Export)**. This matters — it's
-   what makes Cloudflare apply the right routing/build assumptions for a
-   `next build` + `output: 'export'` project instead of treating it as a
-   generic static site.
-4. Build settings:
-   - **Build command:** `npm run build`
-   - **Build output directory:** `out`
-5. Deploy. You'll get a `*.pages.dev` subdomain immediately; a custom domain
-   can be attached afterward under the project's **Custom domains** tab.
+`wrangler.jsonc` is the deployment source of truth. It points the top-level
+Workers Static Assets project at `./out` and intentionally has no Worker
+script. The production workflow is:
 
-**Trailing slashes:** `next.config.ts` sets `trailingSlash: true`, which
-makes every route build as `route/index.html` instead of `route.html`. This
-was a real bug, not a precaution — the first build without it 404'd on
-`/about/` when served from a plain static file server, because Next's
-default output doesn't match how most static hosts resolve folder URLs.
-Confirmed fixed by re-serving and re-testing every route. Leave this
-setting alone unless you're deliberately changing the URL structure.
+```bash
+npm ci
+npm run typecheck
+npm run lint
+npm test
+npm run build
+npx wrangler deploy
+```
 
-## Where things live
+Do not deploy without explicit authorization. Keep `output: "export"`,
+`trailingSlash: true`, and unoptimized Next images unless the hosting
+architecture is deliberately changed and every route is retested.
 
-| What | Where |
+## Sources of truth
+
+| Concern | Source |
 |---|---|
-| Brand name, tagline, phone, email, social links, dev-label toggle | `lib/config.ts` |
-| Image registry (all 22 proxy assets + team-portrait placeholders) | `lib/media.ts` |
-| Page copy, per route | `lib/content/*.ts` |
-| Actual images | `public/images/` |
-| Shared design system (Cue Frame mark, proxy badges, header/footer) | `components/brand/`, `components/layout/`, `components/media/` |
+| Business identity, service area, contacts, publication toggles | `lib/config.ts` |
+| Commercial page copy and hierarchy | `lib/content/commercial.ts` and `lib/content/*.ts` |
+| Prices and approval state | `docs/06_DEV_PRICING_DATA.json` and `lib/pricing.ts` |
+| Plan-builder inventory | `lib/plan.ts` |
+| Media paths, alt text, crop intent, and truth class | `lib/media.ts` |
+| Generated-image prompts and provenance | `docs/07_IMAGE_ASSET_MANIFEST.json` |
+| Cloudflare deployment | `wrangler.jsonc` |
 
-## Swapping in a real image
+Runtime images live under `public/images/`; generated brand assets are grouped
+under `public/images/generated/`. Legacy proxy imagery remains available only
+for unpublished or legacy component paths and retains its development status.
 
-1. Drop the real file in `public/images/`.
-2. In `lib/media.ts`, find the matching entry and change `status: "proxy"`
-   to `status: "real"` — the badge disappears automatically, no template
-   changes needed.
-3. For the About page team slots, replace the `teamPortraitPlaceholder`
-   usage in `components/sections/TeamSlot.tsx` with real per-person data
-   once Sunny provides it, and flip each `status: "needed"` to `"real"`.
+## Publishing real work or media
 
-## Turning off development labels
+1. Add an approved file under `public/images/`.
+2. Register it in `lib/media.ts` with accurate alt text, use, crop metadata,
+   and an `authentic-approved` truth class.
+3. Replace only the intended `ai-brand`, `authentic-pending`, or
+   `development-placeholder` slot.
+4. Retest the mobile and desktop crop and all quality gates.
+5. Enable work/contact/pricing publication flags only after the underlying
+   facts and routes are approved.
 
-Every `PROXY · REPLACE` / `ASSET NEEDED` badge and every dashed-underline
-text flag (like "50+ Combined Years" on the homepage) is controlled by one
-switch: `showDevelopmentLabels` in `lib/config.ts`. Set it to `false` to
-preview the site clean. **Don't ship it `false` while any asset is still
-`proxy`/`needed` or any copy is still unverified** — the whole point of the
-flag is that it's the only thing standing between "obviously a prototype"
-and "looks like a real, evidenced business."
-
-## Rename procedure (Sunny Lab → real name)
-
-1. Update `businessName` in `lib/config.ts`. Every component reads from
-   here — nothing is hardcoded.
-2. Update `phone`, `phoneDisplay`, `smsPhone`, `email` in the same file —
-   these are currently placeholder values (555 exchange, `.test` domain) on
-   purpose, so nothing routes anywhere real by accident.
-3. Re-run the trademark check on the new name before this goes anywhere
-   public. That's what took FocusLab out.
-
-## Known gaps / next-pass items
-
-- `featured-dj-action.jpg` renders as a dancefloor/crowd moment rather than
-  a DJ-focused shot — usable as general party energy, weak as the dedicated
-  DJ & MC page image. Candidate for regeneration.
-- Footer's "Privacy" link (present in the copy doc) has no route — left as
-  unlinked text since the build prompt's route list doesn't include one.
-- About page's rental-equipment-transparency paragraph is held back per its
-  own note ("only if Sunny is comfortable") — not built yet either way.
-- `/weddings` and `/corporate` are built (copy was ready), even though the
-  build prompt marks them optional.
+Do not fabricate team identities, biographies, experience, awards,
+testimonials, clients, event counts, response times, prices, or service claims.

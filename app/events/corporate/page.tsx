@@ -1,2 +1,5 @@
-import type { Metadata } from "next";import { CommercialPage } from "@/components/sections/CommercialPage";import { pages,commonFaqs } from "@/lib/content/redesign";
-export const metadata:Metadata={title:"Corporate & Community"};export default function Page(){const page=pages.corporate;return <CommercialPage hero={page.hero} blocks={page.blocks} faqs={commonFaqs}/>}
+import type { Metadata } from "next";
+import { EventPage } from "@/components/sections/EventPage";
+import { commercialPages } from "@/lib/content/commercial";
+export const metadata: Metadata = { title: "Corporate & Community", description: "Plan professional entertainment, media, AV, and event production around the purpose of the room." };
+export default function CorporatePage() { return <EventPage page={commercialPages.corporate} />; }

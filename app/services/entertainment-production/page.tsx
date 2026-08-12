@@ -1,2 +1,5 @@
-import type { Metadata } from "next";import { CommercialPage } from "@/components/sections/CommercialPage";import { pages,commonFaqs } from "@/lib/content/redesign";
-export const metadata:Metadata={title:"Entertainment + Production"};export default function Page(){const page=pages.production;return <CommercialPage hero={page.hero} blocks={page.blocks} faqs={commonFaqs}/>}
+import type { Metadata } from "next";
+import { EventPage } from "@/components/sections/EventPage";
+import { commercialPages } from "@/lib/content/commercial";
+export const metadata: Metadata = { title: "Entertainment + Production", description: "DJ/MC, sound, lighting, and production planning for DFW weddings and events." };
+export default function ProductionPage() { return <EventPage page={commercialPages.production} />; }

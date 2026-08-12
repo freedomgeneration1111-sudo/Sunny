@@ -1,0 +1,25 @@
+body:has(aside[aria-label="Event plan summary"]) {
+  padding-bottom: 5.75rem;
+}
+
+.chat-teaser-trigger::before {
+  content: "Need help shaping your plan?";
+  display: block;
+  margin-bottom: .2rem;
+  color: var(--color-ink-muted);
+  font-size: .68rem;
+  font-weight: 700;
+  line-height: 1.25;
+  text-transform: none;
+}
+
+summary::-webkit-details-marker { display: none; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .chat-teaser-trigger { animation: teaser-enter .2s ease-out both; }
+}
+
+@keyframes teaser-enter {
+  from { opacity: 0; transform: translateY(.5rem); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -1,2 +1,5 @@
-import type { Metadata } from "next";import { CommercialPage } from "@/components/sections/CommercialPage";import { pages,commonFaqs } from "@/lib/content/redesign";
-export const metadata:Metadata={title:"South Asian Weddings"};export default function Page(){const page=pages.southAsian;return <CommercialPage hero={page.hero} blocks={page.blocks} faqs={commonFaqs}/>}
+import type { Metadata } from "next";
+import { EventPage } from "@/components/sections/EventPage";
+import { commercialPages } from "@/lib/content/commercial";
+export const metadata: Metadata = { title: "South Asian Weddings", description: "Culturally fluent, multi-event media, entertainment, and production planning across DFW." };
+export default function SouthAsianWeddingsPage() { return <EventPage page={commercialPages.southAsian} />; }
