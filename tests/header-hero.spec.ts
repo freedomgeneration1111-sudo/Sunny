@@ -6,7 +6,7 @@ test("homepage header moves from expanded to compact without losing conversion",
 
   const header = page.getByTestId("site-header");
   await expect(header).toHaveAttribute("data-header-state", "expanded");
-  await expect(page.locator("[data-media-mode=simulated]")).toBeVisible();
+  await expect(page.locator("[data-media-mode=video-ready]")).toBeVisible();
 
   const availability = header.getByRole("link", { name: "Check Availability" });
   await expect(availability).toHaveAttribute("href", "/check-availability/");
@@ -44,4 +44,27 @@ test("reduced motion uses a static hero poster", async ({ page }) => {
   const media = page.locator("[data-reduced-motion-fallback=poster]");
   await expect(media).toBeVisible();
   await expect(media.locator(".cinematic-poster")).toHaveCSS("animation-name", "none");
+});
+
+test("the hero film holds on its last frame instead of looping", async ({ page }) => {
+  await page.goto("/");
+  const video = page.locator("video.cinematic-video");
+  await expect(video).toHaveCount(1);
+
+  // `loop` would restart instantly and never fire `ended`, leaving nowhere to
+  // hang the twenty-second hold.
+  expect(await video.evaluate((el: HTMLVideoElement) => el.loop)).toBe(false);
+  expect(await video.evaluate((el: HTMLVideoElement) => el.muted)).toBe(true);
+  expect(await video.evaluate((el: HTMLVideoElement) => el.autoplay)).toBe(true);
+  await expect(video).toHaveAttribute("playsinline", "");
+  await expect(video).toHaveAttribute("aria-hidden", "true");
+
+  // Motion-free visitors get the poster and download no video at all.
+  const sources = await video.locator("source").evaluateAll((els) =>
+    els.map((el) => el.getAttribute("media")),
+  );
+  expect(sources.length).toBeGreaterThan(0);
+  for (const media of sources) {
+    expect(media).toContain("prefers-reduced-motion: no-preference");
+  }
 });

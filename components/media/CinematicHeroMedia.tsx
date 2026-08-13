@@ -1,16 +1,29 @@
 import Image from "next/image";
+import { HeroVideo } from "@/components/media/HeroVideo";
 import type { MediaAsset } from "@/lib/media";
 
 type CinematicHeroMediaProps = {
   asset: MediaAsset;
   desktopVideoSrc?: string;
   mobileVideoSrc?: string;
+  /**
+   * Portrait still for narrow screens. The film is shot both ways, so cropping
+   * the landscape frame down to a phone would throw away the framing.
+   */
+  mobilePosterSrc?: string;
+  /** How long the film rests on a still frame before playing again. */
+  holdMs?: number;
+  /** Where to pause, if the very last frame is not the right one to hold. */
+  holdAtSeconds?: number;
 };
 
 export function CinematicHeroMedia({
   asset,
   desktopVideoSrc,
   mobileVideoSrc,
+  mobilePosterSrc,
+  holdMs,
+  holdAtSeconds,
 }: CinematicHeroMediaProps) {
   const hasVideo = Boolean(desktopVideoSrc || mobileVideoSrc);
 
@@ -26,35 +39,27 @@ export function CinematicHeroMedia({
         fill
         priority
         sizes="100vw"
-        className="cinematic-poster object-cover"
+        className={`cinematic-poster object-cover ${mobilePosterSrc ? "hidden md:block" : ""}`}
         style={{ objectPosition: asset.objectPosition }}
       />
+      {mobilePosterSrc ? (
+        <Image
+          src={mobilePosterSrc}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="cinematic-poster object-cover md:hidden"
+        />
+      ) : null}
       {hasVideo ? (
-        <video
-          className="cinematic-video absolute inset-0 hidden h-full w-full object-cover motion-safe:block"
-          autoPlay
-          muted
-          loop
-          playsInline
-          controls={false}
-          preload="metadata"
+        <HeroVideo
+          desktopSrc={desktopVideoSrc}
+          mobileSrc={mobileVideoSrc}
           poster={asset.src}
-          aria-hidden="true"
-          tabIndex={-1}
-        >
-          {mobileVideoSrc ? (
-            <source
-              src={mobileVideoSrc}
-              media="(prefers-reduced-motion: no-preference) and (max-width: 767px)"
-            />
-          ) : null}
-          {desktopVideoSrc ? (
-            <source
-              src={desktopVideoSrc}
-              media="(prefers-reduced-motion: no-preference) and (min-width: 768px)"
-            />
-          ) : null}
-        </video>
+          holdMs={holdMs}
+          holdAtSeconds={holdAtSeconds}
+        />
       ) : null}
       <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,9,10,.96)_0%,rgba(8,9,10,.82)_38%,rgba(8,9,10,.38)_68%,rgba(8,9,10,.55)_100%)] md:bg-[linear-gradient(90deg,rgba(8,9,10,.97)_0%,rgba(8,9,10,.82)_38%,rgba(8,9,10,.2)_72%,rgba(8,9,10,.42)_100%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(8,9,10,.74)_0%,transparent_42%,rgba(8,9,10,.34)_100%)]" />
