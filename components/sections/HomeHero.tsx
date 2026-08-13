@@ -41,11 +41,7 @@ export function HomeHero({ asset }: HomeHeroProps) {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button href="/check-availability">Check Availability</Button>
-            <Button
-              href="/pricing"
-              variant="secondary"
-              className="!border-on-brand/40 !bg-ink/35 !text-on-brand backdrop-blur-sm hover:!border-on-brand hover:!bg-ink/60"
-            >
+            <Button href="/pricing" variant="outline">
               View Pricing →
             </Button>
           </div>

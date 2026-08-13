@@ -23,7 +23,7 @@ export function PageHero({
   media,
   variant = "split",
   secondaryHref = "/pricing",
-  secondaryLabel = "Explore Pricing",
+  secondaryLabel = "View Pricing",
   inquiryEvent,
 }: PageHeroProps) {
   const inquiryHref = inquiryEvent
@@ -80,7 +80,7 @@ function HeroActions({ inquiryHref, secondaryHref, secondaryLabel, dark }: { inq
   return (
     <div className="mt-8 flex flex-wrap gap-3">
       <Button href={inquiryHref}>Check Availability</Button>
-      <Button href={secondaryHref} variant="secondary" className={dark ? "border-on-brand/35 bg-ink/25 text-on-brand hover:border-on-brand" : ""}>
+      <Button href={secondaryHref} variant={dark ? "outline" : "secondary"}>
         {secondaryLabel} <span className="ml-2" aria-hidden="true">→</span>
       </Button>
     </div>

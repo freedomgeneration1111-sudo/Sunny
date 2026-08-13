@@ -53,7 +53,7 @@ export default function HomePage() {
         <Container>
           <div className="grid gap-12 lg:grid-cols-[.72fr_1.28fr] lg:gap-20">
             <div>
-              <Eyebrow className="!text-brand-accent">Why one crew</Eyebrow>
+              <Eyebrow className="text-brand-accent!">Why one crew</Eyebrow>
               <SectionHeading className="mt-4">Fewer handoffs to manage.</SectionHeading>
               <p className="mt-6 text-lg leading-8 text-on-brand/68">
                 Camera position, microphone cues, music, lighting, and room transitions all affect
@@ -251,7 +251,7 @@ export default function HomePage() {
         <Container>
           <div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
             <div>
-              <Eyebrow className="!text-ink/70">Start here</Eyebrow>
+              <Eyebrow className="text-ink/70!">Start here</Eyebrow>
               <SectionHeading className="mt-4 max-w-[17ch]">One date is enough to start.</SectionHeading>
               <p className="mt-5 max-w-[58ch] text-lg text-ink/75">
                 Tell us the event, the city, and what you have in mind. Our team takes it from there.
@@ -259,8 +259,7 @@ export default function HomePage() {
             </div>
             <Button
               href="/check-availability"
-              variant="secondary"
-              className="border-ink bg-ink text-on-brand hover:bg-ink/85"
+              variant="inverse"
             >
               Check Availability <span className="ml-2" aria-hidden="true">→</span>
             </Button>

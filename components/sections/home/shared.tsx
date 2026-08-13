@@ -63,8 +63,7 @@ export function SectionActions({
         <Button href={pricing.href}>{pricing.label}</Button>
         <Button
           href={`/check-availability?event=${encodeURIComponent(eventType)}`}
-          variant="secondary"
-          className={dark ? "!border-on-brand/40 !text-on-brand hover:!border-on-brand" : ""}
+          variant={dark ? "outline" : "secondary"}
         >
           Check Availability
         </Button>
@@ -80,7 +79,7 @@ export function SectionActions({
               <Link
                 key={slug}
                 href={`/guides/${slug}`}
-                className={`min-h-11 items-center underline underline-offset-4 hover:text-brand-primary ${dark ? "hover:!text-brand-accent" : ""}`}
+                className={`min-h-11 items-center underline underline-offset-4 hover:text-brand-primary ${dark ? "hover:text-brand-accent!" : ""}`}
               >
                 {guide.title}
               </Link>
@@ -107,7 +106,7 @@ export function SectionIntro({
 }) {
   return (
     <div className={className}>
-      <Eyebrow className={tone === "dark" ? "!text-brand-accent" : ""}>{eyebrow}</Eyebrow>
+      <Eyebrow className={tone === "dark" ? "text-brand-accent!" : ""}>{eyebrow}</Eyebrow>
       <h2 className="mt-4 font-display text-[clamp(2rem,3.4vw,3.4rem)] font-bold leading-[1.02] tracking-[-.035em] text-balance">
         {title}
       </h2>

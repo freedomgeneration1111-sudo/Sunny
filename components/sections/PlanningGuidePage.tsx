@@ -150,14 +150,13 @@ export function PlanningGuidePage({ guide }: { guide: PlanningGuide }) {
         <Container>
           <div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
             <div>
-              <Eyebrow className="!text-ink/70">The next useful step</Eyebrow>
+              <Eyebrow className="text-ink/70!">The next useful step</Eyebrow>
               <SectionHeading className="mt-4 max-w-[20ch]">{guide.cta.title}</SectionHeading>
               <p className="mt-5 max-w-[60ch] text-lg leading-8 text-ink/75">{guide.cta.body}</p>
             </div>
             <Button
               href={`/check-availability?event=${encodeURIComponent(guide.inquiryEvent)}`}
-              variant="secondary"
-              className="border-ink bg-ink text-on-brand hover:bg-ink/85"
+              variant="inverse"
             >
               Check Availability <span className="ml-2" aria-hidden="true">→</span>
             </Button>
@@ -190,7 +189,7 @@ function GuideChapterSection({
       <Container>
         <div className="grid gap-10 lg:grid-cols-[.78fr_1.22fr] lg:gap-16">
           <div>
-            <Eyebrow className={isDark ? "!text-brand-accent" : ""}>{chapter.eyebrow}</Eyebrow>
+            <Eyebrow className={isDark ? "text-brand-accent!" : ""}>{chapter.eyebrow}</Eyebrow>
             <h2 className="mt-4 font-display text-[clamp(1.75rem,2.8vw,2.75rem)] font-bold leading-[1.06] tracking-[-.03em] text-balance">
               {chapter.title}
             </h2>

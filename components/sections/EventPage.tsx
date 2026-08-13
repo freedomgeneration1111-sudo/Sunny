@@ -42,11 +42,11 @@ export function EventPage({ page }: { page: CommercialPageContent }) {
         <Container>
           <div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
             <div>
-              <Eyebrow className="!text-ink/70">The next useful step</Eyebrow>
+              <Eyebrow className="text-ink/70!">The next useful step</Eyebrow>
               <SectionHeading className="mt-4 max-w-[18ch]">{page.cta.title}</SectionHeading>
               <p className="mt-5 max-w-[60ch] text-lg leading-8 text-ink/75">{page.cta.body}</p>
             </div>
-            <Button href={`/check-availability${eventQuery}`} variant="secondary" className="border-ink bg-ink text-on-brand hover:border-ink hover:bg-ink/85">
+            <Button href={`/check-availability${eventQuery}`} variant="inverse">
               Check Availability <span className="ml-2" aria-hidden="true">→</span>
             </Button>
           </div>
@@ -124,7 +124,7 @@ function SectionIntro({ section, isDark }: { section: CommercialSection; isDark:
     <div className="max-w-[760px]">
       {section.eyebrow ? <Eyebrow>{section.eyebrow}</Eyebrow> : null}
       <SectionHeading className="mt-4">{section.title}</SectionHeading>
-      <Lead className={`mt-5 ${isDark ? "!text-on-brand/68" : ""}`}>{section.body}</Lead>
+      <Lead className={`mt-5 ${isDark ? "text-on-brand/68!" : ""}`}>{section.body}</Lead>
     </div>
   );
 }

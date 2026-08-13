@@ -83,7 +83,7 @@ export default function AboutPage() {
         <Container>
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
             <div>
-              <Eyebrow className="!text-brand-accent">Language and culture</Eyebrow>
+              <Eyebrow className="text-brand-accent!">Language and culture</Eyebrow>
               <SectionHeading className="mt-4">Planning in the language your family uses.</SectionHeading>
               <p className="mt-6 text-lg leading-8 text-on-brand/68">
                 Our team can communicate in English, Urdu, Hindi and Punjabi. For South Asian
@@ -152,13 +152,13 @@ export default function AboutPage() {
         <Container>
           <div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
             <div>
-              <Eyebrow className="!text-ink/70">Start here</Eyebrow>
+              <Eyebrow className="text-ink/70!">Start here</Eyebrow>
               <SectionHeading className="mt-4 max-w-[20ch]">Tell us about your event.</SectionHeading>
               <p className="mt-5 max-w-[58ch] text-lg text-ink/75">
                 Share the date, the city, and what you have in mind. We will take it from there.
               </p>
             </div>
-            <Button href="/check-availability" variant="secondary" className="border-ink bg-ink text-on-brand hover:bg-ink/85">
+            <Button href="/check-availability" variant="inverse">
               Check Availability <span className="ml-2" aria-hidden="true">→</span>
             </Button>
           </div>

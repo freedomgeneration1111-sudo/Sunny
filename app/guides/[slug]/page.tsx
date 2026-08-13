@@ -46,7 +46,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
         </Section>
       ))}
       <Section theme="brand">
-        <Container><div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]"><div><Eyebrow className="!text-ink/70">Use the guide</Eyebrow><SectionHeading className="mt-4">Bring the useful context into one inquiry.</SectionHeading><p className="mt-4 max-w-[60ch] text-lg text-ink/75">Start with the date, venue or city, and the services you are considering. Exact scope comes next.</p></div><Button href={`/check-availability?event=${encodeURIComponent(guide.relatedEvent)}`} variant="secondary" className="border-ink bg-ink text-on-brand hover:bg-ink/85">Check Availability <span className="ml-2" aria-hidden="true">→</span></Button></div><Link href="/guides" className="mt-8 inline-flex min-h-12 items-center font-extrabold text-ink">← All planning guides</Link></Container>
+        <Container><div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]"><div><Eyebrow className="text-ink/70!">Use the guide</Eyebrow><SectionHeading className="mt-4">Bring the useful context into one inquiry.</SectionHeading><p className="mt-4 max-w-[60ch] text-lg text-ink/75">Start with the date, venue or city, and the services you have in mind. We will take it from there.</p></div><Button href={`/check-availability?event=${encodeURIComponent(guide.relatedEvent)}`} variant="inverse">Check Availability <span className="ml-2" aria-hidden="true">→</span></Button></div><Link href="/guides" className="mt-8 inline-flex min-h-12 items-center font-extrabold text-ink">← All planning guides</Link></Container>
       </Section>
     </>
   );

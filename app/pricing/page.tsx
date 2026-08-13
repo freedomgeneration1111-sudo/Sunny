@@ -66,7 +66,7 @@ export default function PricingPage() {
 
       <Section theme="dark">
         <Container>
-          <Eyebrow className="!text-brand-accent">Custom quotes</Eyebrow>
+          <Eyebrow className="text-brand-accent!">Custom quotes</Eyebrow>
           <SectionHeading className="mt-4 max-w-[20ch]">Some events are quoted from scratch.</SectionHeading>
           <p className="mt-5 max-w-[65ch] text-lg leading-8 text-on-brand/68">
             Larger production, multi-event celebrations, and unusual venues are quoted around what
@@ -94,13 +94,13 @@ export default function PricingPage() {
         <Container>
           <div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
             <div>
-              <Eyebrow className="!text-ink/70">Ready for a number</Eyebrow>
+              <Eyebrow className="text-ink/70!">Ready for a number</Eyebrow>
               <SectionHeading className="mt-4 max-w-[20ch]">Have your date and event in mind?</SectionHeading>
               <p className="mt-5 max-w-[58ch] text-lg text-ink/75">
                 Send us the details and our team will prepare your quote.
               </p>
             </div>
-            <Button href="/check-availability" variant="secondary" className="border-ink bg-ink text-on-brand hover:bg-ink/85">
+            <Button href="/check-availability" variant="inverse">
               Check Availability <span className="ml-2" aria-hidden="true">→</span>
             </Button>
           </div>

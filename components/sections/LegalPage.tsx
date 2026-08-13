@@ -26,7 +26,7 @@ export function LegalPage({
     <>
       <Section theme="dark" className="pt-[calc(var(--header-h)+2rem)]">
         <Container variant="reading">
-          <Eyebrow className="!text-brand-accent">{eyebrow}</Eyebrow>
+          <Eyebrow className="text-brand-accent!">{eyebrow}</Eyebrow>
           <h1 className="mt-5 font-display text-[clamp(2.25rem,4.5vw,3.75rem)] font-extrabold leading-[1.02] tracking-[-.035em] text-balance">
             {title}
           </h1>
