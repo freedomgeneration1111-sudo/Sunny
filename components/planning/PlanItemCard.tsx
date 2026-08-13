@@ -35,18 +35,22 @@ export function PlanItemCard({
         selected ? "border-brand-primary bg-brand-primary/8" : "border-border"
       } ${compact ? "p-5" : "p-6"}`}
     >
-      <div className="flex items-start justify-between gap-4">
-        <p className="text-xs font-extrabold uppercase tracking-[.14em] text-ink-muted">
-          {item.category}
-        </p>
-        {selected ? (
-          <span className="rounded-full bg-ink px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-on-brand">
-            In plan
-          </span>
-        ) : null}
-      </div>
+      {/* The category label is only useful in the planner, where cards appear
+          outside their pricing group. On /pricing the group heading says it. */}
+      {config.quoteBuilderEnabled ? (
+        <div className="mb-3 flex items-start justify-between gap-4">
+          <p className="text-xs font-extrabold uppercase tracking-[.14em] text-ink-muted">
+            {item.category}
+          </p>
+          {selected ? (
+            <span className="rounded-full bg-ink px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wider text-on-brand">
+              In plan
+            </span>
+          ) : null}
+        </div>
+      ) : null}
 
-      <h3 className={`${compact ? "mt-3 text-lg" : "mt-5 text-2xl"} font-extrabold leading-tight`}>
+      <h3 className={`${compact ? "text-lg" : "text-2xl"} font-extrabold leading-tight`}>
         {item.label}
       </h3>
       <p className="mt-3 text-sm leading-6 text-ink-muted">{item.detail}</p>
