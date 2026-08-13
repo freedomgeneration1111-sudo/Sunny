@@ -43,7 +43,12 @@ test("reduced motion uses a static hero poster", async ({ page }) => {
 
   const media = page.locator("[data-reduced-motion-fallback=poster]");
   await expect(media).toBeVisible();
-  await expect(media.locator(".cinematic-poster")).toHaveCSS("animation-name", "none");
+
+  // The hero ships a landscape and a portrait still; exactly one is shown.
+  await expect(media.locator(".cinematic-poster")).toHaveCount(2);
+  const shown = media.locator(".cinematic-poster:visible");
+  await expect(shown).toHaveCount(1);
+  await expect(shown).toHaveCSS("animation-name", "none");
 });
 
 test("the hero film holds on its last frame instead of looping", async ({ page }) => {
