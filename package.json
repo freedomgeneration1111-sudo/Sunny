@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "npm run test:public && npm run test:operations && npm run staff:test",
+    "test": "npm run test:lib && npm run test:public && npm run test:operations && npm run staff:test",
     "test:public": "playwright test",
     "test:operations": "vitest run --config operations/vitest.config.mts",
     "ops:dev": "wrangler dev --config operations/wrangler.jsonc",
@@ -28,7 +28,8 @@
     "staff:typecheck": "tsc -p operations/staff-app/tsconfig.json --noEmit",
     "staff:lint": "eslint operations/staff-app/src",
     "staff:test": "vitest run --config operations/staff-app/vitest.config.mts",
-    "test:staff:e2e": "playwright test --config operations/staff-app/playwright.config.ts"
+    "test:staff:e2e": "playwright test --config operations/staff-app/playwright.config.ts",
+    "test:lib": "vitest run --config vitest.config.mts"
   },
   "dependencies": {
     "jose": "^6.2.8",

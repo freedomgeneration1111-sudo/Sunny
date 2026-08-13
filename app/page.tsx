@@ -1,10 +1,10 @@
+import type { Metadata } from "next";
 import { TrackedLink } from "@/components/analytics/TrackedLink";
 import { MediaFrame } from "@/components/media/MediaFrame";
 import { CorporateSection } from "@/components/sections/home/CorporateSection";
 import { PartiesSection } from "@/components/sections/home/PartiesSection";
 import { ShaadiSection } from "@/components/sections/home/ShaadiSection";
 import { WeddingsSection } from "@/components/sections/home/WeddingsSection";
-import { PricingMenu } from "@/components/sections/PricingMenu";
 import { FAQList } from "@/components/sections/FAQList";
 import { HomeHero } from "@/components/sections/HomeHero";
 import { Button } from "@/components/ui/Button";
@@ -14,26 +14,23 @@ import { Eyebrow, Lead, SectionHeading } from "@/components/ui/Typography";
 import { commonFaqs } from "@/lib/content/commercial";
 import { eventPathCards } from "@/lib/content/eventSections";
 import { media } from "@/lib/media";
-import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   description:
-    "One crew for event media, entertainment and production across Dallas–Fort Worth. Plan your wedding, Shaadi celebration, party, or corporate event on one page.",
+    "Photo, video, DJ/MC, sound, lighting and production for weddings, Shaadi celebrations, parties and corporate events across Dallas–Fort Worth.",
   alternates: { canonical: "/" },
 };
 
 /**
- * The one-anchor homepage: the complete customer journey on a single page.
+ * The homepage carries the customer journey: understand Focus Lab, understand
+ * why one crew helps, choose an event type, see what we cover, then pricing and
+ * Check Availability.
  *
- * A visitor arrives, understands Focus Lab, identifies their event, explores
- * the relevant services, builds a plan, sees pricing, can ask a question, and
- * reaches Check Availability without leaving this route. The matching routes
- * (/weddings, /south-asian-weddings, /events/*) are the knowledge layer —
- * depth and search, not the primary path.
+ * The full service menu deliberately lives on /pricing. Each event section
+ * links to its own category there rather than repeating the catalog here.
  *
- * Anchor order is the structural contract, mirrored by the header nav:
- *   hero → trust-strip → paths → weddings → shaadi → parties → corporate
- *   → why-one-crew → capabilities → pricing-menu → how-it-works → cta
+ * Anchor order is a structural contract, mirrored by the header nav and
+ * asserted in tests/redesign-baseline.spec.ts.
  */
 export default function HomePage() {
   return (
@@ -51,17 +48,61 @@ export default function HomePage() {
         </Container>
       </Section>
 
-      {/* The mental map. These scroll down the page — they never navigate away. */}
+      {/* The differentiator comes before the shopping. */}
+      <Section theme="dark" id="why-one-crew">
+        <Container>
+          <div className="grid gap-12 lg:grid-cols-[.72fr_1.28fr] lg:gap-20">
+            <div>
+              <Eyebrow className="!text-brand-accent">Why one crew</Eyebrow>
+              <SectionHeading className="mt-4">Fewer handoffs to manage.</SectionHeading>
+              <p className="mt-6 text-lg leading-8 text-on-brand/68">
+                Camera position, microphone cues, music, lighting, and room transitions all affect
+                one another. Booking them together means they are planned together.
+              </p>
+            </div>
+            <ol className="grid overflow-hidden rounded-media border border-on-brand/15 sm:grid-cols-3">
+              {[
+                {
+                  n: "01",
+                  t: "One planning conversation",
+                  b: "Photo, video, entertainment and production work from the same event plan.",
+                },
+                {
+                  n: "02",
+                  t: "Fewer handoffs",
+                  b: "Music, microphones, cameras, lighting and key cues are coordinated together.",
+                },
+                {
+                  n: "03",
+                  t: "One place to make changes",
+                  b: "When timing or event details change, there is one plan to update.",
+                },
+              ].map((item) => (
+                <li
+                  key={item.n}
+                  className="border-b border-on-brand/15 p-6 last:border-0 sm:border-b-0 sm:border-r sm:last:border-r-0"
+                >
+                  <span className="text-sm font-black text-brand-accent">{item.n}</span>
+                  <h3 className="mt-12 text-xl font-extrabold">{item.t}</h3>
+                  <p className="mt-3 text-sm leading-6 text-on-brand/60">{item.b}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </Container>
+      </Section>
+
+      {/* The mental map. These scroll down the page. */}
       <Section id="paths">
         <Container>
           <div className="grid gap-6 lg:grid-cols-[.68fr_1.32fr] lg:items-end">
             <div>
               <Eyebrow>Start with your event</Eyebrow>
-              <SectionHeading className="mt-4">Choose the path that fits the room.</SectionHeading>
+              <SectionHeading className="mt-4">What are you planning?</SectionHeading>
             </div>
             <Lead>
-              Everything you need is on this page. Jump to your event, build a plan as you
-              read, and carry it into availability when you are ready.
+              Jump to your event to see what Focus Lab can cover, then head to pricing when you
+              want numbers.
             </Lead>
           </div>
           <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
@@ -99,55 +140,22 @@ export default function HomePage() {
       <PartiesSection />
       <CorporateSection />
 
-      <Section theme="dark" id="why-one-crew">
-        <Container>
-          <div className="grid gap-12 lg:grid-cols-[.72fr_1.28fr] lg:gap-20">
-            <div>
-              <Eyebrow className="!text-brand-accent">Why one crew</Eyebrow>
-              <SectionHeading className="mt-4">Fewer handoffs. A clearer event plan.</SectionHeading>
-              <p className="mt-6 text-lg leading-8 text-on-brand/68">
-                Camera position, microphone cues, music, lighting, and room transitions affect
-                one another. Coordination begins before the event.
-              </p>
-            </div>
-            <ol className="grid overflow-hidden rounded-media border border-on-brand/15 sm:grid-cols-3">
-              {[
-                { n: "01", t: "One timeline", b: "Selected services work from the same key moments." },
-                { n: "02", t: "Clear ownership", b: "Every capability understands where it fits." },
-                { n: "03", t: "Exact scope", b: "Complexity becomes a planning conversation." },
-              ].map((item) => (
-                <li
-                  key={item.n}
-                  className="border-b border-on-brand/15 p-6 last:border-0 sm:border-b-0 sm:border-r sm:last:border-r-0"
-                >
-                  <span className="text-sm font-black text-brand-accent">{item.n}</span>
-                  <h3 className="mt-12 text-xl font-extrabold">{item.t}</h3>
-                  <p className="mt-3 text-sm leading-6 text-on-brand/60">{item.b}</p>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </Container>
-      </Section>
-
       <Section id="capabilities">
         <Container>
-          <Eyebrow>Two capability families</Eyebrow>
-          <SectionHeading className="mt-4 max-w-[18ch]">
-            Specialists connected by one event plan.
-          </SectionHeading>
+          <Eyebrow>What we do</Eyebrow>
+          <SectionHeading className="mt-4 max-w-[18ch]">Two teams, one event plan.</SectionHeading>
           <div className="mt-10 grid gap-10 lg:grid-cols-2">
             {[
               {
                 title: "Photo + Video",
-                body: "Photography, filmmaking, and coordinated coverage.",
+                body: "Photography, film, and coverage planned around your timeline.",
                 asset: media.capture,
                 href: "/services/photo-video",
-                labels: ["Photography", "Film", "Combined coverage"],
+                labels: ["Photography", "Film", "Both together"],
               },
               {
                 title: "Entertainment + Production",
-                body: "DJ/MC, sound, lighting, and event enhancements.",
+                body: "DJ and MC, sound, lighting, and the extras that change a room.",
                 asset: media.production,
                 href: "/services/entertainment-production",
                 labels: ["DJ + MC", "Sound + lighting", "Enhancements"],
@@ -173,7 +181,7 @@ export default function HomePage() {
                   href={capability.href}
                   className="mt-5 inline-flex min-h-12 items-center font-extrabold text-brand-primary"
                 >
-                  Explore capability{" "}
+                  Learn more{" "}
                   <span className="ml-2 transition-transform group-hover:translate-x-1" aria-hidden="true">
                     →
                   </span>
@@ -184,36 +192,37 @@ export default function HomePage() {
         </Container>
       </Section>
 
+      {/* Compact bridge. The full menu lives on /pricing. */}
       <Section theme="alt" id="pricing-menu">
         <Container>
-          <div className="grid gap-6 lg:grid-cols-[.75fr_1.25fr] lg:items-end">
+          <div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
             <div>
-              <Eyebrow>The complete menu</Eyebrow>
-              <SectionHeading className="mt-4">Everything, in one place.</SectionHeading>
+              <Eyebrow>Pricing</Eyebrow>
+              <SectionHeading className="mt-4 max-w-[20ch]">Clear pricing. Custom quotes.</SectionHeading>
+              <p className="mt-5 max-w-[62ch] text-lg leading-8 text-ink-muted">
+                Browse the full Focus Lab service and pricing menu, then send us your event details
+                when you are ready for a quote.
+              </p>
             </div>
-            <Lead>
-              No categories hidden behind tabs. These provisional anchors are visible for
-              customer review — select a useful direction and carry it into availability.
-            </Lead>
+            <div className="flex flex-wrap gap-3">
+              <Button href="/pricing">View Pricing</Button>
+              <Button href="/check-availability" variant="secondary">
+                Check Availability
+              </Button>
+            </div>
           </div>
-          <div className="mt-10">
-            <PricingMenu />
-          </div>
-          <Button href="/pricing" variant="secondary" className="mt-8">
-            Open the shareable pricing page <span className="ml-2" aria-hidden="true">→</span>
-          </Button>
         </Container>
       </Section>
 
       <Section id="how-it-works">
         <Container>
           <Eyebrow>How it works</Eyebrow>
-          <SectionHeading className="mt-4">Start simple. Scope carefully.</SectionHeading>
+          <SectionHeading className="mt-4">Three steps to a real number.</SectionHeading>
           <ol className="mt-10 grid overflow-hidden rounded-card border border-border md:grid-cols-3">
             {[
-              { n: "01", t: "Share the date", b: "Event type, city, timing, and what matters." },
-              { n: "02", t: "Choose the pieces", b: "Media, entertainment, production, or a coordinated mix." },
-              { n: "03", t: "Confirm exact scope", b: "Resolve details before an anchor is treated as final." },
+              { n: "01", t: "Share the date", b: "Tell us what you're planning and where." },
+              { n: "02", t: "Review your options", b: "Use the pricing menu to see the services that may fit your event." },
+              { n: "03", t: "Get your quote", b: "Focus Lab confirms the event details, services and final price with you." },
             ].map((item) => (
               <li
                 key={item.n}
@@ -243,12 +252,9 @@ export default function HomePage() {
           <div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
             <div>
               <Eyebrow className="!text-ink/70">Start here</Eyebrow>
-              <SectionHeading className="mt-4 max-w-[17ch]">
-                One date is enough to start.
-              </SectionHeading>
+              <SectionHeading className="mt-4 max-w-[17ch]">One date is enough to start.</SectionHeading>
               <p className="mt-5 max-w-[58ch] text-lg text-ink/75">
-                Tell us the event, city, and what you are considering. Anything you added to
-                your plan comes with you. Exact scope comes next.
+                Tell us the event, the city, and what you have in mind. Our team takes it from there.
               </p>
             </div>
             <Button

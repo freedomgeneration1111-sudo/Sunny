@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { config } from "@/lib/config";
 import type { MediaAsset } from "@/lib/media";
 
 type CinematicHeroMediaProps = {
@@ -59,11 +58,6 @@ export function CinematicHeroMedia({
       ) : null}
       <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,9,10,.96)_0%,rgba(8,9,10,.82)_38%,rgba(8,9,10,.38)_68%,rgba(8,9,10,.55)_100%)] md:bg-[linear-gradient(90deg,rgba(8,9,10,.97)_0%,rgba(8,9,10,.82)_38%,rgba(8,9,10,.2)_72%,rgba(8,9,10,.42)_100%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(8,9,10,.74)_0%,transparent_42%,rgba(8,9,10,.34)_100%)]" />
-      {config.showDevelopmentLabels && asset.truth === "development-placeholder" ? (
-        <p className="absolute bottom-4 right-4 z-10 rounded-md bg-ink/85 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-on-brand">
-          {asset.id} · Video-ready layout placeholder
-        </p>
-      ) : null}
     </div>
   );
 }

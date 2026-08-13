@@ -1,0 +1,66 @@
+{
+  "meta": {
+    "company": "Focus Lab Productions",
+    "currency": "USD",
+    "market": "Dallas-Fort Worth",
+    "updated": "2026-08-13",
+    "note": "The current Focus Lab service and pricing menu published at /pricing. This file is the single source of truth for offerings, names, descriptions, prices, and pricing modes. Edit here to change what customers see."
+  },
+  "modes": {
+    "exact": "Shown as a flat price.",
+    "from": "Shown as a starting price.",
+    "hourly": "Shown as a per-hour price.",
+    "custom": "No price shown; the customer is invited to request a quote."
+  },
+  "values": {
+    "weddingDjCore": { "amount": 1700, "mode": "from", "label": "Wedding DJ/MC" },
+    "weddingDjCeremonyReception": { "amount": 1900, "mode": "from", "label": "Ceremony + Reception DJ/MC" },
+    "weddingProductionEnhanced": { "amount": 4600, "mode": "from", "label": "DJ + Full Production" },
+    "ceremonySound": { "amount": 550, "mode": "from", "label": "Ceremony Sound System" },
+
+    "saSingleEvent": { "amount": 2400, "mode": "from", "label": "Single Celebration Coverage" },
+    "saWeddingReception": { "amount": 4200, "mode": "from", "label": "Wedding Day + Reception" },
+    "saFullCelebration": { "amount": 9500, "mode": "custom", "label": "Full Celebration Week" },
+    "saBaraat": { "amount": 950, "mode": "from", "label": "Baraat Procession Sound" },
+    "southAsianCelebrationMedia": { "amount": 7500, "mode": "custom", "label": "Shaadi Photo + Video" },
+
+    "party3h": { "amount": 675, "mode": "exact", "label": "3-Hour Party" },
+    "party4h": { "amount": 900, "mode": "exact", "label": "4-Hour Party" },
+    "party5h": { "amount": 1125, "mode": "exact", "label": "5-Hour Party" },
+    "partyPhotography": { "amount": 850, "mode": "from", "label": "Celebration Photography" },
+    "partyHighlightVideo": { "amount": 700, "mode": "from", "label": "Social Highlight Video" },
+
+    "corporateDjHourly": { "amount": 175, "mode": "hourly", "label": "Corporate DJ / Entertainment" },
+    "corporateAvBasic": { "amount": 1200, "mode": "from", "label": "Meeting AV Package" },
+    "corporateProductionHalfDay": { "amount": 1900, "mode": "custom", "label": "Half-Day Production" },
+    "corporateProductionFullDay": { "amount": 5000, "mode": "custom", "label": "Full-Day Production" },
+    "corporateMedia": { "amount": 2200, "mode": "from", "label": "Corporate Photo + Video" },
+    "corporateLivestream": { "amount": 3200, "mode": "custom", "label": "Livestream + Hybrid Capture" },
+
+    "weddingPhotography": { "amount": 3300, "mode": "from", "label": "Wedding Photography" },
+    "weddingVideography": { "amount": 2700, "mode": "from", "label": "Wedding Videography" },
+    "photoVideoBundle": { "amount": 5600, "mode": "from", "label": "Photo + Video" },
+    "engagementSession": { "amount": 650, "mode": "from", "label": "Engagement / Portrait Session" },
+    "socialContent": { "amount": 900, "mode": "from", "label": "Same-Week Social Content" },
+
+    "digitalPhotoBooth": { "amount": 775, "mode": "from", "label": "Digital / Open-Air Booth" },
+    "booth360": { "amount": 600, "mode": "from", "label": "360 Booth" },
+    "dancingOnClouds": { "amount": 525, "mode": "from", "label": "Dancing on Clouds" },
+    "coldSparks": { "amount": 575, "mode": "from", "label": "Cold Sparks" },
+    "uplighting": { "amount": 450, "mode": "from", "label": "Room Uplighting" },
+    "monogram": { "amount": 350, "mode": "from", "label": "Custom Monogram Projection" },
+    "ledWall": { "amount": 3500, "mode": "custom", "label": "LED Wall" }
+  },
+  "customQuoteCategories": [
+    "Multi-day or multi-venue celebrations",
+    "LED walls, stage design, and larger production builds",
+    "Large or technically unusual venues",
+    "Custom dance floors",
+    "Live performers and live sound",
+    "Multi-room corporate AV",
+    "Events that involve travel outside the metroplex",
+    "Larger crews or specific insurance and COI requirements",
+    "Venues with restricted load-in, power, rigging, or effects",
+    "Expedited photo and video delivery"
+  ]
+}

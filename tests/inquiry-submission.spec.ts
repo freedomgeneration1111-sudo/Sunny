@@ -14,7 +14,7 @@ async function openReadyForm(page:Page){
 
 test("configured inquiry UI reports success only after API success",async({page})=>{
   await page.route("https://api.example.test/v1/inquiries",async route=>{const request=route.request();expect(request.headers()["idempotency-key"]).toBeTruthy();const body=request.postDataJSON();expect(body.turnstileToken).toBe("browser-test-token");expect(body.website).toBe("");await route.fulfill({status:201,contentType:"application/json",body:JSON.stringify({ok:true,inquiryId:"inq_synthetic",eventId:"evt_synthetic",createdAt:"2026-08-11T00:00:00.000Z",status:"received_for_review",message:"Your inquiry was received for human review. This is not an availability confirmation."})});});
-  await openReadyForm(page);await page.getByRole("button",{name:"Send Inquiry"}).click();await expect(page.getByText("Inquiry received for review.",{exact:true})).toBeVisible();
+  await openReadyForm(page);await page.getByRole("button",{name:"Send Inquiry"}).click();await expect(page.getByText("Thanks — we have your inquiry.",{exact:true})).toBeVisible();
 });
 
 test("configured inquiry UI shows a safe failure and preserves entries",async({page})=>{

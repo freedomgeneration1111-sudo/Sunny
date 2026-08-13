@@ -36,8 +36,8 @@ export function HomeHero({ asset }: HomeHeroProps) {
             One event. One crew. Zero handoffs.
           </h1>
           <p className="mt-6 max-w-xl text-base leading-7 text-on-brand/78 sm:text-lg sm:leading-8">
-            Photo, film, entertainment and production—planned around the same room,
-            the same timeline and the moments that matter.
+            Photo + video, DJ/MC, sound, lighting and production — planned together
+            around your event.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button href="/check-availability">Check Availability</Button>
@@ -46,7 +46,7 @@ export function HomeHero({ asset }: HomeHeroProps) {
               variant="secondary"
               className="!border-on-brand/40 !bg-ink/35 !text-on-brand backdrop-blur-sm hover:!border-on-brand hover:!bg-ink/60"
             >
-              Explore Pricing →
+              View Pricing →
             </Button>
           </div>
         </div>

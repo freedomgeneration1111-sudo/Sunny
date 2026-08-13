@@ -1,14 +1,12 @@
 import { MediaFrame } from "@/components/media/MediaFrame";
-import { PlanItemCard } from "@/components/planning/PlanItemCard";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { partiesSection as content } from "@/lib/content/eventSections";
-import { GuideLink, PlanGroups, SectionIntro } from "./shared";
+import { Capabilities, SectionActions, SectionIntro } from "./shared";
 
 /**
- * Rhythm: duration-first. The three time blocks are the largest thing in the
- * section because for most celebrations that is genuinely the first decision.
- * Everything else is a secondary strip.
+ * Rhythm: duration first. For most celebrations the length of the night really
+ * is the first decision, so it leads. Prices live on /pricing.
  */
 export function PartiesSection() {
   return (
@@ -34,21 +32,21 @@ export function PartiesSection() {
           ))}
         </ul>
 
-        {/* Primary axis: how long the room stays alive. */}
-        <div className="mt-14">
-          <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
-            <h4 className="font-display text-3xl font-bold tracking-[-.03em]">Pick a time block.</h4>
-            <p className="max-w-[52ch] text-sm text-ink-muted">{content.durationNote}</p>
-          </div>
-          <div className="mt-6 grid gap-5 md:grid-cols-3">
-            {content.durationIds.map((id) => (
-              <PlanItemCard key={id} id={id} />
-            ))}
-          </div>
+        <div className="mt-14 grid gap-px overflow-hidden rounded-media border border-border bg-border md:grid-cols-3">
+          {content.durations.map((duration) => (
+            <div key={duration.label} className="bg-surface p-7 md:p-8">
+              <p className="font-display text-4xl font-black tracking-[-.04em]">{duration.label}</p>
+              <p className="mt-4 leading-7 text-ink-muted">{duration.note}</p>
+            </div>
+          ))}
         </div>
 
-        <PlanGroups groups={content.planGroups} />
-        <GuideLink {...content.guide} />
+        <Capabilities items={content.capabilities} />
+        <SectionActions
+          pricing={content.pricing}
+          guides={content.guides}
+          eventType="Party / Celebration"
+        />
       </Container>
     </Section>
   );

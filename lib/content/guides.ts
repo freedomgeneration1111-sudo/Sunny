@@ -24,7 +24,7 @@ export const guides = [
     relatedEvent: "Wedding",
     sections: [
       { title: "Before the timeline is locked", body: "Resolve the decisions that affect every selected service.", items: ["Confirm venue access, load-in, event start, and hard end times.", "List the people authorized to approve timeline or room changes.", "Mark which moments require music, microphones, photo, video, or lighting cues.", "Share venue restrictions for power, sound, rigging, haze, clouds, or cold sparks."] },
-      { title: "People and announcements", body: "Give the person holding the microphone a verified source for names and order.", items: ["Write names phonetically when pronunciation may be unclear.", "Confirm the entrance order and where each person waits.", "Name the person who will gather speakers before toasts.", "Decide how schedule changes will reach the couple and crew without interrupting guests."] },
+      { title: "People and announcements", body: "Give the person holding the microphone a confirmed list of names and the running order.", items: ["Write names phonetically when pronunciation may be unclear.", "Confirm the entrance order and where each person waits.", "Name the person who will gather speakers before toasts.", "Decide how schedule changes will reach the couple and crew without interrupting guests."] },
       { title: "Key reception transitions", body: "Treat each transition as a shared cue rather than an isolated song or shot.", items: ["Grand entrance into the next planned moment.", "First dance and any parent or family dances.", "Toasts, blessing, dinner release, and open-dance transition.", "Cake, private last dance, send-off, or final announcement if used."] },
     ],
   },
@@ -85,12 +85,12 @@ export const guides = [
     eyebrow: "Production Guide",
     title: "Enhancements & Venue Approval",
     description: "A safety-first approval checklist for booths, low-lying clouds, cold sparks, lighting, and custom production.",
-    intro: "An enhancement is not approved merely because it appears in a planning menu. Venue rules, room conditions, written approval, and final operating scope remain decisive.",
+    intro: "An effect on a menu is not the same as an effect your venue allows. Venue rules, room conditions, and written approval decide what actually happens.",
     relatedEvent: "Wedding",
     sections: [
-      { title: "Ask the venue first", body: "Get requirements in writing before treating an effect as part of the event.", items: ["Which enhancements are permitted in the contracted room.", "Required insurance, permits, operators, fire watch, or certificates.", "Ceiling, sprinkler, alarm, ventilation, flooring, and egress restrictions.", "Approval deadline and the venue contact with final authority."] },
+      { title: "Ask the venue first", body: "Get the requirements in writing before treating an effect as part of the event.", items: ["Which enhancements are permitted in the contracted room.", "Required insurance, permits, operators, fire watch, or certificates.", "Ceiling, sprinkler, alarm, ventilation, flooring, and egress restrictions.", "Approval deadline and the venue contact with final authority."] },
       { title: "Confirm the operating area", body: "The effect must fit the room after guests, tables, and exits are considered.", items: ["Clear equipment placement and guest separation.", "Unobstructed exits, aisles, doors, and accessible paths.", "Power, cable protection, ventilation, and surface protection.", "A safe cancellation plan if room or venue conditions change."] },
-      { title: "Set expectations", body: "Plan for the enhancement without promising conditions nobody controls.", items: ["Exact duration and the moment it supports.", "Who gives the operating cue and who can cancel it.", "What happens if approval is withheld or conditions are unsafe.", "How the selection will be scoped and priced after venue review."] },
+      { title: "Set expectations", body: "Plan the effect without promising conditions nobody controls.", items: ["Exact duration and the moment it supports.", "Who gives the operating cue and who can cancel it.", "What happens if approval is withheld or conditions are unsafe.", "How it will be priced once the venue has confirmed."] },
     ],
   },
 ] as const satisfies readonly Guide[];

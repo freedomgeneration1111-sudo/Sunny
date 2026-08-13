@@ -1,3 +1,4 @@
+import { servicePricing } from "@/lib/pricing";
 import type { PricingKey } from "@/lib/pricing";
 
 export type PlanCategory =
@@ -14,13 +15,6 @@ export type PlanItem = {
   category: PlanCategory;
   detail: string;
   priceKey?: PricingKey;
-  /**
-   * Draft inventory invented to make the redesign coherent. Real offer scope
-   * and pricing are decided in a later sprint; the UI must keep these visibly
-   * provisional. Adding or removing a service happens here and in
-   * docs/06_DEV_PRICING_DATA.json — nowhere else.
-   */
-  draft?: true;
 };
 
 export const planItems = {
@@ -28,21 +22,21 @@ export const planItems = {
     id: "wedding-dj-core",
     label: "Wedding DJ/MC",
     category: "Wedding",
-    detail: "Reception entertainment starting point",
+    detail: "Music and hosting for the reception",
     priceKey: "weddingDjCore",
   },
   "wedding-dj-ceremony": {
     id: "wedding-dj-ceremony",
     label: "Ceremony + Reception DJ/MC",
     category: "Wedding",
-    detail: "A connected ceremony and reception starting point",
+    detail: "Ceremony and reception on one timeline",
     priceKey: "weddingDjCeremonyReception",
   },
   "wedding-production": {
     id: "wedding-production",
-    label: "DJ + Substantial Production",
+    label: "DJ + Full Production",
     category: "Wedding",
-    detail: "For events that need a larger production conversation",
+    detail: "For events that need a larger sound and lighting setup",
     priceKey: "weddingProductionEnhanced",
   },
   "ceremony-sound": {
@@ -51,15 +45,13 @@ export const planItems = {
     category: "Wedding",
     detail: "Vows, officiant, and readings heard from the back row",
     priceKey: "ceremonySound",
-    draft: true,
   },
   "sa-single-event": {
     id: "sa-single-event",
     label: "Single Celebration Coverage",
     category: "South Asian",
-    detail: "One celebration in the week — Mehndi, Sangeet, Haldi, or similar",
+    detail: "One celebration — Mehndi, Sangeet, Haldi, or another event",
     priceKey: "saSingleEvent",
-    draft: true,
   },
   "sa-wedding-reception": {
     id: "sa-wedding-reception",
@@ -67,15 +59,13 @@ export const planItems = {
     category: "South Asian",
     detail: "The ceremony day and the reception on one connected plan",
     priceKey: "saWeddingReception",
-    draft: true,
   },
   "sa-full-celebration": {
     id: "sa-full-celebration",
     label: "Full Celebration Week",
     category: "South Asian",
-    detail: "Every event your family is planning, scoped together",
+    detail: "Every event your family is planning, quoted together",
     priceKey: "saFullCelebration",
-    draft: true,
   },
   "sa-baraat": {
     id: "sa-baraat",
@@ -83,34 +73,33 @@ export const planItems = {
     category: "South Asian",
     detail: "Mobile sound for a procession that moves outdoors",
     priceKey: "saBaraat",
-    draft: true,
   },
   "south-asian-media": {
     id: "south-asian-media",
-    label: "South Asian Celebration Media",
+    label: "Shaadi Photo + Video",
     category: "South Asian",
-    detail: "Development anchor for custom multi-event scoping",
-    priceKey: "southAsianMediaDevelopmentAnchor",
+    detail: "Photo and video across a multi-event celebration",
+    priceKey: "southAsianCelebrationMedia",
   },
   "party-3h": {
     id: "party-3h",
     label: "3-Hour Party",
     category: "Party",
-    detail: "Compact entertainment time block",
+    detail: "A shorter celebration",
     priceKey: "party3h",
   },
   "party-4h": {
     id: "party-4h",
     label: "4-Hour Party",
     category: "Party",
-    detail: "Balanced entertainment time block",
+    detail: "The most common length",
     priceKey: "party4h",
   },
   "party-5h": {
     id: "party-5h",
     label: "5-Hour Party",
     category: "Party",
-    detail: "Extended entertainment time block",
+    detail: "A longer night",
     priceKey: "party5h",
   },
   "party-photography": {
@@ -119,7 +108,6 @@ export const planItems = {
     category: "Party",
     detail: "Photo coverage sized to a shorter celebration",
     priceKey: "partyPhotography",
-    draft: true,
   },
   "party-highlight-video": {
     id: "party-highlight-video",
@@ -127,13 +115,12 @@ export const planItems = {
     category: "Party",
     detail: "A short edit shaped for phones and sharing",
     priceKey: "partyHighlightVideo",
-    draft: true,
   },
   "corporate-dj": {
     id: "corporate-dj",
     label: "Corporate DJ / Entertainment",
     category: "Corporate",
-    detail: "Hourly entertainment starting point",
+    detail: "Music and hosting, billed by the hour",
     priceKey: "corporateDjHourly",
   },
   "corporate-av-basic": {
@@ -142,20 +129,19 @@ export const planItems = {
     category: "Corporate",
     detail: "Microphones, playback, and a display the back row can read",
     priceKey: "corporateAvBasic",
-    draft: true,
   },
   "corporate-half-day": {
     id: "corporate-half-day",
-    label: "Corporate Production Half-Day",
+    label: "Half-Day Production",
     category: "Corporate",
-    detail: "Development-only custom scope anchor",
+    detail: "Sound, lighting, and AV for a half-day program",
     priceKey: "corporateProductionHalfDay",
   },
   "corporate-full-day": {
     id: "corporate-full-day",
-    label: "Corporate Production Full-Day",
+    label: "Full-Day Production",
     category: "Corporate",
-    detail: "Development-only custom scope anchor",
+    detail: "Sound, lighting, and AV for a full-day program",
     priceKey: "corporateProductionFullDay",
   },
   "corporate-media": {
@@ -164,35 +150,33 @@ export const planItems = {
     category: "Corporate",
     detail: "Documentation you can actually use afterward",
     priceKey: "corporateMedia",
-    draft: true,
   },
   "corporate-livestream": {
     id: "corporate-livestream",
     label: "Livestream + Hybrid Capture",
     category: "Corporate",
-    detail: "For rooms with an audience that is not in the room",
+    detail: "For programs with an audience joining remotely",
     priceKey: "corporateLivestream",
-    draft: true,
   },
   photography: {
     id: "photography",
     label: "Wedding Photography",
     category: "Media",
-    detail: "Photography coverage starting point",
+    detail: "Photography coverage for the wedding day",
     priceKey: "weddingPhotography",
   },
   videography: {
     id: "videography",
     label: "Wedding Videography",
     category: "Media",
-    detail: "Filmmaking coverage starting point",
+    detail: "Film coverage for the wedding day",
     priceKey: "weddingVideography",
   },
   "photo-video": {
     id: "photo-video",
     label: "Photo + Video",
     category: "Media",
-    detail: "Coordinated media coverage starting point",
+    detail: "Photography and film planned together",
     priceKey: "photoVideoBundle",
   },
   "engagement-session": {
@@ -201,7 +185,6 @@ export const planItems = {
     category: "Media",
     detail: "A relaxed session before the event week begins",
     priceKey: "engagementSession",
-    draft: true,
   },
   "social-content": {
     id: "social-content",
@@ -209,43 +192,41 @@ export const planItems = {
     category: "Media",
     detail: "Short vertical edits while the event still feels current",
     priceKey: "socialContent",
-    draft: true,
   },
   "digital-booth": {
     id: "digital-booth",
     label: "Digital / Open-Air Booth",
     category: "Enhancement",
-    detail: "Guest photo experience",
+    detail: "A photo station for guests",
     priceKey: "digitalPhotoBooth",
   },
   "booth-360": {
     id: "booth-360",
     label: "360 Booth",
     category: "Enhancement",
-    detail: "Short-form guest video experience",
+    detail: "Short spinning videos guests can share",
     priceKey: "booth360",
   },
   clouds: {
     id: "clouds",
     label: "Dancing on Clouds",
     category: "Enhancement",
-    detail: "Venue-dependent first-dance effect",
+    detail: "A low cloud effect for the first dance",
     priceKey: "dancingOnClouds",
   },
   "cold-sparks": {
     id: "cold-sparks",
     label: "Cold Sparks",
     category: "Enhancement",
-    detail: "Venue approval and safe conditions required",
+    detail: "Indoor-safe sparks for entrances and first dances",
     priceKey: "coldSparks",
   },
   uplighting: {
     id: "uplighting",
     label: "Room Uplighting",
     category: "Enhancement",
-    detail: "Colour on the walls so the room reads as one space",
+    detail: "Color on the walls so the room reads as one space",
     priceKey: "uplighting",
-    draft: true,
   },
   monogram: {
     id: "monogram",
@@ -253,15 +234,13 @@ export const planItems = {
     category: "Enhancement",
     detail: "A projected name or motif on the floor or wall",
     priceKey: "monogram",
-    draft: true,
   },
   "led-wall": {
     id: "led-wall",
     label: "LED Wall",
     category: "Enhancement",
-    detail: "Venue power, rigging, and sightlines are always scoped first",
+    detail: "Sized to your room, power, and sightlines",
     priceKey: "ledWall",
-    draft: true,
   },
 } as const satisfies Record<string, PlanItem>;
 
@@ -275,4 +254,35 @@ export const planItemIds = Object.keys(planItems) as PlanItemId[];
 
 export function planItemsByCategory(category: PlanCategory): PlanItemId[] {
   return planItemIds.filter((id) => planItems[id].category === category);
+}
+
+/* ── Quote-builder logic ──────────────────────────────────────────────
+ * Dormant while `config.quoteBuilderEnabled` is false, but kept pure and
+ * tested so the capability does not rot. `PlanProvider` is the only UI
+ * consumer; these functions are what actually do the work.
+ * ------------------------------------------------------------------- */
+
+/** Sum the services that carry a set price. Custom-quote services are excluded. */
+export function planSubtotal(ids: readonly PlanItemId[], prices = servicePricing.values) {
+  return ids.reduce((total, id) => {
+    const priceKey = planItems[id].priceKey;
+    if (!priceKey) return total;
+    const price = prices[priceKey];
+    return price.mode === "custom" ? total : total + price.amount;
+  }, 0);
+}
+
+/** How many selected services need a custom quote rather than a listed price. */
+export function customQuoteCount(ids: readonly PlanItemId[], prices = servicePricing.values) {
+  return ids.filter((id) => {
+    const priceKey = planItems[id].priceKey;
+    return priceKey ? prices[priceKey].mode === "custom" : true;
+  }).length;
+}
+
+/** Carry a selection into the existing inquiry flow. */
+export function buildPlanInquiryHref(ids: readonly PlanItemId[]) {
+  const params = new URLSearchParams();
+  ids.forEach((id) => params.append("interest", id));
+  return `/check-availability${params.size ? `?${params.toString()}` : ""}`;
 }

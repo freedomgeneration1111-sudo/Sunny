@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { DisplayHeading, Eyebrow, Lead } from "@/components/ui/Typography";
 import { MediaFrame } from "@/components/media/MediaFrame";
-import { config } from "@/lib/config";
 import type { MediaAsset } from "@/lib/media";
 
 type PageHeroProps = {
@@ -58,9 +57,6 @@ export function PageHero({
             <HeroActions inquiryHref={inquiryHref} secondaryHref={secondaryHref} secondaryLabel={secondaryLabel} dark />
           </div>
         </Container>
-        {config.showDevelopmentLabels && media.truth === "development-placeholder" ? (
-          <p className="absolute bottom-3 right-3 z-20 rounded-md bg-ink/85 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-on-brand">{media.id} · Layout Placeholder</p>
-        ) : null}
       </section>
     );
   }

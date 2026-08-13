@@ -6,8 +6,7 @@
  * its own even for someone who never books anything.
  *
  * Services and prices are never written here; chapters reference `PlanItemId`s
- * so `lib/plan.ts` stays the only inventory. Copy is first-draft development
- * content written to establish shape and depth.
+ * so `lib/plan.ts` stays the only inventory.
  */
 import type { MediaAsset } from "@/lib/media";
 import { media } from "@/lib/media";
@@ -34,6 +33,17 @@ export type PlanningGuide = {
   homeAnchor: EventAnchor;
   inquiryEvent: string;
   hero: { eyebrow: string; title: string; body: string; media: MediaAsset };
+  /**
+   * These pages are a commercial landing page first and a planning resource
+   * second. Someone arriving from search sees what Focus Lab covers, why
+   * booking together helps, and where pricing is — before the guide begins.
+   */
+  commercial: {
+    title: string;
+    body: string;
+    capabilities: readonly string[];
+    pricing: { href: string; label: string };
+  };
   intro: string;
   readingTime: string;
   chapters: readonly GuideChapter[];
@@ -57,6 +67,18 @@ export const weddingGuide: PlanningGuide = {
     body: "How to build a wedding timeline that survives contact with a real venue — and how media, sound, and lighting decisions follow from it.",
     media: media.weddingsHero,
   },
+  commercial: {
+    title: "Focus Lab covers weddings across Dallas–Fort Worth.",
+    body: "Photo, video, DJ and MC, ceremony sound, lighting and effects — book one or several. When you book more than one, they are planned on a single timeline instead of four separate ones.",
+    capabilities: [
+      "DJ and MC for the ceremony, reception, or both",
+      "Ceremony sound so vows and readings carry",
+      "Photography and film, together or on their own",
+      "Uplighting, monogram, and dance-floor effects",
+      "Photo and 360 booths for guests",
+    ],
+    pricing: { href: "/pricing#pricing-weddings", label: "See Wedding Pricing" },
+  },
   intro:
     "Most wedding-day problems are not vendor problems. They are timeline problems that nobody noticed until the room was full. This guide works through the day in the order it actually happens, and flags the decisions that quietly determine whether everything else runs smoothly.",
   readingTime: "About 12 minutes",
@@ -68,7 +90,7 @@ export const weddingGuide: PlanningGuide = {
       body: "Pick the one moment you would protect at the cost of everything else — usually the ceremony, sometimes the portraits, occasionally the send-off. Place it first, then work outward in both directions.",
       paragraphs: [
         "Forward-built timelines accumulate optimism. Every block gets the time it deserves on paper, and by the time you reach the end, the day is twenty minutes over before anyone has arrived. Backward-built timelines force the compromises to surface while they are still cheap to make.",
-        "Once the anchor moment is fixed, the two questions that reshape everything else are when the venue lets you in and when it makes you leave. Those are rarely negotiable and almost always tighter than couples expect.",
+        "Once that moment is fixed, the two questions that reshape everything else are when the venue lets you in and when it makes you leave. Those are rarely negotiable and almost always tighter than couples expect.",
       ],
       checklistTitle: "Fix these before anything else moves",
       checklist: [
@@ -76,7 +98,7 @@ export const weddingGuide: PlanningGuide = {
         "Hard end time, and what the overtime charge is after it",
         "Sunset time on your date, if any portraits are outdoors",
         "Whether the ceremony and reception share a room, and how long a flip takes",
-        "Who is authorised to approve a timeline change on the day",
+        "Who is authorized to approve a timeline change on the day",
         "Whether any religious or cultural timing is fixed and cannot move",
       ],
       media: media.weddingCoordination,
@@ -85,7 +107,7 @@ export const weddingGuide: PlanningGuide = {
       id: "ceremony",
       eyebrow: "Chapter 02",
       title: "The ceremony is an audio problem before it is anything else.",
-      body: "Guests forgive a lot. They do not forgive not hearing the vows. Outdoor ceremonies, high ceilings, and soft-spoken officiants are the three most common reasons people leave a wedding saying they missed the important part.",
+      body: "Guests forgive a lot, but not being unable to hear the vows. Outdoor ceremonies, high ceilings, and soft-spoken officiants are three common reasons people leave a wedding saying they missed the important part.",
       theme: "alt",
       paragraphs: [
         "A single microphone on the officiant covers the officiant. It does not reliably cover two people speaking quietly toward each other. If the vows matter to you as a recording, that is a separate decision from whether the back row can hear them live.",
@@ -102,10 +124,10 @@ export const weddingGuide: PlanningGuide = {
     {
       id: "the-gap",
       eyebrow: "Chapter 03",
-      title: "Cocktail hour is where the day is quietly won or lost.",
+      title: "Cocktail hour carries more than it looks like it does.",
       body: "For guests, cocktail hour is the first unstructured time of the day. For everyone working the event, it is a room flip, a portrait session, and a soundcheck happening simultaneously in different places.",
       paragraphs: [
-        "The most common failure here is assuming these can all run at full speed at once. Portraits take longer than the schedule says because families are hard to gather. Room flips take longer because vendors are waiting on each other.",
+        "A common problem here is assuming these can all run at full speed at once. Portraits take longer than the schedule says because families are hard to gather. Room flips take longer because vendors are waiting on each other.",
         "Decide in advance which of the three is allowed to run long, and what gets shortened when it does.",
       ],
       checklistTitle: "Decide before the day",
@@ -120,23 +142,23 @@ export const weddingGuide: PlanningGuide = {
     {
       id: "reception",
       eyebrow: "Chapter 04",
-      title: "A reception is five transitions wearing a trench coat.",
-      body: "Grand entrance, first dance, dinner release, toasts, and open dancing. Everything else is filler between them. Each transition is a handoff where music, microphone, lighting, and camera all have to agree on what happens next.",
+      title: "A reception is really about five transitions.",
+      body: "Grand entrance, first dance, dinner release, toasts, and open dancing. Most of the evening sits between them. Each transition is a handoff where music, microphone, lighting, and camera all have to agree on what happens next.",
       theme: "dark",
       cards: [
         { title: "Grand entrance", body: "Names, order, and where each person waits. Then straight into the next planned thing — dead air here is hard to recover from." },
         { title: "First dance", body: "Decide whether it follows the entrance immediately or comes after dinner. Both work; ambiguity does not." },
         { title: "Dinner release", body: "Table-by-table or open. This is a coordination decision with catering, not a music decision." },
-        { title: "Toasts", body: "The single most common overrun. Someone must gather speakers before the block starts." },
-        { title: "Open dancing", body: "The floor fills or it does not in the first ten minutes. That window is the whole night." },
+        { title: "Toasts", body: "A frequent overrun. Someone should gather speakers before the block starts." },
+        { title: "Open dancing", body: "The first ten minutes tend to set the tone for how the rest of the night dances." },
       ],
       planItemIds: ["wedding-dj-core", "wedding-production"],
     },
     {
       id: "speeches",
       eyebrow: "Chapter 05",
-      title: "Give the person holding the microphone a verified source.",
-      body: "Names get mispronounced when nobody wrote them down phonetically. It is entirely avoidable and it is the thing families remember.",
+      title: "Give the person holding the microphone a confirmed list.",
+      body: "Names get mispronounced when nobody writes them down phonetically. It is avoidable, and families remember it.",
       theme: "alt",
       checklistTitle: "Send this ahead of the day",
       checklist: [
@@ -206,7 +228,7 @@ export const weddingGuide: PlanningGuide = {
   ],
   relatedGuides: ["wedding-day-coordination-checklist", "photo-video-coverage-map", "enhancements-venue-approval"],
   faqs: [
-    { question: "How far ahead should we lock the timeline?", answer: "A working draft is useful early, but the version that matters is the one confirmed after the venue walkthrough and final guest count. Expect it to change at least once." },
+    { question: "How far ahead should we lock the timeline?", answer: "An early version is useful, but the one that matters is confirmed after the venue walkthrough and final guest count. Expect it to change at least once." },
     { question: "Do we need ceremony sound if the space is small?", answer: "Small rooms still defeat quiet speakers, and outdoor spaces defeat almost everyone. The honest test is whether someone in the back row could hear a normal speaking voice with guests present." },
     { question: "Can we choose only some of these services?", answer: "Yes. Everything is modular. Add what belongs on your day and leave the rest out of the conversation." },
   ],
@@ -227,6 +249,18 @@ export const shaadiGuide: PlanningGuide = {
     title: "Plan the week your family is actually having.",
     body: "How to map a multi-event celebration, and how entertainment, production, and media planning changes from one event to the next.",
     media: media.southAsianHero,
+  },
+  commercial: {
+    title: "Focus Lab covers Shaadi celebrations across Dallas–Fort Worth.",
+    body: "One celebration or the whole week. Our team communicates in English, Urdu, Hindi and Punjabi, and shared planning carries names, timing and family preferences from one event to the next.",
+    capabilities: [
+      "Coverage for a single celebration or the whole week",
+      "Photo and video across multiple events",
+      "Baraat procession sound that travels outdoors",
+      "DJ, MC, and performance playback with cue sheets",
+      "Lighting and production sized to each room",
+    ],
+    pricing: { href: "/pricing#pricing-shaadi", label: "See Shaadi Pricing" },
   },
   intro:
     "There is no universal South Asian wedding. Sequence, naming, emphasis, and formality vary between regions, faiths, families, and generations — and a plan that assumes otherwise will be wrong somewhere. This guide starts from the events you are planning and works outward.",
@@ -270,7 +304,7 @@ export const shaadiGuide: PlanningGuide = {
       id: "music-performance",
       eyebrow: "Chapter 03",
       title: "Performances need a rehearsal plan, not just a playlist.",
-      body: "Family performances are frequently the emotional centre of a Sangeet — and the single most common source of technical trouble, because the tracks arrive late and nobody tested them on the actual system.",
+      body: "Family performances are frequently the emotional center of a Sangeet — and a frequent source of technical trouble, because the tracks often arrive late and go untested on the actual system.",
       theme: "alt",
       checklistTitle: "Collect these early",
       checklist: [
@@ -287,11 +321,11 @@ export const shaadiGuide: PlanningGuide = {
     {
       id: "baraat",
       eyebrow: "Chapter 04",
-      title: "The Baraat is the hardest sound problem of the week.",
+      title: "The Baraat is often the hardest sound problem of the week.",
       body: "It is outdoors, it moves, it has no fixed power, and it is loud by design. Everything that makes it joyful makes it technically demanding.",
       paragraphs: [
-        "Sound has to travel with the procession, stay audible over a crowd that is celebrating at full volume, and survive whatever the weather is doing. Battery capacity, not speaker size, is usually the limiting factor.",
-        "It also needs a route agreed with the venue in advance — including where it starts, where it ends, and what happens if it runs long while guests wait inside.",
+        "Sound has to travel with the procession, carry over a crowd celebrating at full volume, and cope with the weather. Battery capacity, rather than speaker size, is often the limiting factor.",
+        "It also needs a route agreed with the venue ahead of time — including where it starts, where it ends, and what happens if it runs long while guests wait inside.",
       ],
       checklistTitle: "Confirm with the venue",
       checklist: [
@@ -309,10 +343,10 @@ export const shaadiGuide: PlanningGuide = {
       id: "media-continuity",
       eyebrow: "Chapter 05",
       title: "Media continuity is why one crew across events matters.",
-      body: "Coverage spread across separate vendors produces separate bodies of work — different framing instincts, different colour, and no shared sense of who the important people are.",
+      body: "Coverage spread across separate vendors produces separate bodies of work — different framing instincts, different color, and no shared sense of who the important people are.",
       theme: "alt",
       paragraphs: [
-        "A crew that was at the Mehndi already knows the grandmother who should be in every family frame, the uncle who runs the schedule, and the cousin who is actually organising the performances. By the reception, nothing is being learned for the second time.",
+        "A crew that was at the Mehndi already knows the grandmother who should be in every family frame, the uncle who runs the schedule, and the cousin who is actually organizing the performances. By the reception, nothing is being learned for the second time.",
         "It also means the week edits together as one story rather than as a set of unrelated galleries.",
       ],
       planItemIds: ["south-asian-media", "sa-full-celebration", "social-content"],
@@ -370,8 +404,8 @@ export const shaadiGuide: PlanningGuide = {
   relatedGuides: ["shaadi-week-timeline", "mehndi-baraat-valima-venue-checklist", "photo-video-coverage-map"],
   faqs: [
     { question: "Do you assume a particular sequence of events?", answer: "No. We start from the events your family is planning and use the names your family uses. Any list we publish is a set of common examples, not a template." },
-    { question: "Can we book only some events in the week?", answer: "Yes. Single events, the wedding day and reception together, or the full week are all normal starting points. Multi-event scope is always confirmed in conversation." },
-    { question: "Which languages can support hosting and planning?", answer: "The verified language capabilities currently listed are English, Urdu, Hindi, and Punjabi. Confirm exact hosting needs for each event." },
+    { question: "Can we book only some events in the week?", answer: "Yes. Single events, the wedding day and reception together, or the full week are all normal starting points. Multi-event celebrations are quoted individually." },
+    { question: "Which languages can support hosting and planning?", answer: "Our team can communicate in English, Urdu, Hindi, and Punjabi. Tell us which events would benefit from language support and we will plan for it." },
   ],
   cta: {
     title: "Start with the events you know about.",
@@ -391,6 +425,18 @@ export const partyGuide: PlanningGuide = {
     body: "How to plan a birthday, shower, anniversary, or graduation so the room actually works — without over-engineering it.",
     media: media.partyHero,
   },
+  commercial: {
+    title: "Focus Lab covers celebrations across Dallas–Fort Worth.",
+    body: "Birthdays, showers, anniversaries, graduations and family celebrations. Choose a time block that fits the night, then add photo, video, or the extras that change how the room feels.",
+    capabilities: [
+      "DJ and MC who read the room rather than run a playlist",
+      "Announcements handled so speeches do not drift",
+      "Photography sized to a shorter celebration",
+      "Short highlight video made for sharing",
+      "Uplighting, monogram, and photo booths",
+    ],
+    pricing: { href: "/pricing#pricing-parties", label: "See Party Pricing" },
+  },
   intro:
     "Celebrations go wrong in predictable ways: the music is the wrong volume for the room, nobody knows when the speeches happen, and the only photos are from three guests' phones. None of that needs a wedding-scale plan to fix.",
   readingTime: "About 8 minutes",
@@ -398,17 +444,17 @@ export const partyGuide: PlanningGuide = {
     {
       id: "duration",
       eyebrow: "Chapter 01",
-      title: "Duration is the first real decision.",
+      title: "Start with how long the night runs.",
       body: "Almost everything else follows from how long the room stays alive. Three hours and five hours are genuinely different events, not the same event with more of it.",
       paragraphs: [
-        "Three hours suits a focused celebration with one clear centrepiece — cake, a toast, a reveal — and guests who arrive together. Five hours suits a party where people drift in, eat, and the dancing builds late.",
+        "Three hours suits a focused celebration with one clear centerpiece — cake, a toast, a reveal — and guests who arrive together. Five hours suits a party where people drift in, eat, and the dancing builds late.",
         "The mistake is booking long and hoping energy sustains itself. A shorter event that ends while people still want more is better than a long one that empties out.",
       ],
       checklistTitle: "Work out your real duration",
       checklist: [
         "When guests actually arrive, versus the time on the invitation",
         "When food is served, and whether it stops the party or feeds it",
-        "The one centrepiece moment, and roughly when it happens",
+        "The one centerpiece moment, and roughly when it happens",
         "Whether children are present, and when they leave",
         "Venue hard-out time, and the overtime rate past it",
         "Setup and breakdown windows either side",
@@ -418,7 +464,7 @@ export const partyGuide: PlanningGuide = {
     {
       id: "reading-the-room",
       eyebrow: "Chapter 02",
-      title: "Somebody has to be reading the room.",
+      title: "Somebody should be reading the room.",
       body: "A playlist cannot tell that the floor is thinning, that the guest of honour just arrived, or that the toast should happen now while everyone is still gathered.",
       theme: "alt",
       paragraphs: [
@@ -427,7 +473,7 @@ export const partyGuide: PlanningGuide = {
       ],
       cards: [
         { title: "Arrival", body: "Background level. Guests need to hear each other while the room fills." },
-        { title: "The centrepiece", body: "Music down, attention up, and everyone actually in the room before it starts." },
+        { title: "The centerpiece", body: "Music down, attention up, and everyone actually in the room before it starts." },
         { title: "After food", body: "The riskiest transition. Energy either restarts here or the party quietly ends." },
         { title: "Late", body: "Whatever fills the floor with whoever is still there — not whatever was planned." },
       ],
@@ -435,8 +481,8 @@ export const partyGuide: PlanningGuide = {
     {
       id: "announcements",
       eyebrow: "Chapter 03",
-      title: "Decide who speaks and when — in advance.",
-      body: "Unplanned speeches are the most common way a celebration loses twenty minutes and its momentum at the same time.",
+      title: "Decide who speaks, and when, in advance.",
+      body: "Unplanned speeches are a common way for a celebration to lose twenty minutes and its momentum at the same time.",
       checklistTitle: "Before the day",
       checklist: [
         "Who is speaking, in what order, for how long",
@@ -474,10 +520,10 @@ export const partyGuide: PlanningGuide = {
     {
       id: "lighting",
       eyebrow: "Chapter 06",
-      title: "Lighting changes a room more cheaply than anything else.",
+      title: "Lighting is usually the most cost-effective way to change a room.",
       body: venueApproval,
       paragraphs: [
-        "Most venues default to bright, even, unflattering overhead light. Uplighting along the walls is the single highest-impact change available, and it costs less than most people assume.",
+        "Most venues default to bright, even, unflattering overhead light. Uplighting along the walls is often the highest-impact change available, and it usually costs less than people assume.",
         "Effects are a separate conversation. Anything that produces haze, sparks, or clouds needs venue sign-off before it is promised to anyone.",
       ],
       planItemIds: ["uplighting", "monogram", "clouds"],
@@ -525,6 +571,18 @@ export const corporateGuide: PlanningGuide = {
     body: "A practical guide to microphones, playback, displays, staging, and documentation for professional and community events.",
     media: media.corporateHero,
   },
+  commercial: {
+    title: "Focus Lab covers corporate and community events across Dallas–Fort Worth.",
+    body: "Microphones, playback, displays, staging, entertainment and documentation for meetings, galas, festivals and all-hands. Booked together, they are planned as one program rather than four deliveries.",
+    capabilities: [
+      "Microphones, playback, and displays the back row can read",
+      "Staging, lighting, and sightlines for half- and full-day programs",
+      "Photography and video you can use afterward",
+      "Livestream and hybrid capture for remote audiences",
+      "DJ and hosting for receptions, galas, and community events",
+    ],
+    pricing: { href: "/pricing#pricing-corporate", label: "See Corporate Pricing" },
+  },
   intro:
     "Professional events are judged on whether people could hear, see, and follow. Everything else is secondary. This guide works through the technical decisions in the order they actually constrain each other.",
   readingTime: "About 11 minutes",
@@ -536,7 +594,7 @@ export const corporateGuide: PlanningGuide = {
       body: "A sales kickoff, an awards gala, a community festival, and an all-hands are four different problems that happen to rent similar gear.",
       cards: [
         { title: "Inform", body: "People must follow content precisely. Intelligibility and legibility dominate every other consideration." },
-        { title: "Recognise", body: "Named individuals are called forward. Pronunciation, timing, and photography matter most." },
+        { title: "Recognize", body: "Named individuals are called forward. Pronunciation, timing, and photography matter most." },
         { title: "Convene", body: "The point is people talking to each other. Sound must support conversation, not compete with it." },
         { title: "Broadcast", body: "The primary audience is not in the room. Capture quality becomes the deliverable." },
       ],
@@ -551,7 +609,7 @@ export const corporateGuide: PlanningGuide = {
     {
       id: "room",
       eyebrow: "Chapter 02",
-      title: "The room decides more than the budget does.",
+      title: "The room shapes more than the budget does.",
       body: "Ceiling height, surface materials, and seating layout determine what is achievable before any equipment is chosen.",
       theme: "alt",
       paragraphs: [
@@ -572,7 +630,7 @@ export const corporateGuide: PlanningGuide = {
       id: "microphones",
       eyebrow: "Chapter 03",
       title: "Microphones: count them by person, not by podium.",
-      body: "The most common AV failure at professional events is a presenter who moves away from the only microphone in the room.",
+      body: "A frequent AV failure at professional events is a presenter who moves away from the only microphone in the room.",
       theme: "dark",
       cards: [
         { title: "Podium", body: "Reliable and predictable, but it pins the speaker to one spot." },
@@ -596,7 +654,7 @@ export const corporateGuide: PlanningGuide = {
       title: "Playback and displays fail in boring, preventable ways.",
       body: "Wrong aspect ratio, unreadable font size, a video with no audio path, and a laptop that will not connect account for most on-the-day panic.",
       paragraphs: [
-        "Collect final content the day before, not on the morning. Test every video with sound on the actual system — video audio routing is the single most common last-minute failure.",
+        "Collect final content the day before, not on the morning. Test every video with sound on the actual system — video audio routing is a frequent last-minute failure.",
         "Legibility has a simple test: display the smallest text on the slide and read it from the furthest seat. If you cannot, the audience cannot.",
       ],
       checklistTitle: "Test in advance",
@@ -678,7 +736,7 @@ export const corporateGuide: PlanningGuide = {
   relatedGuides: ["corporate-av-checklist", "photo-video-coverage-map"],
   faqs: [
     { question: "Can you work with a venue's in-house AV team?", answer: "Yes, and often that is the right answer. What matters is agreeing early who owns which part of the signal chain and who is on site when." },
-    { question: "How far in advance do you need presentation content?", answer: "The day before at the latest. Testing video audio through the actual system is the step that most often catches a problem." },
+    { question: "How far in advance do you need presentation content?", answer: "The day before at the latest. Testing video audio through the actual system is the step that tends to catch problems early." },
     { question: "Do you provide livestreaming?", answer: "Hybrid and livestream capture is scoped individually — platform, bandwidth, and encoder requirements vary too much for a standard package." },
   ],
   cta: {

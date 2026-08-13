@@ -10,17 +10,19 @@ import { config } from "@/lib/config";
 /**
  * Primary navigation is anchor-first. The homepage carries the whole customer
  * journey, so these links scroll within `/` and cross-navigate to `/#anchor`
- * from anywhere else. `Guides` and `Check Availability` stay real routes.
+ * from anywhere else. `Pricing` and `Check Availability` are real routes.
+ *
+ * Planning guides deliberately live in the footer, not here — the header stays
+ * focused on the event types, pricing, and the conversion action.
  */
 const anchorNav = [
   { anchor: "weddings", label: "Weddings" },
   { anchor: "shaadi", label: "Shaadi" },
   { anchor: "parties", label: "Parties" },
   { anchor: "corporate", label: "Corporate" },
-  { anchor: "pricing-menu", label: "Pricing" },
 ] as const;
 
-const routeNav = [{ href: "/guides", label: "Guides" }] as const;
+const routeNav = [{ href: "/pricing", label: "Pricing" }] as const;
 
 export function Header() {
   const path = usePathname();
@@ -192,7 +194,7 @@ export function Header() {
               </Link>
             ))}
             <p className="px-3 pt-4 text-xs font-bold uppercase tracking-widest text-ink-muted">
-              Planning resources
+              Focus Lab
             </p>
             {routeNav.map((item) => (
               <Link

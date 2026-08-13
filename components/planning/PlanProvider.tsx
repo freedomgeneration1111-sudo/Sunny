@@ -3,8 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { developmentPricing } from "@/lib/pricing";
-import { isPlanItemId, planItems, type PlanItemId } from "@/lib/plan";
+import { config } from "@/lib/config";
+import {
+  buildPlanInquiryHref,
+  customQuoteCount,
+  isPlanItemId,
+  planSubtotal,
+  type PlanItemId,
+} from "@/lib/plan";
 
 type PlanContextValue = {
   selected: PlanItemId[];
@@ -20,11 +26,6 @@ type PlanContextValue = {
 const PlanContext = createContext<PlanContextValue | null>(null);
 const storageKey = "focuslab.event-plan.v1";
 
-function buildInquiryHref(selected: PlanItemId[]) {
-  const params = new URLSearchParams();
-  selected.forEach((id) => params.append("interest", id));
-  return `/check-availability${params.size ? `?${params.toString()}` : ""}`;
-}
 
 export function PlanProvider({ children }: { children: ReactNode }) {
   const [selected, setSelected] = useState<PlanItemId[]>([]);
@@ -58,16 +59,8 @@ export function PlanProvider({ children }: { children: ReactNode }) {
     });
   };
 
-  const estimatedAnchor = selected.reduce((total, id) => {
-    const priceKey = planItems[id].priceKey;
-    if (!priceKey) return total;
-    const price = developmentPricing.values[priceKey];
-    return price.mode === "custom-anchor-dev" ? total : total + price.amount;
-  }, 0);
-  const customItemCount = selected.filter((id) => {
-    const priceKey = planItems[id].priceKey;
-    return priceKey ? developmentPricing.values[priceKey].mode === "custom-anchor-dev" : true;
-  }).length;
+  const estimatedAnchor = planSubtotal(selected);
+  const customItemCount = customQuoteCount(selected);
 
   const value: PlanContextValue = {
     selected,
@@ -77,7 +70,7 @@ export function PlanProvider({ children }: { children: ReactNode }) {
     includes: (id) => selected.includes(id),
     estimatedAnchor,
     customItemCount,
-    inquiryHref: buildInquiryHref(selected),
+    inquiryHref: buildPlanInquiryHref(selected),
   };
 
   return <PlanContext.Provider value={value}>{children}<PlanBar /></PlanContext.Provider>;
@@ -93,6 +86,7 @@ function PlanBar() {
   const pathname = usePathname();
   const { selected, estimatedAnchor, customItemCount, inquiryHref, clear } = usePlan();
 
+  if (!config.quoteBuilderEnabled) return null;
   if (!selected.length || pathname.startsWith("/check-availability")) return null;
 
   return (
@@ -101,7 +95,9 @@ function PlanBar() {
         <div className="min-w-0" aria-live="polite">
           <p className="text-sm font-extrabold">Your plan: {selected.length} {selected.length === 1 ? "item" : "items"}</p>
           <p className="truncate text-xs text-on-brand/60">
-            {estimatedAnchor > 0 ? `$${estimatedAnchor.toLocaleString()} DEV subtotal${customItemCount ? ` + ${customItemCount} custom` : ""}` : `${customItemCount} custom-scope ${customItemCount === 1 ? "item" : "items"}`}
+            {estimatedAnchor > 0
+              ? `$${estimatedAnchor.toLocaleString()}${customItemCount ? ` + ${customItemCount} custom` : ""}`
+              : `${customItemCount} custom ${customItemCount === 1 ? "quote" : "quotes"}`}
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-2">

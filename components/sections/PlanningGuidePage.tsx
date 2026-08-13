@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { MediaFrame } from "@/components/media/MediaFrame";
-import { PlanItemCard } from "@/components/planning/PlanItemCard";
 import { FAQList } from "@/components/sections/FAQList";
 import { PageHero } from "@/components/sections/PageHero";
 import { Button } from "@/components/ui/Button";
@@ -25,6 +24,43 @@ export function PlanningGuidePage({ guide }: { guide: PlanningGuide }) {
         media={guide.hero.media}
         inquiryEvent={guide.inquiryEvent}
       />
+
+      {/* Commercial first: a search visitor sees what we cover and where
+          pricing is before the planning guide begins. */}
+      <Section theme="alt">
+        <Container>
+          <div className="grid gap-10 lg:grid-cols-[1.05fr_.95fr] lg:gap-16">
+            <div>
+              <SectionHeading>{guide.commercial.title}</SectionHeading>
+              <p className="mt-6 max-w-[62ch] text-lg leading-8 text-ink-muted">
+                {guide.commercial.body}
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Button href={guide.commercial.pricing.href}>{guide.commercial.pricing.label}</Button>
+                <Button
+                  href={`/check-availability?event=${encodeURIComponent(guide.inquiryEvent)}`}
+                  variant="secondary"
+                >
+                  Check Availability
+                </Button>
+              </div>
+            </div>
+            <div>
+              <h2 className="text-xs font-extrabold uppercase tracking-[.16em] text-brand-primary">
+                What we can cover
+              </h2>
+              <ul className="mt-5 grid gap-3">
+                {guide.commercial.capabilities.map((item) => (
+                  <li key={item} className="flex gap-4 border-t border-border pt-3 leading-7 text-ink-muted">
+                    <span aria-hidden="true" className="font-black text-brand-primary">—</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </Container>
+      </Section>
 
       <Section compact className="border-b border-border">
         <Container>
@@ -130,7 +166,7 @@ export function PlanningGuidePage({ guide }: { guide: PlanningGuide }) {
             href={`/#${guide.homeAnchor}`}
             className="mt-10 inline-flex min-h-12 items-center font-extrabold text-ink"
           >
-            ← Build a plan on the main page
+            ← Back to Focus Lab
           </Link>
         </Container>
       </Section>
@@ -218,13 +254,6 @@ function GuideChapterSection({
               </div>
             ) : null}
 
-            {chapter.planItemIds ? (
-              <div className="mt-10 grid gap-4 sm:grid-cols-2 print:hidden">
-                {chapter.planItemIds.map((id) => (
-                  <PlanItemCard key={id} id={id} compact />
-                ))}
-              </div>
-            ) : null}
           </div>
         </div>
       </Container>

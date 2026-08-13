@@ -12,6 +12,8 @@ const publicRoutes = [
   "/about/",
   "/check-availability/",
   "/guides/",
+  "/privacy/",
+  "/terms/",
 ] as const;
 
 const indexableRoutes = [
@@ -30,29 +32,37 @@ const indexableRoutes = [
   "/guides/corporate-av-checklist/",
   "/guides/photo-video-coverage-map/",
   "/guides/enhancements-venue-approval/",
+  "/privacy/",
+  "/terms/",
 ] as const;
 
-/** The structural contract of the one-anchor homepage, in page order. */
+/** The structural contract of the homepage, in page order. */
 const homepageAnchors = [
   "hero",
   "trust-strip",
+  "why-one-crew",
   "paths",
   "weddings",
   "shaadi",
   "parties",
   "corporate",
-  "why-one-crew",
   "capabilities",
   "pricing-menu",
   "how-it-works",
   "cta",
 ] as const;
 
-test("the homepage carries every one-anchor section", async ({ page }) => {
+test("the homepage carries every section in order", async ({ page }) => {
   await page.goto("/");
   for (const anchor of homepageAnchors) {
     await expect(page.locator(`#${anchor}`), `#${anchor} should exist on the homepage`).toHaveCount(1);
   }
+
+  // Why One Crew must come before the event shopping starts.
+  const top = async (id: string) =>
+    page.evaluate((anchor) => document.getElementById(anchor)!.getBoundingClientRect().top, id);
+  expect(await top("why-one-crew")).toBeLessThan(await top("paths"));
+  expect(await top("paths")).toBeLessThan(await top("weddings"));
 });
 
 test("event path cards scroll within the page instead of navigating away", async ({ page }) => {
@@ -68,16 +78,45 @@ test("event path cards scroll within the page instead of navigating away", async
   await expect(page.locator("#shaadi")).toBeInViewport();
 });
 
-test("primary navigation targets homepage anchors", async ({ page }) => {
+test("primary navigation is event anchors plus pricing, without guides", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/");
   const nav = page.getByRole("navigation", { name: "Primary" });
-  for (const label of ["Weddings", "Shaadi", "Parties", "Corporate", "Pricing"]) {
+
+  for (const label of ["Weddings", "Shaadi", "Parties", "Corporate"]) {
     await expect(nav.getByRole("link", { name: label, exact: true })).toHaveAttribute("href", /^#/);
   }
-  // From a supporting page the same links must cross-navigate back to the homepage.
+  await expect(nav.getByRole("link", { name: "Pricing", exact: true })).toHaveAttribute("href", "/pricing/");
+  await expect(nav.getByRole("link", { name: "Guides", exact: true })).toHaveCount(0);
+
   await page.goto("/guides/");
   await expect(nav.getByRole("link", { name: "Weddings", exact: true })).toHaveAttribute("href", "/#weddings");
+});
+
+test("each event section links to its own pricing category", async ({ page }) => {
+  await page.goto("/");
+  for (const [anchor, target] of [
+    ["weddings", "/pricing/#pricing-weddings"],
+    ["shaadi", "/pricing/#pricing-shaadi"],
+    ["parties", "/pricing/#pricing-parties"],
+    ["corporate", "/pricing/#pricing-corporate"],
+  ] as const) {
+    const section = page.locator(`#${anchor}`);
+    await expect(section.locator(`a[href="${target}"]`), `#${anchor} should link to ${target}`).toHaveCount(1);
+    await expect(section.locator('a[href^="/check-availability"]')).not.toHaveCount(0);
+  }
+});
+
+test("the footer carries every planning checklist and the legal routes", async ({ page }) => {
+  await page.goto("/");
+  const footer = page.locator("footer");
+  const checklists = footer.getByRole("navigation", { name: "Planning checklists" });
+  await expect(checklists.getByRole("link")).toHaveCount(6);
+
+  // Header and footer must not use the same label for different destinations.
+  await expect(footer.getByRole("link", { name: "Wedding Planning Guide" })).toHaveAttribute("href", "/weddings/");
+  await expect(footer.getByRole("link", { name: "Privacy" })).toHaveAttribute("href", "/privacy/");
+  await expect(footer.getByRole("link", { name: "Terms" })).toHaveAttribute("href", "/terms/");
 });
 
 test("redesigned routes do not overflow the viewport", async ({ page }) => {
@@ -113,12 +152,19 @@ test("the duplicate event routes no longer publish a second copy", async ({ requ
   }
 });
 
-test("publication safeguards remain visible and work stays unpublished", async ({ page }) => {
-  await page.goto("/pricing/");
-  await expect(page.getByText(/Provisional and not approved for production publication/)).toBeVisible();
+test("no customer-facing route narrates the development process", async ({ page }) => {
+  const banned = /\b(draft|DEV reference|provisional|prototype|review build|pending approval|not yet approved|unsupported claim)\b/i;
+  for (const route of ["/", "/pricing/", "/weddings/", "/events/corporate/", "/about/", "/guides/"]) {
+    await page.goto(route);
+    const text = await page.locator("main").innerText();
+    expect(text, `${route} should read as a customer website`).not.toMatch(banned);
+  }
+});
+
+test("work stays unpublished and out of the primary navigation", async ({ page }) => {
+  await page.goto("/");
   await expect(page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "Work" })).toHaveCount(0);
 
   await page.goto("/work/");
   await expect(page.locator("meta[name=robots]")).toHaveAttribute("content", /noindex/);
-  await expect(page.getByText(/No AI or proxy image is presented here as portfolio evidence/)).toBeVisible();
 });

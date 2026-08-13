@@ -2,12 +2,11 @@ import { MediaFrame } from "@/components/media/MediaFrame";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { weddingsSection as content } from "@/lib/content/eventSections";
-import { GuideLink, PlanGroups, SectionIntro } from "./shared";
+import { Capabilities, SectionActions, SectionIntro } from "./shared";
 
 /**
- * Rhythm: a horizontal ceremony→reception spine. The day reads left to right
- * before any service is offered, so the plan items land as answers to moments
- * the visitor has already pictured.
+ * Rhythm: a horizontal ceremony-to-reception spine. The day reads left to right
+ * first, so the services below land as answers to moments already pictured.
  */
 export function WeddingsSection() {
   return (
@@ -22,23 +21,17 @@ export function WeddingsSection() {
           />
         </div>
 
-        {/* The spine. Horizontal scroll on phones, five equal columns above. */}
+        {/* The spine. Horizontal scroll on phones, five columns above. */}
         <ol className="mt-14 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] lg:grid lg:grid-cols-5 lg:gap-0 lg:overflow-visible">
           {content.moments.map((moment, index) => (
-            <li
-              key={moment.label}
-              className="relative w-[76vw] shrink-0 snap-start sm:w-[46vw] lg:w-auto lg:pr-6"
-            >
+            <li key={moment.label} className="relative w-[76vw] shrink-0 snap-start sm:w-[46vw] lg:w-auto lg:pr-6">
               <div className="flex items-center gap-3">
                 <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-ink text-xs font-black text-on-brand">
                   {String(index + 1).padStart(2, "0")}
                 </span>
-                <span
-                  aria-hidden="true"
-                  className="h-px flex-1 bg-border lg:block"
-                />
+                <span aria-hidden="true" className="h-px flex-1 bg-border lg:block" />
               </div>
-              <h4 className="mt-6 text-xl font-extrabold">{moment.label}</h4>
+              <h3 className="mt-6 text-xl font-extrabold">{moment.label}</h3>
               <p className="mt-3 text-sm leading-6 text-ink-muted lg:pr-4">{moment.note}</p>
             </li>
           ))}
@@ -51,18 +44,18 @@ export function WeddingsSection() {
             aspectRatioOverride="4/3"
           />
           <div>
-            <h4 className="font-display text-3xl font-bold leading-tight tracking-[-.03em]">
-              Choose only what your wedding actually needs.
-            </h4>
+            <h3 className="font-display text-3xl font-bold leading-tight tracking-[-.03em]">
+              Take only what your wedding needs.
+            </h3>
             <p className="mt-5 max-w-[58ch] leading-7 text-ink-muted">
-              Nothing here is a bundle you have to take whole. Add what belongs on your
-              day, and the rest stays out of the conversation.
+              Nothing here is a bundle you have to take whole. Book one service or several — the
+              difference is that several are planned together.
             </p>
+            <Capabilities items={content.capabilities} />
           </div>
         </div>
 
-        <PlanGroups groups={content.planGroups} />
-        <GuideLink {...content.guide} />
+        <SectionActions pricing={content.pricing} guides={content.guides} eventType="Wedding" />
       </Container>
     </Section>
   );

@@ -19,6 +19,8 @@ const importantRoutes = [
   "/guides/corporate-av-checklist/",
   "/guides/photo-video-coverage-map/",
   "/guides/enhancements-venue-approval/",
+  "/privacy/",
+  "/terms/",
 ] as const;
 
 async function expectPageShell(page: Page) {
@@ -33,6 +35,7 @@ test("important routes render", async ({ page }) => {
     const response = await page.goto(route);
     expect(response?.ok(), `${route} should return a successful response`).toBeTruthy();
     await expectPageShell(page);
+    if (route === "/work/") continue; // deliberately a short "coming soon" page
     const customerFacingText = (await page.locator("main").innerText()).replace(/\s+/g, " ").trim();
     expect(customerFacingText.length, route + " should contain substantive customer-facing content").toBeGreaterThan(250);
   }
@@ -64,7 +67,7 @@ test("check-availability flow renders and advances", async ({ page }) => {
   await page.getByRole("button", { name: "Wedding", exact: true }).click();
   await page.locator('input[type="date"]').fill("2027-04-17");
   await page.getByRole("button", { name: "Continue" }).click();
-  await expect(page.getByRole("group", { name: "Shape the starting scope." })).toBeVisible();
+  await expect(page.getByRole("group", { name: "Tell us what you need." })).toBeVisible();
   await page.getByRole("button", { name: "Continue" }).click();
   await expect(page.getByRole("group", { name: "How should Focus Lab reach you?" })).toBeVisible();
 });

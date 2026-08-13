@@ -1,6 +1,5 @@
-export type MediaTruth = "ai-brand" | "authentic-approved" | "authentic-pending" | "development-placeholder";
+export type MediaTruth = "ai-brand" | "authentic";
 export type MediaAsset = { id: string; src: string; alt: string; purpose: string; truth: MediaTruth; desktopAspect: string; mobileAspect: string; objectPosition?: string; priority?: "P0" | "P1" | "P2" };
-const placeholder = (id: string, src: string, alt: string, purpose: string, desktopAspect = "16/9", mobileAspect = "4/5", objectPosition = "center"): MediaAsset => ({ id, src, alt, purpose, truth: "development-placeholder", desktopAspect, mobileAspect, objectPosition });
 const generated = (id: string, src: string, alt: string, purpose: string, desktopAspect = "16/9", mobileAspect = "4/5", objectPosition = "center", priority: "P0" | "P1" | "P2" = "P1"): MediaAsset => ({ id, src, alt, purpose, truth: "ai-brand", desktopAspect, mobileAspect, objectPosition, priority });
 
 export const media = {
@@ -23,22 +22,4 @@ export const media = {
   photoVideoDetail: generated("PHOTO-VIDEO-DETAIL-01", "/images/generated/photo-video-detail-01.webp", "One guest fastens a delicate bracelet on another guest's wrist", "Photo video detail", "3/2", "4/3"),
   productionHero: generated("PRODUCTION-HERO-01", "/images/generated/production-hero-01.webp", "Guests dance beneath coordinated event lighting", "Production hero", "16/9", "4/5", "center right", "P0"),
   productionEffects: generated("PRODUCTION-EFFECTS-01", "/images/generated/production-effects-01.webp", "A couple dances between low clouds and controlled cold-spark effects", "Production effects", "3/2", "4/5"),
-  heroReception: placeholder("legacy-hero", "/images/hero-south-asian-reception-wide.jpg", "Reception", "Legacy"),
-  featuredFamilyEmotion: placeholder("legacy-family", "/images/featured-family-emotion.jpg", "Family moment", "Legacy"),
-  featuredDancefloorWide: placeholder("legacy-dance", "/images/featured-dancefloor-wide.jpg", "Dance floor", "Legacy"),
-  featuredRoomLighting: placeholder("legacy-lighting", "/images/featured-room-lighting.jpg", "Room lighting", "Legacy"),
-  featuredFilmmakerBts: placeholder("legacy-film", "/images/featured-filmmaker-bts.jpg", "Film equipment", "Legacy"),
-  socialContentVertical: placeholder("legacy-social", "/images/social-content-vertical.jpg", "Vertical filming", "Legacy"),
-  processCoordination: placeholder("legacy-process", "/images/process-coordination.jpg", "Event planning", "Legacy"),
-  saMehndiColor: placeholder("legacy-mehndi", "/images/sa-mehndi-color.jpg", "Mehndi", "Legacy"),
-  saCeremonyWide: placeholder("legacy-sa-ceremony", "/images/sa-ceremony-wide.jpg", "Ceremony", "Legacy"),
-  saEntranceReaction: placeholder("legacy-sa-entrance", "/images/sa-entrance-reaction.jpg", "Entrance", "Legacy"),
-  saGenerations: placeholder("legacy-sa-family", "/images/sa-generations.jpg", "Family", "Legacy"),
-  partyBirthdayWide: placeholder("legacy-party", "/images/party-birthday-wide.jpg", "Party", "Legacy"),
-  partyMcCrowd: placeholder("legacy-mc", "/images/party-mc-crowd.jpg", "MC", "Legacy"),
-  weddingCoupleNight: placeholder("legacy-wedding", "/images/wedding-couple-night.jpg", "Couple", "Legacy"),
-  detailHandsTexture: placeholder("legacy-detail", "/images/detail-hands-texture.jpg", "Detail", "Legacy"),
-  corporateStageWide: placeholder("legacy-corporate", "/images/corporate-stage-wide.jpg", "Stage", "Legacy"),
 } as const;
-
-export const teamPortraitPlaceholder: MediaAsset = placeholder("team-needed", "/brand/focus-lab-mark.svg", "", "Team asset", "4/5", "4/5");

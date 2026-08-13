@@ -108,8 +108,8 @@ function EventSection({ section }: { section: CommercialSection }) {
             ) : null}
             {section.kind === "pricing-bridge" ? (
               <div className={`mt-10 flex flex-col gap-5 rounded-media border p-6 sm:flex-row sm:items-center sm:justify-between md:p-8 ${isDark ? "border-on-brand/15 bg-on-brand/[.04]" : "border-border bg-surface"}`}>
-                <p className={`max-w-[54ch] text-sm leading-6 ${isDark ? "text-on-brand/65" : "text-ink-muted"}`}>Review every published development anchor in one place. Add-to-Plan choices persist as you move between pages.</p>
-                <Button href="/pricing" variant={isDark ? "primary" : "secondary"}>Open Pricing Planner <span className="ml-2" aria-hidden="true">→</span></Button>
+                <p className={`max-w-[54ch] text-sm leading-6 ${isDark ? "text-on-brand/65" : "text-ink-muted"}`}>See the full Focus Lab service and pricing menu in one place.</p>
+                <Button href="/pricing" variant={isDark ? "primary" : "secondary"}>View Pricing <span className="ml-2" aria-hidden="true">→</span></Button>
               </div>
             ) : null}
           </>

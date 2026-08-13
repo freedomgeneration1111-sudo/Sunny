@@ -13,12 +13,12 @@ export const metadata: Metadata = {
 export default function GuidesPage() {
   return (
     <>
-      <PageHero variant="textLed" eyebrow="Planning Resources" title="Useful questions before exact scope." body="Short, practical guides for event timelines, venue conversations, media priorities, and production approvals." />
+      <PageHero variant="textLed" eyebrow="Planning Resources" title="Questions worth answering early." body="Short, practical guides for event timelines, venue conversations, media priorities, and production approvals." />
       <Section>
         <Container>
           <div className="grid gap-6 lg:grid-cols-[.7fr_1.3fr] lg:items-end">
-            <div><Eyebrow>Guide library</Eyebrow><SectionHeading className="mt-4">Plan the event before choosing every detail.</SectionHeading></div>
-            <Lead>Use these resources to prepare a clearer inquiry or planning conversation. Venue rules and final service agreements remain authoritative.</Lead>
+            <div><Eyebrow>Guide library</Eyebrow><SectionHeading className="mt-4">Plan the event before you choose every detail.</SectionHeading></div>
+            <Lead>Use these to prepare for planning conversations with your venue, your family, and us. Your venue&rsquo;s rules and your final agreement always come first.</Lead>
           </div>
           <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {guides.map((guide) => (
