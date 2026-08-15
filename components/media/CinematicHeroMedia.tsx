@@ -1,31 +1,26 @@
 import Image from "next/image";
-import { HeroVideo } from "@/components/media/HeroVideo";
+import { HeroVideo, type HeroClip } from "@/components/media/HeroVideo";
 import type { MediaAsset } from "@/lib/media";
 
 type CinematicHeroMediaProps = {
   asset: MediaAsset;
-  desktopVideoSrc?: string;
-  mobileVideoSrc?: string;
+  /** Clips played in rotation; each holds on a still frame before handing over. */
+  clips?: readonly HeroClip[];
   /**
    * Portrait still for narrow screens. The film is shot both ways, so cropping
    * the landscape frame down to a phone would throw away the framing.
    */
   mobilePosterSrc?: string;
-  /** How long the film rests on a still frame before playing again. */
   holdMs?: number;
-  /** Where to pause, if the very last frame is not the right one to hold. */
-  holdAtSeconds?: number;
 };
 
 export function CinematicHeroMedia({
   asset,
-  desktopVideoSrc,
-  mobileVideoSrc,
+  clips,
   mobilePosterSrc,
   holdMs,
-  holdAtSeconds,
 }: CinematicHeroMediaProps) {
-  const hasVideo = Boolean(desktopVideoSrc || mobileVideoSrc);
+  const hasVideo = Boolean(clips?.length);
 
   return (
     <div
@@ -52,15 +47,7 @@ export function CinematicHeroMedia({
           className="cinematic-poster object-cover md:hidden"
         />
       ) : null}
-      {hasVideo ? (
-        <HeroVideo
-          desktopSrc={desktopVideoSrc}
-          mobileSrc={mobileVideoSrc}
-          poster={asset.src}
-          holdMs={holdMs}
-          holdAtSeconds={holdAtSeconds}
-        />
-      ) : null}
+      {hasVideo ? <HeroVideo clips={clips!} holdMs={holdMs} /> : null}
       <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,9,10,.96)_0%,rgba(8,9,10,.82)_38%,rgba(8,9,10,.38)_68%,rgba(8,9,10,.55)_100%)] md:bg-[linear-gradient(90deg,rgba(8,9,10,.97)_0%,rgba(8,9,10,.82)_38%,rgba(8,9,10,.2)_72%,rgba(8,9,10,.42)_100%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(8,9,10,.74)_0%,transparent_42%,rgba(8,9,10,.34)_100%)]" />
     </div>

@@ -51,25 +51,39 @@ test("reduced motion uses a static hero poster", async ({ page }) => {
   await expect(shown).toHaveCSS("animation-name", "none");
 });
 
-test("the hero film holds on its last frame instead of looping", async ({ page }) => {
+test("the hero rotates between clips without looping either", async ({ page }) => {
   await page.goto("/");
-  const video = page.locator("video.cinematic-video");
-  await expect(video).toHaveCount(1);
+  const videos = page.locator("video.cinematic-video");
 
-  // `loop` would restart instantly and never fire `ended`, leaving nowhere to
-  // hang the twenty-second hold.
-  expect(await video.evaluate((el: HTMLVideoElement) => el.loop)).toBe(false);
-  expect(await video.evaluate((el: HTMLVideoElement) => el.muted)).toBe(true);
-  expect(await video.evaluate((el: HTMLVideoElement) => el.autoplay)).toBe(true);
-  await expect(video).toHaveAttribute("playsinline", "");
-  await expect(video).toHaveAttribute("aria-hidden", "true");
+  // Rotation runs on two stacked elements so the incoming clip is already
+  // decoded — swapping src on one element would flash while it reloads.
+  await expect(videos).toHaveCount(2);
 
-  // Motion-free visitors get the poster and download no video at all.
-  const sources = await video.locator("source").evaluateAll((els) =>
-    els.map((el) => el.getAttribute("media")),
-  );
-  expect(sources.length).toBeGreaterThan(0);
-  for (const media of sources) {
-    expect(media).toContain("prefers-reduced-motion: no-preference");
+  for (const v of await videos.all()) {
+    // `loop` would restart instantly and never fire `ended`, leaving nowhere
+    // to hang the hold or the handover.
+    expect(await v.evaluate((el: HTMLVideoElement) => el.loop)).toBe(false);
+    expect(await v.evaluate((el: HTMLVideoElement) => el.muted)).toBe(true);
+    await expect(v).toHaveAttribute("playsinline", "");
+    await expect(v).toHaveAttribute("aria-hidden", "true");
+
+    // Motion-free visitors download no video at all.
+    const media = await v.locator("source").evaluateAll((els) =>
+      els.map((el) => el.getAttribute("media")),
+    );
+    expect(media.length).toBeGreaterThan(0);
+    for (const m of media) expect(m).toContain("prefers-reduced-motion: no-preference");
   }
+
+  // Exactly one clip is on screen at a time — no gap, no double exposure.
+  const opaque = await videos.evaluateAll((els) =>
+    els.filter((el) => getComputedStyle(el).opacity === "1").length,
+  );
+  expect(opaque).toBe(1);
+
+  // The two elements carry different clips, which is what makes it a rotation.
+  const sources = await videos.evaluateAll((els) =>
+    els.map((el) => el.querySelector("source")?.getAttribute("src")),
+  );
+  expect(new Set(sources).size).toBe(2);
 });
