@@ -9,10 +9,9 @@ import { useEffect, useRef } from "react";
  * `loop` is deliberately not used — it restarts instantly and never fires
  * `ended`, so there is nowhere to hang the hold.
  *
- * `holdAtSeconds` exists because the supplied clip ends on a half-second
- * sparkle transition. Freezing on the literal final frame parks the page on a
- * mid-wipe effect, which reads as a broken player. Pausing just before it holds
- * a clean image instead. Leave it undefined to hold on the true last frame.
+ * `holdAtSeconds` pauses early, for clips that end on a transition where
+ * freezing the literal last frame would park the page mid-wipe. Leave it
+ * undefined — as the current wedding clip does — to hold the true last frame.
  *
  * Under `prefers-reduced-motion` no `<source>` matches, so nothing downloads
  * and the poster image stands in.

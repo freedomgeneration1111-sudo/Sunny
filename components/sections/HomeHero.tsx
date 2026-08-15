@@ -27,7 +27,6 @@ export function HomeHero({ asset }: HomeHeroProps) {
         mobileVideoSrc={heroVideo.mobile}
         mobilePosterSrc={heroVideo.posterMobile}
         holdMs={heroVideo.holdMs}
-        holdAtSeconds={heroVideo.holdAtSeconds}
       />
       <Container
         variant="wide"

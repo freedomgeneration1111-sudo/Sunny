@@ -1,28 +1,28 @@
 export type MediaTruth = "ai-brand" | "authentic";
 
 /**
- * The homepage hero film: real Focus Lab footage from a mehndi, so it carries
- * the `authentic` class rather than `ai-brand`.
+ * The homepage hero film: real Focus Lab wedding footage.
  *
- * The clip runs 8s. `holdAtSeconds` stops it just before a half-second sparkle
- * transition at the very end — freezing on the literal last frame would park
- * the page on a mid-wipe effect. It then rests for `holdMs` and plays again,
- * a 27-second cycle.
+ * The clip runs 14s and ends on usable content, so it holds on its true final
+ * frame — no `holdAtSeconds` override is needed here. It rests for `holdMs`
+ * and plays again, a 34-second cycle.
+ *
+ * Seeking to arbitrary points is unreliable in these encodes (sparse
+ * keyframes); seeking to zero, which is all the restart does, is dependable.
  */
 export const heroVideo = {
-  desktop: "/video/hero-mehndi-desktop.mp4",
-  mobile: "/video/hero-mehndi-mobile.mp4",
-  posterDesktop: "/images/hero/hero-mehndi-desktop-poster.webp",
-  posterMobile: "/images/hero/hero-mehndi-mobile-poster.webp",
+  desktop: "/video/hero-wedding-03-desktop.mp4",
+  mobile: "/video/hero-wedding-03-mobile.mp4",
+  posterDesktop: "/images/hero/hero-wedding-desktop-poster.webp",
+  posterMobile: "/images/hero/hero-wedding-mobile-poster.webp",
   truth: "authentic" as MediaTruth,
   holdMs: 20_000,
-  holdAtSeconds: 7.3,
 } as const;
 export type MediaAsset = { id: string; src: string; alt: string; purpose: string; truth: MediaTruth; desktopAspect: string; mobileAspect: string; objectPosition?: string; priority?: "P0" | "P1" | "P2" };
 const generated = (id: string, src: string, alt: string, purpose: string, desktopAspect = "16/9", mobileAspect = "4/5", objectPosition = "center", priority: "P0" | "P1" | "P2" = "P1"): MediaAsset => ({ id, src, alt, purpose, truth: "ai-brand", desktopAspect, mobileAspect, objectPosition, priority });
 
 export const media = {
-  homeHero: generated("HOME-HERO-01", "/images/hero/hero-mehndi-desktop-poster.webp", "Family hands gather over a bride's henna-covered hands at a mehndi", "Home hero", "16/10", "4/5", "center", "P0"),
+  homeHero: generated("HOME-HERO-01", "/images/hero/hero-wedding-desktop-poster.webp", "A bride in a red lehenga on her wedding day", "Home hero", "16/10", "4/5", "center", "P0"),
   eventSouthAsian: generated("HOME-EVENT-SA-01", "/images/generated/home-event-sa-01.webp", "A South Asian couple celebrates with family at a reception", "South Asian event path", "4/5", "4/5", "center", "P0"),
   eventWedding: generated("HOME-EVENT-WEDDING-01", "/images/generated/home-event-wedding-01.webp", "A couple shares a joyful moment on the dance floor", "Wedding event path", "4/5", "4/5", "center", "P0"),
   eventParty: generated("HOME-EVENT-PARTY-01", "/images/generated/home-event-party-01.webp", "Friends dance together at a private celebration", "Party event path", "4/5", "4/5", "center", "P0"),
