@@ -36,6 +36,42 @@ const CLIP_TOLERANCE = 0.5;
 /** How deep a line must sit inside a text box before it counts as a strike. */
 const OVERLAP_TOLERANCE = 1.0;
 
+/**
+ * Known, tracked defects that are deliberately NOT fixed here.
+ *
+ * `LOGOS/` is frozen as immutable source material by
+ * `docs/01_CANONICAL_DECISIONS.md` and six other project documents, so the
+ * delivered masters are left exactly as the designer supplied them. The
+ * corrected artwork lives in `public/brand/` instead.
+ *
+ * The pin records the exact clip so the file stays visible without blocking
+ * the build — and so any change to it, in either direction, fails loudly
+ * rather than silently redefining what "known" means. Remove the entry once a
+ * corrected master arrives.
+ */
+const PINNED = {
+  "LOGOS/focuslab_favicon_OUTLINED.svg": {
+    viewBox: "0 0 256 256",
+    clip: { left: 18.1, top: 15.2, right: 10.1, bottom: 13.0 },
+    note: "delivered master clips its aperture blades; awaiting corrected file from the designer",
+  },
+  // The trailing dash of "— PRODUCTIONS —" sits 74u too far left in the
+  // masters, so it crosses the final letters. Corrected in public/brand/ by
+  // moving it to x1=998.83 x2=1052.19, mirroring the leading dash.
+  "LOGOS/focuslab_primary_dark_OUTLINED.svg": {
+    viewBox: "0 0 1400 470",
+    overlap: { "line#line47": 51.05 },
+    note: "trailing dash mispositioned into the lettering; awaiting corrected file from the designer",
+  },
+  "LOGOS/focuslab_primary_light_OUTLINED.svg": {
+    viewBox: "0 0 1400 470",
+    overlap: { "line#line47": 51.05 },
+    note: "trailing dash mispositioned into the lettering; awaiting corrected file from the designer",
+  },
+};
+/** How far a pinned measurement may drift before it counts as changed. */
+const PIN_TOLERANCE = 0.05;
+
 function collect(dir) {
   if (!existsSync(dir)) return [];
   return readdirSync(dir)
@@ -205,31 +241,108 @@ for (const file of files) {
 
 await browser.close();
 
+/* ── Reconcile pinned exceptions ──────────────────────────────────────
+   A pin only excuses the exact defect it records. If the numbers move, the
+   viewBox changes, or a new kind of problem appears, the file fails.        */
+for (const entry of report) {
+  const key = relative(process.cwd(), entry.file).split("\\").join("/");
+  const pin = PINNED[key];
+  if (!pin || entry.error) continue;
+
+  const drift = [];
+
+  if (pin.clip) {
+    const measured = { left: 0, top: 0, right: 0, bottom: 0 };
+    for (const i of entry.issues) if (i.kind === "CLIP") measured[i.edge] = i.amount;
+    for (const edge of Object.keys(pin.clip)) {
+      if (Math.abs(measured[edge] - pin.clip[edge]) > PIN_TOLERANCE) {
+        drift.push(`clip ${edge} ${measured[edge]} (pinned ${pin.clip[edge]})`);
+      }
+    }
+  }
+
+  if (pin.overlap) {
+    const measured = {};
+    for (const i of entry.issues) {
+      if (i.kind === "OVERLAP") {
+        const m = i.detail.match(/by ([\d.]+)u/);
+        if (m) measured[i.element] = parseFloat(m[1]);
+      }
+    }
+    for (const [el, amount] of Object.entries(pin.overlap)) {
+      const got = measured[el];
+      if (got === undefined || Math.abs(got - amount) > PIN_TOLERANCE) {
+        drift.push(`overlap ${el} ${got ?? "absent"} (pinned ${amount})`);
+      }
+    }
+    // An overlap the pin does not name is a new defect, not a known one.
+    for (const el of Object.keys(measured)) {
+      if (!(el in pin.overlap)) drift.push(`unpinned overlap ${el} ${measured[el]}`);
+    }
+  }
+
+  if (entry.viewBox !== pin.viewBox) {
+    entry.pinBroken = `viewBox is now "${entry.viewBox}", pinned as "${pin.viewBox}"`;
+  } else if (drift.length) {
+    entry.pinBroken = `measurement no longer matches the pin — ${drift.join(", ")}`;
+  } else {
+    // Exactly the known defect: keep it visible, but let the build pass. Any
+    // other class of problem in this file still counts.
+    const excused = new Set(
+      [pin.clip && "CLIP", pin.clip && "OUT_OF_BOUNDS", pin.overlap && "OVERLAP"].filter(Boolean),
+    );
+    entry.issues = entry.issues.filter((i) => !excused.has(i.kind));
+    entry.pinned = pin;
+  }
+}
+
 if (asJson) {
   console.log(JSON.stringify(report, null, 2));
 } else {
   for (const r of report) {
-    const bad = r.error || r.issues.length;
-    console.log(`${bad ? "FAIL" : "ok  "}  ${relative(process.cwd(), r.file)}`);
+    const bad = r.error || r.issues.length || r.pinBroken;
+    const label = bad ? "FAIL" : r.pinned ? "WARN" : "ok  ";
+    console.log(`${label}  ${relative(process.cwd(), r.file)}`);
     if (r.error) {
       console.log(`        ${r.error}`);
       continue;
     }
-    if (!r.issues.length) {
-      console.log(`        viewBox "${r.viewBox}"  content x ${r.content.x1}→${r.content.x2}  y ${r.content.y1}→${r.content.y2}`);
-      continue;
+    if (r.pinBroken) {
+      console.log(`        PINNED EXCEPTION BROKEN: ${r.pinBroken}`);
+      console.log(`        This file was allowed through on an exact known defect. It has changed —`);
+      console.log(`        re-measure, then update or remove the pin in ${relative(process.cwd(), import.meta.filename)}.`);
     }
     for (const i of r.issues) {
       const head = i.element ? `${i.kind} ${i.element}` : i.kind;
       console.log(`        ${head}: ${i.detail}`);
     }
+    if (r.pinned) {
+      const c = r.pinned.clip;
+      const what = c
+        ? `clips left ${c.left} / top ${c.top} / right ${c.right} / bottom ${c.bottom}`
+        : Object.entries(r.pinned.overlap).map(([el, n]) => `${el} overlaps ${n}u`).join(", ");
+      console.log(`        known issue, tracked and allowed: ${what}`);
+      console.log(`        ${r.pinned.note}`);
+      console.log(`        LOGOS/ is frozen per docs/01_CANONICAL_DECISIONS.md; the fixed copy lives in public/brand/.`);
+    }
+    if (!bad && !r.pinned) {
+      console.log(`        viewBox "${r.viewBox}"  content x ${r.content.x1}→${r.content.x2}  y ${r.content.y1}→${r.content.y2}`);
+    }
   }
 }
 
-const failed = report.filter((r) => r.error || r.issues.length);
+const failed = report.filter((r) => r.error || r.issues.length || r.pinBroken);
+const warned = report.filter((r) => r.pinned && !failed.includes(r));
 if (failed.length) {
   console.error(`\n${failed.length} of ${report.length} SVG file(s) have problems.`);
   console.error("Fix the viewBox bounds or reposition the offending element, then re-run.");
   process.exit(1);
 }
-console.log(`\nAll ${report.length} SVG files are within their declared bounds.`);
+if (warned.length) {
+  console.log(
+    `\n${report.length - warned.length} of ${report.length} SVG files are clean; ` +
+      `${warned.length} passing on a pinned exception (see WARN above).`,
+  );
+} else {
+  console.log(`\nAll ${report.length} SVG files are within their declared bounds.`);
+}

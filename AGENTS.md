@@ -22,6 +22,27 @@
 - Run `npm run check:svg` after touching anything in `public/brand/` or `LOGOS/`. It is also the first step of `npm test`.
 - The check compares each file's declared `viewBox` against its real `getBBox()` extent and fails on clipping, on any element outside the stated bounds, and on a `<line>` crossing a text path (the strike-through case). Both bugs it guards were invisible in source review and only appeared on screen.
 - `LOGOS/FocusLab Logo Guide.png` is the approved visual authority. Check a lockup against it before assuming an element is stray — the guide shows `— PRODUCTIONS —` with symmetric dashes on *both* sides in the primary and stacked versions, and a vertical divider in the horizontal version.
+- Lockup variants: horizontal (`focus-lab-compact-*`, `focus-lab-horizontal-dark`), primary/expanded, **stacked** (`focus-lab-stacked-*` — mark over wordmark over `— PRODUCTIONS —`, guide minimum width 90px), and mark only. The stacked lockup is height-driven; size it with `fit="height"` inside a fixed-height bar or it overflows.
+
+### Pinned exceptions in the SVG check
+
+Three files in `LOGOS/` carry defects that are deliberately **not** fixed:
+
+| File | Defect |
+|---|---|
+| `focuslab_favicon_OUTLINED.svg` | Artwork clips on all four edges |
+| `focuslab_primary_dark_OUTLINED.svg` | Trailing dash sits 74u left, crossing the lettering |
+| `focuslab_primary_light_OUTLINED.svg` | Same |
+
+`LOGOS/` is immutable source material per `docs/01_CANONICAL_DECISIONS.md` and six
+other documents, so the delivered masters stay exactly as supplied and the
+corrected artwork lives in `public/brand/`. Each defect is pinned to its exact
+measurement in `scripts/check-svg-bounds.mjs`: the build passes, a `WARN` line
+stays visible on every run, and any change to those files — in either direction —
+fails loudly rather than quietly redefining what "known" means.
+
+Remove a pin when a corrected master arrives from the designer. Do not add a new
+pin to silence a defect in a file you are able to fix.
 
 ## Public architecture
 

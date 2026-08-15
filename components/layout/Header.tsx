@@ -117,8 +117,17 @@ export function Header() {
           <span className={expanded ? "hidden w-[360px] md:block lg:w-[385px] xl:w-[410px]" : "hidden"}>
             <BrandLogo mode="expanded" tone="light" priority />
           </span>
-          <span className={expanded ? "hidden" : "hidden w-[205px] min-[380px]:block sm:w-[230px]"}>
-            <BrandLogo mode="compact" tone="dark" priority />
+          {/* Scrolled nav uses the guide's stacked lockup. It is height-driven,
+              not width-driven: the bar has a fixed height and a stacked logo is
+              tall, so sizing it by width would overflow the header. */}
+          <span
+            className={
+              expanded
+                ? "hidden"
+                : "hidden h-[58px] min-[380px]:block md:h-[64px] xl:h-[68px]"
+            }
+          >
+            <BrandLogo mode="stacked" tone="dark" fit="height" priority />
           </span>
           <span className={expanded ? "hidden" : "block w-11 min-[380px]:hidden"}>
             <BrandLogo mode="mark" tone="dark" priority />
