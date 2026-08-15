@@ -17,6 +17,12 @@
 - Use the official repo-local Cloudflare skills in `.agents/skills/` for Cloudflare work. Consult current official Cloudflare documentation and the installed Wrangler schema rather than relying on memory.
 - Do not deploy, change Cloudflare resources, or modify production settings without explicit user authorization.
 
+## Brand SVGs
+
+- Run `npm run check:svg` after touching anything in `public/brand/` or `LOGOS/`. It is also the first step of `npm test`.
+- The check compares each file's declared `viewBox` against its real `getBBox()` extent and fails on clipping, on any element outside the stated bounds, and on a `<line>` crossing a text path (the strike-through case). Both bugs it guards were invisible in source review and only appeared on screen.
+- `LOGOS/FocusLab Logo Guide.png` is the approved visual authority. Check a lockup against it before assuming an element is stray — the guide shows `— PRODUCTIONS —` with symmetric dashes on *both* sides in the primary and stacked versions, and a vertical divider in the horizontal version.
+
 ## Public architecture
 
 - **The homepage is the complete customer journey**; the supporting routes are a knowledge layer. See `docs/02_ARCHITECTURE_AND_CONTENT_HIERARCHY.md` and the decision record in `docs/12_ONE_ANCHOR_DECISION.md`.
