@@ -13,6 +13,113 @@ summary::-webkit-details-marker { display: none; }
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* ── Hero logo flare ──────────────────────────────────────────────────
+ * Decoration for the logo over the homepage hero photo only. Drawn from the
+ * client's marketing artwork: a warm starburst off the icon's upper-right and
+ * a soft streak beneath the lockup.
+ *
+ * Built from gradients alone. `filter: blur()` and blurred `box-shadow` would
+ * both force an offscreen pass over a large area on every frame the fixed
+ * header repaints during hero scroll — expensive for something decorative and
+ * above the fold. Multi-stop gradients give the same bloom for one cheap paint
+ * and stay crisp at any size.
+ *
+ * Colours are the existing orange ramp (#FF9C20 → #F47A00 → #D95F00) with a
+ * white-hot core, so this reads as the palette rather than a new accent.
+ */
+.hero-flare {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hero-flare__burst {
+  position: absolute;
+  left: var(--burst-x);
+  top: var(--burst-y);
+  width: var(--burst-size);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  background:
+    /* horizontal ray */
+    linear-gradient(
+        90deg,
+        transparent 2%,
+        rgba(255, 156, 32, 0.28) 26%,
+        rgba(255, 236, 200, 0.85) 50%,
+        rgba(255, 156, 32, 0.28) 74%,
+        transparent 98%
+      )
+      50% 50% / 100% 5% no-repeat,
+    /* vertical ray, shorter as in the reference */
+      linear-gradient(
+        180deg,
+        transparent 14%,
+        rgba(255, 156, 32, 0.24) 32%,
+        rgba(255, 236, 200, 0.8) 50%,
+        rgba(255, 156, 32, 0.24) 68%,
+        transparent 86%
+      )
+      50% 50% / 5% 100% no-repeat,
+    /* warm halo + white core */
+      radial-gradient(
+        circle at 50% 50%,
+        rgba(255, 252, 235, 0.95) 0%,
+        rgba(255, 226, 165, 0.8) 7%,
+        rgba(255, 156, 32, 0.42) 16%,
+        rgba(244, 122, 0, 0.16) 27%,
+        rgba(217, 95, 0, 0.05) 38%,
+        transparent 52%
+      );
+}
+
+.hero-flare__streak {
+  position: absolute;
+  left: 50%;
+  top: 84%;
+  width: 56%;
+  height: 9%;
+  transform: translate(-50%, -50%);
+  background:
+    /* bright core line */
+    linear-gradient(
+        90deg,
+        transparent 8%,
+        rgba(255, 214, 150, 0.5) 28%,
+        rgba(255, 250, 238, 0.92) 50%,
+        rgba(255, 214, 150, 0.5) 72%,
+        transparent 92%
+      )
+      50% 50% / 100% 14% no-repeat,
+    /* surrounding bloom */
+      radial-gradient(
+        ellipse 50% 50% at 50% 50%,
+        rgba(255, 236, 200, 0.5) 0%,
+        rgba(255, 156, 32, 0.22) 34%,
+        rgba(244, 122, 0, 0.07) 60%,
+        transparent 80%
+      );
+}
+
+/* Tight against the hamburger at phone widths: keep the streak, drop the
+   starburst's rays and shrink its halo so nothing crowds the nav controls. */
+@media (max-width: 639px) {
+  .hero-flare__burst {
+    width: calc(var(--burst-size) * 0.62);
+    background: radial-gradient(
+      circle at 50% 50%,
+      rgba(255, 252, 235, 0.9) 0%,
+      rgba(255, 226, 165, 0.72) 9%,
+      rgba(255, 156, 32, 0.34) 20%,
+      rgba(244, 122, 0, 0.1) 34%,
+      transparent 50%
+    );
+  }
+  .hero-flare__streak {
+    width: 48%;
+  }
+}
+
 /*
  * Print: the planning guides are meant to be taken to a venue walkthrough.
  * Strip the app chrome, force black on white, and keep checklist items whole.

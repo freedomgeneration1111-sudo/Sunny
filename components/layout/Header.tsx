@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { BrandLogo } from "@/components/brand/BrandLogo";
+import { HeroLogoFlare } from "@/components/brand/HeroLogoFlare";
 import { PublicChatTrigger } from "@/components/operations/NativeChatPanel";
 import { config } from "@/lib/config";
 
@@ -111,11 +112,18 @@ export function Header() {
           aria-label="Focus Lab Productions home"
           className="relative flex min-w-0 items-center"
         >
+          {/* The flare belongs to the transparent-over-photo state only. It is
+              scoped to these two spans, which render solely while `expanded`
+              — i.e. the homepage header sitting over the hero image. */}
           <span className={expanded ? "block w-[190px] sm:w-[225px] md:hidden" : "hidden"}>
-            <BrandLogo mode="compact" tone="light" priority />
+            <HeroLogoFlare lockup="compact">
+              <BrandLogo mode="compact" tone="light" priority />
+            </HeroLogoFlare>
           </span>
           <span className={expanded ? "hidden w-[360px] md:block lg:w-[385px] xl:w-[410px]" : "hidden"}>
-            <BrandLogo mode="expanded" tone="light" priority />
+            <HeroLogoFlare lockup="expanded">
+              <BrandLogo mode="expanded" tone="light" priority />
+            </HeroLogoFlare>
           </span>
           {/* Scrolled nav uses the guide's stacked lockup. It is height-driven,
               not width-driven: the bar has a fixed height and a stacked logo is
