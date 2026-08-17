@@ -65,6 +65,10 @@ export function HeroVideo({ candidates }: { candidates: readonly DesktopHeroCand
         data-testid="desktop-hero-video"
         data-candidate={active.id}
         className="cinematic-video absolute inset-0 hidden h-full w-full object-cover md:block"
+        style={{
+          transform: `translateX(${active.desktopFocal.translateXPercent}%) scale(${active.desktopFocal.scale})`,
+          transformOrigin: `${active.desktopFocal.originXPercent}% 50%`,
+        }}
         autoPlay
         muted
         loop

@@ -16,6 +16,11 @@ export type DesktopHeroCandidate = {
   poster: string;
   truth: "authentic-approved";
   source: { filename: string; start: string; end: string };
+  desktopFocal: {
+    scale: number;
+    translateXPercent: number;
+    originXPercent: number;
+  };
 };
 
 export const desktopHeroCandidates = [
@@ -27,6 +32,7 @@ export const desktopHeroCandidates = [
     poster: "/images/hero/approved/focuslab-desktop-hero-selection-08-poster.jpg",
     truth: "authentic-approved",
     source: { filename: "DSC_0572.MOV", start: "00:00:02.200", end: "00:00:18.800" },
+    desktopFocal: { scale: 1.11, translateXPercent: 0, originXPercent: 0 },
   },
   {
     id: "selection-31",
@@ -36,6 +42,7 @@ export const desktopHeroCandidates = [
     poster: "/images/hero/approved/focuslab-desktop-hero-selection-31-poster.jpg",
     truth: "authentic-approved",
     source: { filename: "DSC_0250.MOV", start: "00:00:00.250", end: "00:00:05.000" },
+    desktopFocal: { scale: 1.16, translateXPercent: 0, originXPercent: 0 },
   },
   {
     id: "selection-43",
@@ -45,6 +52,7 @@ export const desktopHeroCandidates = [
     poster: "/images/hero/approved/focuslab-desktop-hero-selection-43-poster.jpg",
     truth: "authentic-approved",
     source: { filename: "DSC_0815.MOV", start: "00:00:00.300", end: "00:00:06.400" },
+    desktopFocal: { scale: 1.14, translateXPercent: 0, originXPercent: 0 },
   },
 ] as const satisfies readonly DesktopHeroCandidate[];
 

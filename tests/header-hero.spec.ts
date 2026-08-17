@@ -73,6 +73,7 @@ test("desktop hero loads only the selected looping candidate", async ({ page }) 
   const initialHeroBox = await hero.boundingBox();
   await expect(video).toHaveCount(1);
   await expect(video).toHaveAttribute("data-candidate", "selection-08");
+  await expect(video).toHaveAttribute("style", /scale\(1\.11\)/);
   expect(await video.evaluate((el: HTMLVideoElement) => el.loop)).toBe(true);
   expect(await video.evaluate((el: HTMLVideoElement) => el.muted)).toBe(true);
   await expect(video).toHaveAttribute("playsinline", "");
@@ -88,10 +89,12 @@ test("desktop hero loads only the selected looping candidate", async ({ page }) 
 
   await page.getByRole("button", { name: "Show Arrival and couple moment" }).click();
   await expect(video).toHaveAttribute("data-candidate", "selection-31");
+  await expect(video).toHaveAttribute("style", /scale\(1\.16\)/);
   await expect(video.locator("source").first()).toHaveAttribute("src", /selection-31\.webm$/);
 
   await page.getByRole("button", { name: "Show Blue atmospheric couple moment" }).click();
   await expect(video).toHaveAttribute("data-candidate", "selection-43");
+  await expect(video).toHaveAttribute("style", /scale\(1\.14\)/);
   await expect(video).toHaveAttribute("poster", /selection-43-poster\.jpg$/);
   await expect(video.locator("source").first()).toHaveAttribute("src", /selection-43\.webm$/);
   expect(await hero.boundingBox()).toEqual(initialHeroBox);

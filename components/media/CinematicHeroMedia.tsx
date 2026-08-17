@@ -19,7 +19,8 @@ export function CinematicHeroMedia({
   mobilePosterSrc,
 }: CinematicHeroMediaProps) {
   const hasVideo = Boolean(candidates?.length);
-  const desktopPosterSrc = candidates?.[0]?.poster ?? asset.src;
+  const initialCandidate = candidates?.[0];
+  const desktopPosterSrc = initialCandidate?.poster ?? asset.src;
 
   return (
     <div
@@ -34,7 +35,15 @@ export function CinematicHeroMedia({
         priority
         sizes="100vw"
         className={`cinematic-poster object-cover ${mobilePosterSrc ? "hidden md:block" : ""}`}
-        style={{ objectPosition: asset.objectPosition }}
+        style={{
+          objectPosition: asset.objectPosition,
+          transform: initialCandidate
+            ? `translateX(${initialCandidate.desktopFocal.translateXPercent}%) scale(${initialCandidate.desktopFocal.scale})`
+            : undefined,
+          transformOrigin: initialCandidate
+            ? `${initialCandidate.desktopFocal.originXPercent}% 50%`
+            : undefined,
+        }}
       />
       {mobilePosterSrc ? (
         <Image
