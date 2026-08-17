@@ -4,7 +4,7 @@ const publicRoutes = [
   "/",
   "/pricing/",
   "/weddings/",
-  "/south-asian-weddings/",
+  "/asian-weddings/",
   "/services/photo-video/",
   "/services/entertainment-production/",
   "/events/parties/",
@@ -19,7 +19,7 @@ const publicRoutes = [
 const indexableRoutes = [
   "/",
   "/weddings/",
-  "/south-asian-weddings/",
+  "/asian-weddings/",
   "/events/parties/",
   "/events/corporate/",
   "/services/photo-video/",
@@ -27,7 +27,7 @@ const indexableRoutes = [
   "/pricing/",
   "/guides/",
   "/guides/wedding-day-coordination-checklist/",
-  "/guides/shaadi-week-timeline/",
+  "/guides/asian-wedding-week-timeline/",
   "/guides/mehndi-baraat-valima-venue-checklist/",
   "/guides/corporate-av-checklist/",
   "/guides/photo-video-coverage-map/",
@@ -43,7 +43,7 @@ const homepageAnchors = [
   "why-one-crew",
   "paths",
   "weddings",
-  "shaadi",
+  "asian-weddings",
   "parties",
   "corporate",
   "capabilities",
@@ -70,12 +70,12 @@ test("event path cards scroll within the page instead of navigating away", async
   const cards = page.locator("#paths a[href]");
   await expect(cards).toHaveCount(4);
   for (const href of await cards.evaluateAll((links) => links.map((link) => link.getAttribute("href")))) {
-    expect(href, "event path cards must be in-page anchors").toMatch(/^#(weddings|shaadi|parties|corporate)$/);
+    expect(href, "event path cards must be in-page anchors").toMatch(/^#(weddings|asian-weddings|parties|corporate)$/);
   }
 
-  await cards.filter({ hasText: "Shaadi" }).click();
-  await expect(page).toHaveURL(/#shaadi$/);
-  await expect(page.locator("#shaadi")).toBeInViewport();
+  await cards.filter({ hasText: "Asian Wedding" }).click();
+  await expect(page).toHaveURL(/#asian-weddings$/);
+  await expect(page.locator("#asian-weddings")).toBeInViewport();
 });
 
 test("primary navigation is event anchors plus pricing, without guides", async ({ page }) => {
@@ -83,7 +83,7 @@ test("primary navigation is event anchors plus pricing, without guides", async (
   await page.goto("/");
   const nav = page.getByRole("navigation", { name: "Primary" });
 
-  for (const label of ["Weddings", "Shaadi", "Parties", "Corporate"]) {
+  for (const label of ["Weddings", "Asian Weddings", "Parties", "Corporate"]) {
     await expect(nav.getByRole("link", { name: label, exact: true })).toHaveAttribute("href", /^#/);
   }
   await expect(nav.getByRole("link", { name: "Pricing", exact: true })).toHaveAttribute("href", "/pricing/");
@@ -97,7 +97,7 @@ test("each event section links to its own pricing category", async ({ page }) =>
   await page.goto("/");
   for (const [anchor, target] of [
     ["weddings", "/pricing/#pricing-weddings"],
-    ["shaadi", "/pricing/#pricing-shaadi"],
+    ["asian-weddings", "/pricing/#pricing-asian-weddings"],
     ["parties", "/pricing/#pricing-parties"],
     ["corporate", "/pricing/#pricing-corporate"],
   ] as const) {
@@ -114,7 +114,7 @@ test("the footer carries every planning checklist and the legal routes", async (
   await expect(checklists.getByRole("link")).toHaveCount(6);
 
   // Header and footer must not use the same label for different destinations.
-  await expect(footer.getByRole("link", { name: "Wedding Planning Guide" })).toHaveAttribute("href", "/weddings/");
+  await expect(footer.getByRole("link", { name: "Wedding Planning Guide", exact: true })).toHaveAttribute("href", "/weddings/");
   await expect(footer.getByRole("link", { name: "Privacy" })).toHaveAttribute("href", "/privacy/");
   await expect(footer.getByRole("link", { name: "Terms" })).toHaveAttribute("href", "/terms/");
 });

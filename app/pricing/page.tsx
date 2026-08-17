@@ -12,7 +12,7 @@ import { servicePricing } from "@/lib/pricing";
 export const metadata: Metadata = {
   title: "Pricing",
   description:
-    "Focus Lab Productions pricing for DFW weddings, Shaadi celebrations, parties, and corporate events — photo, video, DJ/MC, sound, lighting, and production.",
+    "Focus Lab Productions pricing for DFW weddings, Asian wedding celebrations, parties, and corporate events — photo, video, DJ/MC, sound, lighting, and production.",
   alternates: { canonical: "/pricing/" },
 };
 

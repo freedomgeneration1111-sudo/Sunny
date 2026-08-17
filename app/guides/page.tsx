@@ -8,7 +8,7 @@ import { guides } from "@/lib/content/guides";
 
 export const metadata: Metadata = {
   title: "Event Planning Guides",
-  description: "Practical planning checklists for DFW weddings, South Asian celebrations, corporate AV, photo and video, and venue approvals.", alternates: { canonical: "/guides/" } };
+  description: "Practical planning checklists for DFW weddings, Asian celebrations, corporate AV, photo and video, and venue approvals.", alternates: { canonical: "/guides/" } };
 
 export default function GuidesPage() {
   return (

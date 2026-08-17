@@ -3,7 +3,7 @@ import type { PricingKey } from "@/lib/pricing";
 
 export type PlanCategory =
   | "Wedding"
-  | "South Asian"
+  | "Asian Wedding"
   | "Party"
   | "Corporate"
   | "Media"
@@ -49,35 +49,35 @@ export const planItems = {
   "sa-single-event": {
     id: "sa-single-event",
     label: "Single Celebration Coverage",
-    category: "South Asian",
+    category: "Asian Wedding",
     detail: "One celebration — Mehndi, Sangeet, Haldi, or another event",
     priceKey: "saSingleEvent",
   },
   "sa-wedding-reception": {
     id: "sa-wedding-reception",
     label: "Wedding Day + Reception",
-    category: "South Asian",
+    category: "Asian Wedding",
     detail: "The ceremony day and the reception on one connected plan",
     priceKey: "saWeddingReception",
   },
   "sa-full-celebration": {
     id: "sa-full-celebration",
     label: "Full Celebration Week",
-    category: "South Asian",
+    category: "Asian Wedding",
     detail: "Every event your family is planning, quoted together",
     priceKey: "saFullCelebration",
   },
   "sa-baraat": {
     id: "sa-baraat",
     label: "Baraat Procession Sound",
-    category: "South Asian",
+    category: "Asian Wedding",
     detail: "Mobile sound for a procession that moves outdoors",
     priceKey: "saBaraat",
   },
   "south-asian-media": {
     id: "south-asian-media",
-    label: "Shaadi Photo + Video",
-    category: "South Asian",
+    label: "Asian Wedding Photo + Video",
+    category: "Asian Wedding",
     detail: "Photo and video across a multi-event celebration",
     priceKey: "southAsianCelebrationMedia",
   },

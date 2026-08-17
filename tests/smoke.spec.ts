@@ -2,7 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 
 const importantRoutes = [
   "/",
-  "/south-asian-weddings/",
+  "/asian-weddings/",
   "/weddings/",
   "/events/parties/",
   "/events/corporate/",
@@ -14,7 +14,7 @@ const importantRoutes = [
   "/check-availability/",
   "/guides/",
   "/guides/wedding-day-coordination-checklist/",
-  "/guides/shaadi-week-timeline/",
+  "/guides/asian-wedding-week-timeline/",
   "/guides/mehndi-baraat-valima-venue-checklist/",
   "/guides/corporate-av-checklist/",
   "/guides/photo-video-coverage-map/",

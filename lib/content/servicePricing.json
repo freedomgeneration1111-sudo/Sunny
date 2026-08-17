@@ -22,7 +22,7 @@
     "saWeddingReception": { "amount": 4200, "mode": "from", "label": "Wedding Day + Reception" },
     "saFullCelebration": { "amount": 9500, "mode": "custom", "label": "Full Celebration Week" },
     "saBaraat": { "amount": 950, "mode": "from", "label": "Baraat Procession Sound" },
-    "southAsianCelebrationMedia": { "amount": 7500, "mode": "custom", "label": "Shaadi Photo + Video" },
+    "southAsianCelebrationMedia": { "amount": 7500, "mode": "custom", "label": "Asian Wedding Photo + Video" },
 
     "party3h": { "amount": 675, "mode": "exact", "label": "3-Hour Party" },
     "party4h": { "amount": 900, "mode": "exact", "label": "4-Hour Party" },

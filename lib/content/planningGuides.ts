@@ -238,20 +238,20 @@ export const weddingGuide: PlanningGuide = {
   },
 };
 
-/* ──────────────────────── Shaadi celebrations ───────────────────────── */
+/* ──────────────────────── Asian wedding celebrations ────────────────── */
 
-export const shaadiGuide: PlanningGuide = {
-  slug: "south-asian-weddings",
-  homeAnchor: "shaadi",
-  inquiryEvent: "South Asian Wedding",
+export const asianWeddingsGuide: PlanningGuide = {
+  slug: "asian-weddings",
+  homeAnchor: "asian-weddings",
+  inquiryEvent: "Asian Wedding",
   hero: {
-    eyebrow: "Complete Shaadi Planning Guide",
+    eyebrow: "Complete Asian Wedding Planning Guide",
     title: "Plan the week your family is actually having.",
     body: "How to map a multi-event celebration, and how entertainment, production, and media planning changes from one event to the next.",
-    media: media.southAsianHero,
+    media: media.asianWeddingHero,
   },
   commercial: {
-    title: "Focus Lab covers Shaadi celebrations across Dallas–Fort Worth.",
+    title: "Focus Lab covers Asian Wedding celebrations across Dallas–Fort Worth.",
     body: "One celebration or the whole week. Our team communicates in English, Urdu, Hindi and Punjabi, and shared planning carries names, timing and family preferences from one event to the next.",
     capabilities: [
       "Coverage for a single celebration or the whole week",
@@ -260,10 +260,10 @@ export const shaadiGuide: PlanningGuide = {
       "DJ, MC, and performance playback with cue sheets",
       "Lighting and production sized to each room",
     ],
-    pricing: { href: "/pricing#pricing-shaadi", label: "See Shaadi Pricing" },
+    pricing: { href: "/pricing#pricing-asian-weddings", label: "See Asian Wedding Pricing" },
   },
   intro:
-    "There is no universal South Asian wedding. Sequence, naming, emphasis, and formality vary between regions, faiths, families, and generations — and a plan that assumes otherwise will be wrong somewhere. This guide starts from the events you are planning and works outward.",
+    "There is no universal Asian wedding. Sequence, naming, emphasis, and formality vary between regions, faiths, families, and generations — and a plan that assumes otherwise will be wrong somewhere. This guide starts from the events you are planning and works outward.",
   readingTime: "About 14 minutes",
   chapters: [
     {
@@ -284,7 +284,7 @@ export const shaadiGuide: PlanningGuide = {
         "Whether it is indoors, outdoors, or moves between the two",
         "Which services that specific event needs",
       ],
-      media: media.southAsianMehndi,
+      media: media.asianWeddingMehndi,
     },
     {
       id: "different-rooms",
@@ -337,7 +337,7 @@ export const shaadiGuide: PlanningGuide = {
         "How long the venue will hold the next event if this one runs over",
       ],
       planItemIds: ["sa-baraat"],
-      media: media.southAsianBaraat,
+      media: media.asianWeddingBaraat,
     },
     {
       id: "media-continuity",
@@ -401,7 +401,7 @@ export const shaadiGuide: PlanningGuide = {
       ],
     },
   ],
-  relatedGuides: ["shaadi-week-timeline", "mehndi-baraat-valima-venue-checklist", "photo-video-coverage-map"],
+  relatedGuides: ["asian-wedding-week-timeline", "mehndi-baraat-valima-venue-checklist", "photo-video-coverage-map"],
   faqs: [
     { question: "Do you assume a particular sequence of events?", answer: "No. We start from the events your family is planning and use the names your family uses. Any list we publish is a set of common examples, not a template." },
     { question: "Can we book only some events in the week?", answer: "Yes. Single events, the wedding day and reception together, or the full week are all normal starting points. Multi-event celebrations are quoted individually." },
@@ -747,7 +747,7 @@ export const corporateGuide: PlanningGuide = {
 
 export const planningGuides = {
   weddings: weddingGuide,
-  southAsian: shaadiGuide,
+  asianWeddings: asianWeddingsGuide,
   parties: partyGuide,
   corporate: corporateGuide,
 } as const;

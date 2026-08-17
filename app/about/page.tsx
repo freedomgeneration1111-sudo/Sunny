@@ -86,7 +86,7 @@ export default function AboutPage() {
               <Eyebrow className="text-brand-accent!">Language and culture</Eyebrow>
               <SectionHeading className="mt-4">Planning in the language your family uses.</SectionHeading>
               <p className="mt-6 text-lg leading-8 text-on-brand/68">
-                Our team can communicate in English, Urdu, Hindi and Punjabi. For South Asian
+                Our team can communicate in English, Urdu, Hindi and Punjabi. For Asian
                 celebrations that matters well before the event — in how names are pronounced, how
                 announcements are made, and how comfortably families can talk through the plan.
               </p>
@@ -143,7 +143,7 @@ export default function AboutPage() {
                 get in touch — events further out are quoted with the travel included.
               </Lead>
             </div>
-            <MediaFrame asset={media.southAsianReception} sizes="(min-width:1024px) 48vw,100vw" aspectRatioOverride="16/10" />
+            <MediaFrame asset={media.asianWeddingReception} sizes="(min-width:1024px) 48vw,100vw" aspectRatioOverride="16/10" />
           </div>
         </Container>
       </Section>

@@ -3,7 +3,7 @@ import { TrackedLink } from "@/components/analytics/TrackedLink";
 import { MediaFrame } from "@/components/media/MediaFrame";
 import { CorporateSection } from "@/components/sections/home/CorporateSection";
 import { PartiesSection } from "@/components/sections/home/PartiesSection";
-import { ShaadiSection } from "@/components/sections/home/ShaadiSection";
+import { AsianWeddingsSection } from "@/components/sections/home/AsianWeddingsSection";
 import { WeddingsSection } from "@/components/sections/home/WeddingsSection";
 import { FAQList } from "@/components/sections/FAQList";
 import { HomeHero } from "@/components/sections/HomeHero";
@@ -17,7 +17,7 @@ import { media } from "@/lib/media";
 
 export const metadata: Metadata = {
   description:
-    "Photo, video, DJ/MC, sound, lighting and production for weddings, Shaadi celebrations, parties and corporate events across Dallas–Fort Worth.",
+    "Photo, video, DJ/MC, sound, lighting and production for weddings, Asian wedding celebrations, parties and corporate events across Dallas–Fort Worth.",
   alternates: { canonical: "/" },
 };
 
@@ -136,7 +136,7 @@ export default function HomePage() {
       </Section>
 
       <WeddingsSection />
-      <ShaadiSection />
+      <AsianWeddingsSection />
       <PartiesSection />
       <CorporateSection />
 

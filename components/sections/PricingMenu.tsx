@@ -25,8 +25,8 @@ const groups = [
     ids: ["wedding-dj-core", "wedding-dj-ceremony", "wedding-production", "ceremony-sound"],
   },
   {
-    slug: "shaadi",
-    title: "Shaadi Celebrations",
+    slug: "asian-weddings",
+    title: "Asian Wedding Celebrations",
     body: "Multi-event celebrations are quoted around the events your family is actually planning. These are starting points, not a fixed sequence.",
     ids: ["sa-single-event", "sa-wedding-reception", "sa-full-celebration", "sa-baraat", "south-asian-media"],
   },

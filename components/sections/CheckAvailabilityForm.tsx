@@ -12,7 +12,7 @@ import { isPlanItemId, planItems } from "@/lib/plan";
 type State = { eventType:string;date:string;location:string;services:string[];guests:string;budget:string;name:string;email:string;phone:string;contact:string;note:string };
 type SubmissionState = { kind:"idle"|"demo"|"submitting"|"success"|"error";message?:string };
 const base: State = { eventType:"",date:"",location:"",services:[],guests:"",budget:"",name:"",email:"",phone:"",contact:"email",note:"" };
-const eventTypes = ["Wedding","South Asian Wedding","Party / Celebration","Corporate / Community"];
+const eventTypes = ["Wedding","Asian Wedding","Party / Celebration","Corporate / Community"];
 const serviceOptions = ["Photo","Video","DJ / MC","Lighting / Production","Photo Booth / 360"];
 const inputClass = "mt-2 min-h-12 w-full rounded-control border border-border bg-surface px-4 text-ink placeholder:text-ink-muted/65";
 const chipClass = "min-h-12 rounded-control border px-4 py-3 text-sm font-extrabold transition-colors";

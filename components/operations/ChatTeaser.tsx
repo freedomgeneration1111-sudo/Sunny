@@ -21,8 +21,8 @@ export function ChatTeaser() {
   }, []);
 
   if (!visible) return null;
-  const teaser = pathname.startsWith("/south-asian-weddings") || pathname.startsWith("/guides/shaadi") || pathname.startsWith("/guides/mehndi")
-    ? "Need help shaping your Shaadi plan?"
+  const teaser = pathname.startsWith("/asian-weddings") || pathname.startsWith("/guides/asian-wedding") || pathname.startsWith("/guides/mehndi")
+    ? "Need help shaping your Asian wedding plan?"
     : "Need help shaping your plan?";
 
   return (

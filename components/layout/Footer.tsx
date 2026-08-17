@@ -17,7 +17,7 @@ const columns = [
     heading: "Events & Planning",
     links: [
       { href: "/weddings", label: "Wedding Planning Guide" },
-      { href: "/south-asian-weddings", label: "Shaadi Planning Guide" },
+      { href: "/asian-weddings", label: "Asian Wedding Planning Guide" },
       { href: "/events/parties", label: "Party Planning Guide" },
       { href: "/events/corporate", label: "Corporate Event Guide" },
     ],

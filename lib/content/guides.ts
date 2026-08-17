@@ -29,12 +29,12 @@ export const guides = [
     ],
   },
   {
-    slug: "shaadi-week-timeline",
-    eyebrow: "South Asian Wedding Guide",
-    title: "Shaadi-Week Timeline Framework",
+    slug: "asian-wedding-week-timeline",
+    eyebrow: "Asian Wedding Guide",
+    title: "Asian Wedding-Week Timeline Framework",
     description: "Map a multi-event wedding week before assigning entertainment, production, and media coverage.",
     intro: "No two Shaadi weeks need the same sequence. Start with the celebrations your families are actually planning, then attach venues, access windows, people, and services to each one.",
-    relatedEvent: "South Asian Wedding",
+    relatedEvent: "Asian Wedding",
     sections: [
       { title: "Build the event map", body: "Create one row for every celebration rather than treating the week as a single long booking.", items: ["Event name and family-preferred terminology.", "Date, venue, address, and room or entrance location.", "Guest arrival, family arrival, formal start, and hard end.", "Selected media, sound, hosting, lighting, and enhancement needs."] },
       { title: "Mark the handoffs", body: "Multi-event plans often become unclear between venues or between daytime and evening programs.", items: ["Travel time and parking between locations.", "Wardrobe, hair and makeup, portraits, and family-photo windows.", "Equipment reset or second-room requirements.", "Who can approve a delay when it affects the next event."] },
@@ -43,11 +43,11 @@ export const guides = [
   },
   {
     slug: "mehndi-baraat-valima-venue-checklist",
-    eyebrow: "South Asian Wedding Guide",
+    eyebrow: "Asian Wedding Guide",
     title: "Mehndi, Baraat & Valima Venue Checklist",
     description: "Questions to ask each venue when a wedding sequence moves across rooms, dates, or properties.",
     intro: "Venue conditions can change the production plan even when the guest list stays the same. Review each celebration independently and use the family’s chosen event terminology.",
-    relatedEvent: "South Asian Wedding",
+    relatedEvent: "Asian Wedding",
     sections: [
       { title: "Access and movement", body: "Confirm how people and equipment reach the actual event space.", items: ["Vendor access time, loading entrance, elevator, stairs, and parking.", "Baraat or arrival route, gathering point, weather alternative, and property boundaries.", "Room flip timing and whether guests must move between spaces.", "End-of-night strike window and any overtime or security requirements."] },
       { title: "Sound and power", body: "Do not assume ceremony, procession, and reception areas share the same technical conditions.", items: ["Indoor and outdoor sound limits or cutoff times.", "Available circuits and venue-approved power locations.", "House audio requirements and whether outside equipment may connect.", "Microphone needs for family remarks, officiants, performers, or program hosts."] },

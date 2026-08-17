@@ -1,7 +1,7 @@
 import { MediaFrame } from "@/components/media/MediaFrame";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
-import { shaadiSection as content } from "@/lib/content/eventSections";
+import { asianWeddingsSection as content } from "@/lib/content/eventSections";
 import { Capabilities, SectionActions, SectionIntro } from "./shared";
 
 /**
@@ -9,7 +9,7 @@ import { Capabilities, SectionActions, SectionIntro } from "./shared";
  * the cultural point — these are common examples, never a required order —
  * followed by an editorial pair and the shared-planning argument.
  */
-export function ShaadiSection() {
+export function AsianWeddingsSection() {
   return (
     <Section theme="dark" id={content.anchor}>
       <Container>
@@ -87,7 +87,7 @@ export function ShaadiSection() {
           pricing={content.pricing}
           guides={content.guides}
           tone="dark"
-          eventType="South Asian Wedding"
+          eventType="Asian Wedding"
         />
       </Container>
     </Section>

@@ -18,7 +18,7 @@ import { config } from "@/lib/config";
  */
 const anchorNav = [
   { anchor: "weddings", label: "Weddings" },
-  { anchor: "shaadi", label: "Shaadi" },
+  { anchor: "asian-weddings", label: "Asian Weddings" },
   { anchor: "parties", label: "Parties" },
   { anchor: "corporate", label: "Corporate" },
 ] as const;

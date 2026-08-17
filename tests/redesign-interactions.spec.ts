@@ -4,7 +4,7 @@ test("the pricing page is one complete visible menu without tabs", async ({ page
   await page.goto("/pricing/");
   await expect(page.getByRole("tablist")).toHaveCount(0);
 
-  for (const slug of ["weddings", "shaadi", "parties", "corporate", "photo-video", "enhancements"]) {
+  for (const slug of ["weddings", "asian-weddings", "parties", "corporate", "photo-video", "enhancements"]) {
     await expect(page.locator(`#pricing-${slug}`), `${slug} category should be visible`).toBeVisible();
   }
 
@@ -74,10 +74,10 @@ test("the contextual chat teaser still appears without opening chat", async ({ p
       }),
     }),
   );
-  await page.goto("/south-asian-weddings/");
+  await page.goto("/asian-weddings/");
   const teaser = page.getByTestId("chat-teaser");
   await expect(teaser).toBeVisible({ timeout: 30_000 });
-  await expect(teaser).toContainText("Need help shaping your Shaadi plan?");
+  await expect(teaser).toContainText("Need help shaping your Asian wedding plan?");
   await expect(page.getByRole("dialog")).toHaveCount(0);
 });
 

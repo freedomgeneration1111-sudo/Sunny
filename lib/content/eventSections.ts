@@ -9,7 +9,7 @@
 import type { MediaAsset } from "@/lib/media";
 import { media } from "@/lib/media";
 
-export type EventAnchor = "weddings" | "shaadi" | "parties" | "corporate";
+export type EventAnchor = "weddings" | "asian-weddings" | "parties" | "corporate";
 
 export type EventPathCard = {
   anchor: EventAnchor;
@@ -29,10 +29,10 @@ export const eventPathCards: readonly EventPathCard[] = [
     asset: media.eventWedding,
   },
   {
-    anchor: "shaadi",
-    title: "Shaadi Celebrations",
+    anchor: "asian-weddings",
+    title: "Asian Wedding Celebrations",
     body: "Multi-event celebrations, built around your family's schedule.",
-    asset: media.eventSouthAsian,
+    asset: media.eventAsianWedding,
   },
   {
     anchor: "parties",
@@ -76,14 +76,14 @@ export const weddingsSection = {
   guide: { href: "/weddings", label: "Read the wedding planning guide" },
 };
 
-/* ── Shaadi ────────────────────────────────────────────────────────── */
+/* ── Asian Weddings ────────────────────────────────────────────────── */
 
-export const shaadiSection = {
-  anchor: "shaadi" as const,
-  eyebrow: "Shaadi Celebrations",
+export const asianWeddingsSection = {
+  anchor: "asian-weddings" as const,
+  eyebrow: "Asian Wedding Celebrations",
   title: "Built around your family's celebrations.",
   lead: "No two celebrations use the same sequence. Some families plan three events, some plan seven, and the names, order, and emphasis change between regions, faiths, and generations. We start from what you are actually planning.",
-  media: media.southAsianHero,
+  media: media.asianWeddingHero,
   languages: ["English", "Urdu", "Hindi", "Punjabi"],
   sequenceNote: "Common examples, not a required order. Tell us which of these you are planning, and which you are not.",
   sequence: [
@@ -104,7 +104,7 @@ export const shaadiSection = {
       { title: "Timing that compounds", body: "What ran long at one event informs the plan for the next." },
     ],
   },
-  editorialMedia: [media.southAsianMehndi, media.southAsianBaraat],
+  editorialMedia: [media.asianWeddingMehndi, media.asianWeddingBaraat],
   capabilities: [
     "Coverage for a single celebration or the whole week",
     "Photo and video across multiple events",
@@ -112,9 +112,9 @@ export const shaadiSection = {
     "DJ, MC, and performance playback with cue sheets",
     "Lighting and production sized to each room",
   ],
-  pricing: { href: "/pricing#pricing-shaadi", label: "See Shaadi Pricing" },
-  guides: ["shaadi-week-timeline", "mehndi-baraat-valima-venue-checklist"] as readonly GuideLinkSlug[],
-  guide: { href: "/south-asian-weddings", label: "Read the Shaadi planning guide" },
+  pricing: { href: "/pricing#pricing-asian-weddings", label: "See Asian Wedding Pricing" },
+  guides: ["asian-wedding-week-timeline", "mehndi-baraat-valima-venue-checklist"] as readonly GuideLinkSlug[],
+  guide: { href: "/asian-weddings", label: "Read the Asian wedding planning guide" },
 };
 
 /* ── Parties ───────────────────────────────────────────────────────── */

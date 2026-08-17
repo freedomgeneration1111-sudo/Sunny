@@ -61,7 +61,7 @@ architecture is deliberately changed and every route is retested.
 The homepage is the complete customer journey — a visitor can identify their
 event, explore services, build a plan, see pricing, and reach Check Availability
 without leaving `/`. The supporting routes (`/weddings`,
-`/south-asian-weddings`, `/events/*`, `/guides/*`) are a **knowledge layer**:
+`/asian-weddings`, `/events/*`, `/guides/*`) are a **knowledge layer**:
 substantial planning guides for depth, search, and sharing.
 
 See `docs/02_ARCHITECTURE_AND_CONTENT_HIERARCHY.md` for the anchor contract and
