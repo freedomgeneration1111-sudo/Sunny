@@ -1,42 +1,54 @@
-export type MediaTruth = "ai-brand" | "authentic";
+export type MediaTruth =
+  | "ai-brand"
+  | "authentic-approved"
+  | "authentic-pending"
+  | "development-placeholder";
 
 /**
- * The homepage hero rotation.
- *
- * The player alternates between these clips: each plays once at normal speed,
- * holds on a still frame for `holdMs`, then hands over to the next.
- *
- * The wedding clip is the client's own submission and carries a burned-in
- * watermark and subtitle. It is deliberately left as supplied — see the
- * hero-video report — rather than cropped or hidden.
- *
- * The mehndi clip ends on a half-second sparkle transition, so it pauses at
- * 7.3s rather than on its literal last frame. The wedding clip ends on usable
- * content and needs no such override.
- *
- * Seeking to arbitrary points is unreliable in the wedding encodes (sparse
- * keyframes); seeking to zero, which is all the rotation does, is dependable.
+ * Approved prior-work candidates for desktop hero comparison. Source names and
+ * exact edit ranges are retained as provenance; they are not location claims.
  */
-export const heroClips = [
-  {
-    desktop: "/video/hero-wedding-03-desktop.mp4",
-    mobile: "/video/hero-wedding-03-mobile.mp4",
-    poster: "/images/hero/hero-wedding-desktop-poster.webp",
-    posterMobile: "/images/hero/hero-wedding-mobile-poster.webp",
-  },
-  {
-    desktop: "/video/hero-mehndi-desktop.mp4",
-    mobile: "/video/hero-mehndi-mobile.mp4",
-    poster: "/images/hero/hero-mehndi-desktop-poster.webp",
-    posterMobile: "/images/hero/hero-mehndi-mobile-poster.webp",
-    holdAtSeconds: 7.3,
-  },
-] as const;
+export type DesktopHeroCandidate = {
+  id: string;
+  label: string;
+  mp4: string;
+  webm: string;
+  poster: string;
+  truth: "authentic-approved";
+  source: { filename: string; start: string; end: string };
+};
 
-export const heroVideo = {
-  truth: "authentic" as MediaTruth,
-  holdMs: 20_000,
-} as const;
+export const desktopHeroCandidates = [
+  {
+    id: "selection-08",
+    label: "Dance and guest energy",
+    mp4: "/video/approved/focuslab-desktop-hero-selection-08.mp4",
+    webm: "/video/approved/focuslab-desktop-hero-selection-08.webm",
+    poster: "/images/hero/approved/focuslab-desktop-hero-selection-08-poster.jpg",
+    truth: "authentic-approved",
+    source: { filename: "DSC_0572.MOV", start: "00:00:02.200", end: "00:00:18.800" },
+  },
+  {
+    id: "selection-31",
+    label: "Arrival and couple moment",
+    mp4: "/video/approved/focuslab-desktop-hero-selection-31.mp4",
+    webm: "/video/approved/focuslab-desktop-hero-selection-31.webm",
+    poster: "/images/hero/approved/focuslab-desktop-hero-selection-31-poster.jpg",
+    truth: "authentic-approved",
+    source: { filename: "DSC_0250.MOV", start: "00:00:00.250", end: "00:00:05.000" },
+  },
+  {
+    id: "selection-43",
+    label: "Blue atmospheric couple moment",
+    mp4: "/video/approved/focuslab-desktop-hero-selection-43.mp4",
+    webm: "/video/approved/focuslab-desktop-hero-selection-43.webm",
+    poster: "/images/hero/approved/focuslab-desktop-hero-selection-43-poster.jpg",
+    truth: "authentic-approved",
+    source: { filename: "DSC_0815.MOV", start: "00:00:00.300", end: "00:00:06.400" },
+  },
+] as const satisfies readonly DesktopHeroCandidate[];
+
+export const heroMobilePoster = "/images/hero/hero-wedding-mobile-poster.webp";
 export type MediaAsset = { id: string; src: string; alt: string; purpose: string; truth: MediaTruth; desktopAspect: string; mobileAspect: string; objectPosition?: string; priority?: "P0" | "P1" | "P2" };
 const generated = (id: string, src: string, alt: string, purpose: string, desktopAspect = "16/9", mobileAspect = "4/5", objectPosition = "center", priority: "P0" | "P1" | "P2" = "P1"): MediaAsset => ({ id, src, alt, purpose, truth: "ai-brand", desktopAspect, mobileAspect, objectPosition, priority });
 
