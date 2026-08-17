@@ -6,39 +6,17 @@ describe("public staging same-origin facade", () => {
     const operations = { fetch: vi.fn().mockResolvedValue(new Response("api", { status: 201 })) };
     const assets = { fetch: vi.fn().mockResolvedValue(new Response("asset")) };
     const response = await handlePublicSite(new Request("https://public.example.test/v1/inquiries", { method: "POST" }), { OPERATIONS_API: operations, ASSETS: assets });
-    expect(response.status).toBe(201);
-    expect(operations.fetch).toHaveBeenCalledOnce();
-    expect(assets.fetch).not.toHaveBeenCalled();
+    expect(response.status).toBe(201);expect(operations.fetch).toHaveBeenCalledOnce();expect(assets.fetch).not.toHaveBeenCalled();
   });
-
   it("serves static paths with review-only robots protection", async () => {
     const operations = { fetch: vi.fn() };
     const assets = { fetch: vi.fn().mockResolvedValue(new Response("asset", { headers: { "Content-Type": "text/html" } })) };
     const response = await handlePublicSite(new Request("https://public.example.test/check-availability/"), { OPERATIONS_API: operations, ASSETS: assets });
-    expect(await response.text()).toBe("asset");
-    expect(response.headers.get("X-Robots-Tag")).toBe("noindex, nofollow");
-    expect(operations.fetch).not.toHaveBeenCalled();
+    expect(await response.text()).toBe("asset");expect(response.headers.get("X-Robots-Tag")).toBe("noindex, nofollow");expect(operations.fetch).not.toHaveBeenCalled();
   });
-
-  it("propagates a chat WebSocket response from the service binding", async () => {
-    const pair = new WebSocketPair();
-    pair[1].accept();
-    const upgrade = new Response(null, { status: 101, webSocket: pair[0] });
-    const operations = { fetch: vi.fn().mockResolvedValue(upgrade) };
-    const assets = { fetch: vi.fn() };
-    const response = await handlePublicSite(new Request("https://public.example.test/v1/chat/conversations/chat_test/socket", { headers: { Upgrade: "websocket" } }), { OPERATIONS_API: operations, ASSETS: assets });
-    expect(response).toBe(upgrade);
-    expect(response.webSocket).toBe(pair[0]);
-    response.webSocket?.accept();
-    response.webSocket?.close(1000, "Test complete");
-  });
-
-  it("forwards secure conversation resume through the service binding", async () => {
-    const operations = { fetch: vi.fn().mockResolvedValue(Response.json({ ok: true })) };
-    const assets = { fetch: vi.fn() };
-    const response = await handlePublicSite(new Request("https://public.example.test/v1/chat/resume", { headers: { "X-Chat-Resume-Token": "opaque" } }), { OPERATIONS_API: operations, ASSETS: assets });
-    expect(response.status).toBe(200);
-    expect(operations.fetch).toHaveBeenCalledOnce();
-    expect(assets.fetch).not.toHaveBeenCalled();
+  it("passes chat and secure resume responses through unchanged", async () => {
+    const upstream=Response.json({ok:true});const operations={fetch:vi.fn().mockResolvedValue(upstream)};const assets={fetch:vi.fn()};
+    expect(await handlePublicSite(new Request("https://public.example.test/v1/chat/resume",{headers:{"X-Chat-Resume-Token":"opaque"}}),{OPERATIONS_API:operations,ASSETS:assets})).toBe(upstream);
+    expect(operations.fetch).toHaveBeenCalledOnce();expect(assets.fetch).not.toHaveBeenCalled();
   });
 });

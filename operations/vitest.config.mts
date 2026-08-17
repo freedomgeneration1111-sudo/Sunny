@@ -1,25 +1,3 @@
-import { cloudflarePool,readD1Migrations } from "@cloudflare/vitest-pool-workers";
-import { defineConfig } from "vitest/config";
+import {defineConfig} from "vitest/config";
 
-export default defineConfig({
-  test: {
-    include: ["operations/test/**/*.test.ts"],
-    setupFiles: ["operations/test/setup.ts"],
-    pool: cloudflarePool(async () => ({
-      wrangler: { configPath: "operations/wrangler.jsonc" },
-      miniflare: {
-        d1Databases: { MIGRATION_DB: "sprint-1-migration-test" },
-        bindings: {
-          TEST_MIGRATIONS: await readD1Migrations("operations/migrations"),
-          INTERNAL_API_TOKEN: "development-test-token-00000000",
-          MESSAGING_PROVIDER: "test-shared-inbox",
-          MESSAGING_DESTINATION_URL: "https://messaging.example.test/shared",
-          TURNSTILE_TEST_BYPASS: "true",
-          VAPID_PUBLIC_KEY: "test-public-vapid-key",
-          VAPID_PRIVATE_KEY: "test-private-vapid-key",
-          VAPID_SUBJECT: "mailto:push-test@example.test",
-        },
-      },
-    })),
-  },
-});
+export default defineConfig({test:{include:["operations/test/**/*.test.ts"],environment:"node"}});

@@ -14,4 +14,3 @@ test-results/
 playwright-report/
 tsconfig.tsbuildinfo
 artifacts/
-operations/staff-app/dist/
