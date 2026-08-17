@@ -1,5 +1,5 @@
 import { CinematicHeroMedia } from "@/components/media/CinematicHeroMedia";
-import { heroClips, heroVideo } from "@/lib/media";
+import { desktopHeroCandidates, heroMobilePoster } from "@/lib/media";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import type { MediaAsset } from "@/lib/media";
@@ -23,9 +23,8 @@ export function HomeHero({ asset }: HomeHeroProps) {
       />
       <CinematicHeroMedia
         asset={asset}
-        clips={heroClips}
-        mobilePosterSrc={heroClips[0].posterMobile}
-        holdMs={heroVideo.holdMs}
+        candidates={desktopHeroCandidates}
+        mobilePosterSrc={heroMobilePoster}
       />
       <Container
         variant="wide"
