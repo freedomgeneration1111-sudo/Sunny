@@ -92,7 +92,7 @@ export function Header() {
   const routeActive = (href: string) => path === href || path.startsWith(`${href}/`);
   const expanded = isHome && heroTop && !mobile;
   const headerTone = expanded
-    ? "border-transparent bg-transparent text-on-brand"
+    ? "border-transparent bg-transparent text-on-brand backdrop-blur-none"
     : "border-border/70 bg-canvas/95 text-ink shadow-[0_8px_28px_rgba(17,18,20,.08)] backdrop-blur";
   const navHover = expanded
     ? "hover:text-brand-accent aria-[current=true]:text-brand-accent aria-[current=page]:text-brand-accent"
@@ -102,43 +102,41 @@ export function Header() {
     <header
       data-testid="site-header"
       data-header-state={expanded ? "expanded" : "compact"}
-      className={`${isHome ? "fixed" : "sticky"} left-0 right-0 top-0 z-50 border-b transition-[background-color,border-color,box-shadow,color] duration-300 motion-reduce:transition-none ${headerTone}`}
+      className={`${isHome ? "fixed" : "sticky"} left-0 right-0 top-0 z-50 border-b transition-[background-color,border-color,box-shadow,color,backdrop-filter] duration-300 ease-out motion-reduce:transition-none ${headerTone}`}
     >
       <div
-        className={`mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-5 transition-[height,padding] duration-300 motion-reduce:transition-none md:px-8 lg:px-10 ${expanded ? "h-[104px] md:h-[128px] xl:h-[140px]" : "h-[var(--header-h)]"}`}
+        className={`mx-auto flex max-w-[1440px] items-center justify-between gap-4 px-5 transition-[height,padding] duration-300 ease-out motion-reduce:transition-none md:px-8 lg:px-10 ${expanded ? "h-[104px] md:h-[128px] xl:h-[140px]" : "h-[var(--header-h)]"}`}
       >
         <Link
           href="/"
           aria-label="Focus Lab Productions home"
           className="relative flex min-w-0 items-center"
         >
-          {/* The flare belongs to the transparent-over-photo state only. It is
-              scoped to these two spans, which render solely while `expanded`
-              — i.e. the homepage header sitting over the hero image. */}
-          <span className={expanded ? "block w-[190px] sm:w-[225px] md:hidden" : "hidden"}>
-            <HeroLogoFlare lockup="compact">
-              <BrandLogo mode="compact" tone="light" priority />
-            </HeroLogoFlare>
-          </span>
-          <span className={expanded ? "hidden w-[360px] md:block lg:w-[385px] xl:w-[410px]" : "hidden"}>
-            <HeroLogoFlare lockup="expanded">
-              <BrandLogo mode="expanded" tone="light" priority />
-            </HeroLogoFlare>
-          </span>
-          {/* Scrolled nav uses the guide's stacked lockup. It is height-driven,
-              not width-driven: the bar has a fixed height and a stacked logo is
-              tall, so sizing it by width would overflow the header. */}
+          {/* One horizontal lockup drives both header states — hero and
+              scrolled render the same icon-beside-wordmark artwork, sized by
+              height only, so the resize animates instead of hard-swapping to
+              a different layout (the old stacked/mark scrolled treatment). */}
           <span
-            className={
-              expanded
-                ? "hidden"
-                : "hidden h-[58px] min-[380px]:block md:h-[64px] xl:h-[68px]"
-            }
+            className={`block transition-[height] duration-300 ease-out motion-reduce:transition-none md:hidden ${expanded ? "h-[53px] sm:h-[63px]" : "h-[58px]"}`}
           >
-            <BrandLogo mode="stacked" tone="dark" fit="height" priority />
+            {expanded ? (
+              <HeroLogoFlare lockup="compact">
+                <BrandLogo mode="compact" tone="light" fit="height" priority />
+              </HeroLogoFlare>
+            ) : (
+              <BrandLogo mode="compact" tone="dark" fit="height" priority />
+            )}
           </span>
-          <span className={expanded ? "hidden" : "block w-11 min-[380px]:hidden"}>
-            <BrandLogo mode="mark" tone="dark" priority />
+          <span
+            className={`hidden transition-[height] duration-300 ease-out motion-reduce:transition-none md:block ${expanded ? "h-[121px] lg:h-[129px] xl:h-[138px]" : "h-[64px] xl:h-[68px]"}`}
+          >
+            {expanded ? (
+              <HeroLogoFlare lockup="expanded">
+                <BrandLogo mode="expanded" tone="light" fit="height" priority />
+              </HeroLogoFlare>
+            ) : (
+              <BrandLogo mode="expanded" tone="dark" fit="height" priority />
+            )}
           </span>
         </Link>
 
@@ -148,7 +146,7 @@ export function Header() {
               key={item.anchor}
               href={anchorHref(item.anchor)}
               aria-current={activeAnchor === item.anchor ? true : undefined}
-              className={`text-sm font-semibold transition-colors ${navHover}`}
+              className={`text-sm font-semibold transition-colors duration-300 ease-out ${navHover}`}
             >
               {item.label}
             </Link>
@@ -158,7 +156,7 @@ export function Header() {
               key={item.href}
               href={item.href}
               aria-current={routeActive(item.href) ? "page" : undefined}
-              className={`text-sm font-semibold transition-colors ${navHover}`}
+              className={`text-sm font-semibold transition-colors duration-300 ease-out ${navHover}`}
             >
               {item.label}
             </Link>
