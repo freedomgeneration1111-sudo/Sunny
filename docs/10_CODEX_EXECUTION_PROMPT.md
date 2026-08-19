@@ -1,3 +1,7 @@
+> **Deployment note (2026-08-19):** this file's deployment mechanics predate
+> the staging Worker/chat feature and are out of date. See `AGENTS.md` §3 for
+> current, accurate deployment facts.
+
 # Focus Lab Productions — Codex Redesign Execution Prompt v2.1
 
 Implement the approved Focus Lab Productions redesign by **evolving the existing prototype**, not rebuilding/replatforming it.

@@ -1,3 +1,7 @@
+> **Archived 2026-08-19 — superseded.** This was already self-declared
+> superseded by the modular files at the time it was written. Do not read it
+> for current facts — canonical content lives in `docs/00`–`12`.
+
 # Focus Lab Productions — Website Redesign Master Handoff
 
 > Consolidated single-file version of the Codex redesign package. Individual files remain canonical for editing.

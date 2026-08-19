@@ -1,3 +1,9 @@
+> **⚠ Deployment note (2026-08-19):** the "Cloudflare Workers Static Assets"
+> section below is out of date and describes the wrong deploy target
+> (`wrangler.jsonc` / `dfw-event-web` is a legacy, backend-less Worker — not
+> where this site is actually reviewed). See `AGENTS.md` §3 for current,
+> accurate deployment facts before deploying anything.
+
 # Focus Lab Productions — Website Prototype
 
 Next.js 15 static-export prototype for Focus Lab Productions, an event media,

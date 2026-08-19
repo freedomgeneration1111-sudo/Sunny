@@ -1,3 +1,7 @@
+> **Deployment note (2026-08-19):** this file's deployment mechanics predate
+> the staging Worker/chat feature and are out of date. See `AGENTS.md` §3 for
+> current, accurate deployment facts.
+
 # Focus Lab Productions Codebase — A Beginner’s Guided Tour
 
 Think of this repository as a small theater production. The routes are the stages, components are reusable scenery, `lib/` contains scripts and production facts, `public/` is the prop room, and Next.js assembles everything into static HTML for Cloudflare.
@@ -640,10 +644,9 @@ The numbered files in `docs/` are authoritative:
 - `10_CODEX_EXECUTION_PROMPT.md` — execution instructions
 - `11_BASELINE_CODEX_CONTEXT.md` — technical handoff context
 
-The master and archived references are:
-
-- `FOCUSLAB_REDESIGN_MASTER_HANDOFF_V2_1.md`
-- `FOCUSLAB_REDESIGN_MASTER_HANDOFF_v1_ARCHIVE.md`
+The old master/mirror files were archived to `docs/archive/` on 2026-08-19 —
+both were full duplicates of the numbered files above and are superseded.
+Read the numbered files, not the archive.
 
 ## 17. Generated folders
 

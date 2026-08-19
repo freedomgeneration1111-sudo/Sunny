@@ -1,3 +1,7 @@
+> **Deployment note (2026-08-19):** this file's deployment mechanics predate
+> the staging Worker/chat feature and are out of date. See `AGENTS.md` §3 for
+> current, accurate deployment facts.
+
 # 11 — Codex Phase-0 Technical Baseline
 
 This file records the Phase-0 implementation baseline supplied by Codex. Treat these as existing repo facts to preserve while carrying out the visual redesign. They are not invitations to redo baseline engineering.

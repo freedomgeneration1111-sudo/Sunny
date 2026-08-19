@@ -1,3 +1,7 @@
+> **Archived 2026-08-19 — superseded.** This is a full mirror of `docs/00`–`12`,
+> kept only for history. Do not read it for current facts — use the modular
+> files it duplicates instead.
+
 # FOCUS LAB PRODUCTIONS — REDESIGN MASTER HANDOFF v2.1
 
 This consolidated file mirrors the authoritative modular handoff files. JSON configuration/manifests are embedded at the end for agent convenience.
