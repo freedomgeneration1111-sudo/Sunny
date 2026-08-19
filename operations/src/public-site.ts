@@ -5,7 +5,7 @@ export type PublicSiteEnv = {
 
 export async function handlePublicSite(request: Request, env: PublicSiteEnv): Promise<Response> {
   const path = new URL(request.url).pathname;
-  if (path === "/v1/inquiries" || path === "/v1/chat/status" || path === "/v1/chat/resume" || path.startsWith("/v1/chat/conversations") || path === "/health") {
+  if (path === "/v1/inquiries" || path === "/v1/availability" || path === "/v1/chat/status" || path === "/v1/chat/resume" || path.startsWith("/v1/chat/conversations") || path === "/health") {
     return env.OPERATIONS_API.fetch(request);
   }
   const asset = await env.ASSETS.fetch(request);

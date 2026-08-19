@@ -1,7 +1,7 @@
 export type InquirySubmission = {
   eventType: string; date: string; location: string; services: string[]; guests: string;
   budget: string; name: string; email: string; phone: string; contact: string; note: string;
-  turnstileToken: string; website: string;
+  turnstileToken: string; website: string; availabilityChecked?: boolean;
 };
 export type InquirySubmissionResult = {
   ok: true; inquiryId: string; eventId: string; createdAt: string;
@@ -11,6 +11,8 @@ export type ChatStatus = {
   state: "live" | "async" | "unavailable"; label: "Live Chat" | "Send us a Message" | "Send us a DM" | "Messaging unavailable";
   destinationUrl: string | null; checkedAt: string;
 };
+export type AvailabilityStatus = "available" | "unavailable" | "unknown";
+export type AvailabilityResult = { ok: true; date: string; status: AvailabilityStatus; nearby?: { date: string; status: AvailabilityStatus }[] };
 export type InquiryClientConfig = { apiUrl:string;enabled:boolean };
 
 export const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
@@ -65,6 +67,20 @@ export async function getChatStatus(signal?: AbortSignal): Promise<ChatStatus> {
   return body;
 }
 
+/** Always resolves — never throws. A failed/unreachable/misconfigured check degrades to "unknown", never a raw error. */
+export async function getAvailability(date: string, signal?: AbortSignal): Promise<AvailabilityResult> {
+  if (!operationsApiConfigured) return { ok: true, date, status: "unknown" };
+  let response: Response;
+  try {
+    response = await fetch(`${apiUrl}/v1/availability?date=${encodeURIComponent(date)}`, { signal });
+  } catch {
+    return { ok: true, date, status: "unknown" };
+  }
+  if (!response.ok) return { ok: true, date, status: "unknown" };
+  const body: unknown = await response.json().catch(() => null);
+  return isAvailabilityResult(body) ? body : { ok: true, date, status: "unknown" };
+}
+
 function isInquiryResult(value: unknown): value is InquirySubmissionResult {
   return typeof value === "object" && value !== null && "ok" in value && value.ok === true
     && "inquiryId" in value && typeof value.inquiryId === "string" && "eventId" in value && typeof value.eventId === "string"
@@ -76,4 +92,18 @@ function isChatStatus(value: unknown): value is ChatStatus {
     && (value.state === "live" || value.state === "async" || value.state === "unavailable")
     && "label" in value && typeof value.label === "string" && "destinationUrl" in value
     && (typeof value.destinationUrl === "string" || value.destinationUrl === null) && "checkedAt" in value && typeof value.checkedAt === "string";
+}
+function isAvailabilityStatus(value: unknown): value is AvailabilityStatus {
+  return value === "available" || value === "unavailable" || value === "unknown";
+}
+function isAvailabilityResult(value: unknown): value is AvailabilityResult {
+  if (typeof value !== "object" || value === null || !("ok" in value) || value.ok !== true) return false;
+  if (!("date" in value) || typeof value.date !== "string") return false;
+  if (!("status" in value) || !isAvailabilityStatus(value.status)) return false;
+  if ("nearby" in value && value.nearby !== undefined) {
+    if (!Array.isArray(value.nearby)) return false;
+    return value.nearby.every((entry: unknown) =>
+      typeof entry === "object" && entry !== null && "date" in entry && typeof entry.date === "string" && "status" in entry && isAvailabilityStatus(entry.status));
+  }
+  return true;
 }

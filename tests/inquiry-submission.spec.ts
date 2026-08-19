@@ -4,8 +4,7 @@ async function openReadyForm(page:Page){
   await page.route("https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit",route=>route.fulfill({contentType:"application/javascript",body:`window.turnstile={render:(el,opts)=>{el.textContent='Security check';setTimeout(()=>opts.callback('browser-test-token'),0);return 'widget-1'},remove:()=>{},reset:()=>{}};` }));
   await page.goto("/check-availability/");
   await page.getByRole("button",{name:"Wedding",exact:true}).click();
-  await page.locator('input[type="date"]').fill("2027-04-17");
-  await page.getByRole("button",{name:"Continue"}).click();
+  await page.getByLabel("Preferred date").fill("2027-04-17");
   await page.getByRole("button",{name:"Continue"}).click();
   await page.getByLabel("Name").fill("Synthetic Browser Customer");
   await page.getByLabel("Email",{exact:true}).fill("browser@example.test");

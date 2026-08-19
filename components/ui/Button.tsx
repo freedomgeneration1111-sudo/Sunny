@@ -34,7 +34,7 @@ const styles: Record<Variant, string> = {
 export function Button({ href, children, variant = "primary", className = "", ...rest }: Props) {
   const cls = `inline-flex min-h-12 items-center justify-center rounded-control px-6 py-3 text-sm font-bold transition-colors ${styles[variant]} ${className}`;
   return href ? (
-    <Link href={href} className={cls}>
+    <Link href={href} className={cls} onClick={rest.onClick}>
       {children}
     </Link>
   ) : (

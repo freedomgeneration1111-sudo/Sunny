@@ -42,9 +42,9 @@ test("check availability works without planner carryover", async ({ page }) => {
 
   await expect(page.getByRole("group", { name: "Start with the event." })).toBeVisible();
   await page.getByRole("button", { name: "Wedding", exact: true }).click();
-  await page.locator('input[type="date"]').fill("2027-04-17");
+  await page.getByLabel("Preferred date").fill("2027-04-17");
   await page.getByRole("button", { name: "Continue" }).click();
-  await expect(page.getByRole("group", { name: "Tell us what you need." })).toBeVisible();
+  await expect(page.getByRole("group", { name: "How should Focus Lab reach you?" })).toBeVisible();
 });
 
 test("guide pages open commercially before the planning material", async ({ page }) => {

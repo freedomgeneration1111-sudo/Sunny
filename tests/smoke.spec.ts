@@ -65,9 +65,7 @@ test("check-availability flow renders and advances", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await expect(page.getByRole("group", { name: "Start with the event." })).toBeVisible();
   await page.getByRole("button", { name: "Wedding", exact: true }).click();
-  await page.locator('input[type="date"]').fill("2027-04-17");
-  await page.getByRole("button", { name: "Continue" }).click();
-  await expect(page.getByRole("group", { name: "Tell us what you need." })).toBeVisible();
+  await page.getByLabel("Preferred date").fill("2027-04-17");
   await page.getByRole("button", { name: "Continue" }).click();
   await expect(page.getByRole("group", { name: "How should Focus Lab reach you?" })).toBeVisible();
 });
