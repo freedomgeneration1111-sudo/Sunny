@@ -13,7 +13,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "sw
 const isReviewBuild = process.env.NEXT_PUBLIC_PUBLICATION_STAGE === "review";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://gofocuslab.com"),
+  metadataBase: new URL(config.siteUrl),
   title: { default: `${config.businessName} — DFW Weddings & Events`, template: `%s | ${config.businessName}` },
   description: config.shortStatement,
   robots: isReviewBuild ? { index: false, follow: false } : undefined,

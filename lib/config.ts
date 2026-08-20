@@ -1,4 +1,5 @@
 export const config = {
+  siteUrl: "https://focuslabproductions.com",
   businessName: "Focus Lab Productions",
   shortStatement:
     "One crew for event media, entertainment and production across Dallas–Fort Worth.",
