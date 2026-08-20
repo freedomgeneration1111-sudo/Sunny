@@ -11,6 +11,7 @@ export type MediaTruth =
 export type DesktopHeroCandidate = {
   id: string;
   label: string;
+  alt: string;
   mp4: string;
   webm: string;
   poster: string;
@@ -27,6 +28,7 @@ export const desktopHeroCandidates = [
   {
     id: "selection-08",
     label: "Dance and guest energy",
+    alt: "Two young girls in formal gowns twirl down a flower-decorated wedding stage runway",
     mp4: "/video/approved/focuslab-desktop-hero-selection-08.mp4",
     webm: "/video/approved/focuslab-desktop-hero-selection-08.webm",
     poster: "/images/hero/approved/focuslab-desktop-hero-selection-08-poster.jpg",
@@ -37,6 +39,7 @@ export const desktopHeroCandidates = [
   {
     id: "selection-31",
     label: "Arrival and couple moment",
+    alt: "A close-up portrait of a woman in a bright pink embroidered veil and floral garland",
     mp4: "/video/approved/focuslab-desktop-hero-selection-31.mp4",
     webm: "/video/approved/focuslab-desktop-hero-selection-31.webm",
     poster: "/images/hero/approved/focuslab-desktop-hero-selection-31-poster.jpg",
@@ -47,6 +50,7 @@ export const desktopHeroCandidates = [
   {
     id: "selection-43",
     label: "Blue atmospheric couple moment",
+    alt: "A bride and groom walk arm-in-arm outdoors at night, lit by strings of blue lights",
     mp4: "/video/approved/focuslab-desktop-hero-selection-43.mp4",
     webm: "/video/approved/focuslab-desktop-hero-selection-43.webm",
     poster: "/images/hero/approved/focuslab-desktop-hero-selection-43-poster.jpg",
@@ -64,6 +68,7 @@ export const desktopHeroCandidates = [
 export type MobileHeroCandidate = {
   id: string;
   label: string;
+  alt: string;
   src: string;
   truth: "authentic-approved";
   source: { filename: string; timestamp: string };
@@ -73,6 +78,7 @@ export const mobileHeroCandidates = [
   {
     id: "selection-08",
     label: "Dance and guest energy",
+    alt: "A young girl in a purple ruffled gown twirls on a flower-decorated wedding stage",
     src: "/images/hero/mobile/focuslab-mobile-hero-selection-08.webp",
     truth: "authentic-approved",
     source: { filename: "DSC_0572.MOV", timestamp: "00:00:14.750" },
@@ -80,6 +86,7 @@ export const mobileHeroCandidates = [
   {
     id: "selection-31",
     label: "Bridal portrait",
+    alt: "A close-up portrait of a woman in an ornate red and pink headscarf with a marigold flower in her hair",
     src: "/images/hero/mobile/focuslab-mobile-hero-selection-31.webp",
     truth: "authentic-approved",
     source: { filename: "DSC_0250.MOV", timestamp: "00:00:02.000" },
@@ -87,6 +94,7 @@ export const mobileHeroCandidates = [
   {
     id: "selection-43",
     label: "Couple walking",
+    alt: "A bride in a veil and a groom in a pink suit stand close together at night, lit by blue string lights",
     src: "/images/hero/mobile/focuslab-mobile-hero-selection-43.webp",
     truth: "authentic-approved",
     source: { filename: "DSC_0815.MOV", timestamp: "00:00:00.200" },

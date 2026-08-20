@@ -32,7 +32,7 @@ export function CinematicHeroMedia({
     >
       <Image
         src={desktopPosterSrc}
-        alt=""
+        alt={initialCandidate?.alt ?? asset.alt}
         fill
         priority
         sizes="100vw"

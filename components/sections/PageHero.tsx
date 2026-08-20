@@ -46,7 +46,7 @@ export function PageHero({
   if (variant === "fullBleed" && media) {
     return (
       <section className="relative isolate flex min-h-[min(82svh,780px)] items-end overflow-hidden bg-ink text-on-brand">
-        <Image src={media.src} alt="" fill priority sizes="100vw" className="object-cover" style={{ objectPosition: media.objectPosition }} />
+        <Image src={media.src} alt={media.alt} fill priority sizes="100vw" className="object-cover" style={{ objectPosition: media.objectPosition }} />
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(8,9,10,.96)_0%,rgba(8,9,10,.78)_45%,rgba(8,9,10,.18)_78%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(8,9,10,.78)_0%,transparent_60%,rgba(8,9,10,.25)_100%)]" />
         <Container variant="wide" className="relative z-10 py-14 md:py-20 lg:py-24">

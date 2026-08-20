@@ -1,0 +1,12 @@
+{
+  "name": "Focus Lab Productions",
+  "short_name": "Focus Lab",
+  "icons": [
+    { "src": "/brand/favicon.svg", "type": "image/svg+xml", "sizes": "any" },
+    { "src": "/apple-touch-icon.png", "type": "image/png", "sizes": "180x180" },
+    { "src": "/icon-512.png", "type": "image/png", "sizes": "512x512" }
+  ],
+  "theme_color": "#111214",
+  "background_color": "#111214",
+  "display": "browser"
+}

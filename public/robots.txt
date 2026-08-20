@@ -5,7 +5,6 @@ Allow: /
 # explicit opt-in for indexing and AI-assisted answer/search use. ai-train is
 # intentionally left unset (neither granted nor restricted) -- that's a
 # separate decision about third-party model training, not indexability.
-search: yes
-ai-input: yes
+Content-Signal: search=yes, ai-input=yes
 
 Sitemap: https://focuslabproductions.com/sitemap.xml

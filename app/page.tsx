@@ -13,13 +13,18 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { Eyebrow, Lead, SectionHeading } from "@/components/ui/Typography";
 import { commonFaqs } from "@/lib/content/commercial";
+import { config } from "@/lib/config";
 import { eventPathCards } from "@/lib/content/eventSections";
 import { media } from "@/lib/media";
+import { socialMetadata } from "@/lib/seo";
+
+const description =
+  "Photo, video, DJ/MC, sound, lighting and production for weddings, Asian wedding celebrations, parties and corporate events across Dallas–Fort Worth.";
 
 export const metadata: Metadata = {
-  description:
-    "Photo, video, DJ/MC, sound, lighting and production for weddings, Asian wedding celebrations, parties and corporate events across Dallas–Fort Worth.",
+  description,
   alternates: { canonical: "/" },
+  ...socialMetadata(`${config.businessName} — DFW Weddings & Events`, description),
 };
 
 /**

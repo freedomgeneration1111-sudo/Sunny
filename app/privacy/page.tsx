@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
 import { LegalPage, type LegalSection } from "@/components/sections/LegalPage";
+import { socialMetadata } from "@/lib/seo";
+
+const title = "Privacy";
+const description = "How Focus Lab Productions handles the information you share through this website.";
 
 export const metadata: Metadata = {
-  title: "Privacy",
-  description:
-    "How Focus Lab Productions handles the information you share through this website.",
+  title,
+  description,
   alternates: { canonical: "/privacy/" },
+  ...socialMetadata(title, description),
 };
 
 const sections: readonly LegalSection[] = [

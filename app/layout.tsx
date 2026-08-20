@@ -6,6 +6,7 @@ import { ChatTeaser } from "@/components/operations/ChatTeaser";
 import { PublicChatProvider } from "@/components/operations/NativeChatPanel";
 import { PlanProvider } from "@/components/planning/PlanProvider";
 import { config } from "@/lib/config";
+import { localBusinessJsonLd } from "@/lib/jsonld";
 import "./globals.css";
 import "./redesign.css";
 
@@ -17,7 +18,11 @@ export const metadata: Metadata = {
   title: { default: `${config.businessName} — DFW Weddings & Events`, template: `%s | ${config.businessName}` },
   description: config.shortStatement,
   robots: isReviewBuild ? { index: false, follow: false } : undefined,
-  icons: { icon: "/brand/favicon.svg" },
+  icons: {
+    icon: [{ url: "/brand/favicon.svg", type: "image/svg+xml" }, { url: "/favicon.ico", sizes: "any" }],
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
 };
 
 export const viewport: Viewport = { themeColor: "#111214", colorScheme: "light" };
@@ -26,6 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={inter.variable}>
       <body className="flex min-h-screen flex-col">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd()) }} />
         <PublicChatProvider>
           <PlanProvider>
             <a href="#main-content" className="fixed left-3 top-3 z-[100] -translate-y-20 rounded-control bg-brand-primary px-4 py-3 font-bold text-on-brand focus:translate-y-0">Skip to content</a>

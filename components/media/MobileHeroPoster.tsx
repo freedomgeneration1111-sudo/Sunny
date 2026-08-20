@@ -31,7 +31,7 @@ export function MobileHeroPoster({ candidates }: { candidates: readonly MobileHe
     <Image
       key={active.id}
       src={active.src}
-      alt=""
+      alt={active.alt}
       fill
       priority
       sizes="100vw"
