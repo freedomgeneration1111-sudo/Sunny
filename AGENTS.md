@@ -19,18 +19,19 @@ Two wrangler configs exist. They are NOT interchangeable and target different Wo
 | `wrangler.jsonc` | `dfw-event-web` | bare static assets, no Worker script | none — chat/API 404s here by construction |
 | `wrangler.staging.jsonc` | `focus-lab-public-staging` | full Worker script (`operations/src/public-site.ts`) + static assets | `OPERATIONS_API` → `focus-lab-api-staging` (live chat/CRM backend) |
 
-**`focus-lab-public-staging` is the real review/staging target** — this is what's reviewed at `focus-lab-public-staging.freedomgeneration1111.workers.dev`. Always deploy there via the established scripts, never a bare `wrangler deploy`:
+**`focus-lab-public-staging` is the real live target** — it's bound to the custom domain `focuslabproductions.com` (attached 2026-08-20) and is what real customers hit. "Staging" is a legacy name; treat it as production. Always deploy there via the established script, never a bare `wrangler deploy`:
 
 ```
-npm run public:staging:build   # sets NEXT_PUBLIC_PUBLICATION_STAGE=review → noindex on
-npm run public:staging:deploy  # wrangler deploy --config wrangler.staging.jsonc
+npm run public:staging:deploy  # rebuilds from current source, then wrangler deploy --config wrangler.staging.jsonc
 ```
 
-`dfw-event-web` is a legacy/orphaned target with no backend wiring and no noindex protection. Do not deploy here unless explicitly instructed — confirm its intended purpose first if a task seems to call for it.
+`public:staging:deploy` always rebuilds first (folded into the script itself) — a bare `deploy` can't ship stale `./out` output.
+
+The site is intentionally indexable (2026-08-20) — no sitewide `noindex`. Don't reintroduce one without explicit instruction.
+
+`dfw-event-web` is a legacy/orphaned target with no backend wiring. Do not deploy here unless explicitly instructed — confirm its intended purpose first if a task seems to call for it.
 
 The chat/CRM backend Worker (`focus-lab-api-staging`) and its source live in a **separate repo**: `/home/moses/projects/operator-os`. This repo contains only the public-facing proxy/binding, not the backend itself. Do not attempt to build or modify the backend from inside this repo.
-
-Custom domain `focuslabproductions.com`: DNS currently unattached to anything. Do not attach without explicit instruction — confirm noindex is intact on whichever Worker first.
 
 ## 4. Highest-level rule
 

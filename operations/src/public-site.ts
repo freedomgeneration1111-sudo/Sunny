@@ -8,10 +8,7 @@ export async function handlePublicSite(request: Request, env: PublicSiteEnv): Pr
   if (path === "/v1/inquiries" || path === "/v1/availability" || path === "/v1/chat/status" || path === "/v1/chat/resume" || path.startsWith("/v1/chat/conversations") || path === "/health") {
     return env.OPERATIONS_API.fetch(request);
   }
-  const asset = await env.ASSETS.fetch(request);
-  const response = new Response(asset.body, asset);
-  response.headers.set("X-Robots-Tag", "noindex, nofollow");
-  return response;
+  return env.ASSETS.fetch(request);
 }
 
 const publicSiteWorker={fetch:handlePublicSite};

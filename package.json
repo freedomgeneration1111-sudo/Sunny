@@ -11,8 +11,8 @@
     "test": "npm run check:svg && npm run test:lib && npm run test:operations-client && npm run test:public",
     "test:public": "playwright test",
     "test:operations-client": "vitest run --config operations/vitest.config.mts",
-    "public:staging:build": "NEXT_PUBLIC_PUBLICATION_STAGE=review next build",
-    "public:staging:deploy": "wrangler deploy --config wrangler.staging.jsonc",
+    "public:staging:build": "next build",
+    "public:staging:deploy": "npm run public:staging:build && wrangler deploy --config wrangler.staging.jsonc",
     "test:lib": "vitest run --config vitest.config.mts",
     "check:svg": "node scripts/check-svg-bounds.mjs"
   },

@@ -1,0 +1,11 @@
+User-Agent: *
+Allow: /
+
+# Content Signals Policy (https://developers.google.com/search/blog, Cloudflare content-signals draft):
+# explicit opt-in for indexing and AI-assisted answer/search use. ai-train is
+# intentionally left unset (neither granted nor restricted) -- that's a
+# separate decision about third-party model training, not indexability.
+search: yes
+ai-input: yes
+
+Sitemap: https://focuslabproductions.com/sitemap.xml
