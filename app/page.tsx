@@ -7,6 +7,7 @@ import { AsianWeddingsSection } from "@/components/sections/home/AsianWeddingsSe
 import { WeddingsSection } from "@/components/sections/home/WeddingsSection";
 import { FAQList } from "@/components/sections/FAQList";
 import { HomeHero } from "@/components/sections/HomeHero";
+import { Reveal } from "@/components/motion/Reveal";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
@@ -52,14 +53,14 @@ export default function HomePage() {
       <Section theme="dark" id="why-one-crew">
         <Container>
           <div className="grid gap-12 lg:grid-cols-[.72fr_1.28fr] lg:gap-20">
-            <div>
+            <Reveal>
               <Eyebrow className="text-brand-accent!">Why one crew</Eyebrow>
               <SectionHeading className="mt-4">Fewer handoffs to manage.</SectionHeading>
               <p className="mt-6 text-lg leading-8 text-on-brand/68">
                 Camera position, microphone cues, music, lighting, and room transitions all affect
                 one another. Booking them together means they are planned together.
               </p>
-            </div>
+            </Reveal>
             <ol className="grid overflow-hidden rounded-media border border-on-brand/15 sm:grid-cols-3">
               {[
                 {
@@ -77,15 +78,17 @@ export default function HomePage() {
                   t: "One place to make changes",
                   b: "When timing or event details change, there is one plan to update.",
                 },
-              ].map((item) => (
-                <li
+              ].map((item, index) => (
+                <Reveal
+                  as="li"
+                  index={index}
                   key={item.n}
                   className="border-b border-on-brand/15 p-6 last:border-0 sm:border-b-0 sm:border-r sm:last:border-r-0"
                 >
                   <span className="text-sm font-black text-brand-accent">{item.n}</span>
                   <h3 className="mt-12 text-xl font-extrabold">{item.t}</h3>
                   <p className="mt-3 text-sm leading-6 text-on-brand/60">{item.b}</p>
-                </li>
+                </Reveal>
               ))}
             </ol>
           </div>
@@ -95,7 +98,7 @@ export default function HomePage() {
       {/* The mental map. These scroll down the page. */}
       <Section id="paths">
         <Container>
-          <div className="grid gap-6 lg:grid-cols-[.68fr_1.32fr] lg:items-end">
+          <Reveal className="grid gap-6 lg:grid-cols-[.68fr_1.32fr] lg:items-end">
             <div>
               <Eyebrow>Start with your event</Eyebrow>
               <SectionHeading className="mt-4">What are you planning?</SectionHeading>
@@ -104,32 +107,33 @@ export default function HomePage() {
               Jump to your event to see what Focus Lab can cover, then head to pricing when you
               want numbers.
             </Lead>
-          </div>
+          </Reveal>
           <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-            {eventPathCards.map((event) => (
-              <TrackedLink
-                event="event_path_select"
-                details={{ path: `#${event.anchor}` }}
-                href={`#${event.anchor}`}
-                key={event.anchor}
-                className="group overflow-hidden rounded-card border border-border bg-surface transition-[border-color,transform] motion-safe:hover:-translate-y-1 hover:border-brand-primary"
-              >
-                <MediaFrame
-                  asset={event.asset}
-                  className="rounded-none"
-                  sizes="(min-width:1280px) 25vw,(min-width:640px) 50vw,100vw"
-                />
-                <div className="p-5">
-                  <h3 className="text-xl font-extrabold">{event.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-ink-muted">{event.body}</p>
-                  <span className="mt-5 inline-flex font-extrabold text-brand-primary">
-                    Jump to section{" "}
-                    <span className="ml-2 transition-transform group-hover:translate-y-0.5" aria-hidden="true">
-                      ↓
+            {eventPathCards.map((event, index) => (
+              <Reveal index={index} key={event.anchor}>
+                <TrackedLink
+                  event="event_path_select"
+                  details={{ path: `#${event.anchor}` }}
+                  href={`#${event.anchor}`}
+                  className="card-hover group block overflow-hidden rounded-card border border-border bg-surface transition-[border-color] hover:border-brand-primary"
+                >
+                  <MediaFrame
+                    asset={event.asset}
+                    className="rounded-none"
+                    sizes="(min-width:1280px) 25vw,(min-width:640px) 50vw,100vw"
+                  />
+                  <div className="p-5">
+                    <h3 className="text-xl font-extrabold">{event.title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-ink-muted">{event.body}</p>
+                    <span className="mt-5 inline-flex font-extrabold text-brand-primary">
+                      Jump to section{" "}
+                      <span className="ml-2 transition-transform group-hover:translate-y-0.5" aria-hidden="true">
+                        ↓
+                      </span>
                     </span>
-                  </span>
-                </div>
-              </TrackedLink>
+                  </div>
+                </TrackedLink>
+              </Reveal>
             ))}
           </div>
         </Container>
@@ -142,8 +146,10 @@ export default function HomePage() {
 
       <Section id="capabilities">
         <Container>
-          <Eyebrow>What we do</Eyebrow>
-          <SectionHeading className="mt-4 max-w-[18ch]">Two teams, one event plan.</SectionHeading>
+          <Reveal>
+            <Eyebrow>What we do</Eyebrow>
+            <SectionHeading className="mt-4 max-w-[18ch]">Two teams, one event plan.</SectionHeading>
+          </Reveal>
           <div className="mt-10 grid gap-10 lg:grid-cols-2">
             {[
               {
@@ -160,8 +166,13 @@ export default function HomePage() {
                 href: "/services/entertainment-production",
                 labels: ["DJ + MC", "Sound + lighting", "Enhancements"],
               },
-            ].map((capability) => (
-              <article key={capability.title} className="group">
+            ].map((capability, index) => (
+              <Reveal
+                as="article"
+                index={index}
+                key={capability.title}
+                className="card-hover group rounded-card"
+              >
                 <MediaFrame asset={capability.asset} sizes="(min-width:1024px) 50vw,100vw" />
                 <div className="mt-6 flex flex-wrap gap-2">
                   {capability.labels.map((label) => (
@@ -186,7 +197,7 @@ export default function HomePage() {
                     →
                   </span>
                 </TrackedLink>
-              </article>
+              </Reveal>
             ))}
           </div>
         </Container>
@@ -195,7 +206,7 @@ export default function HomePage() {
       {/* Compact bridge. The full menu lives on /pricing. */}
       <Section theme="alt" id="pricing-menu">
         <Container>
-          <div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
+          <Reveal className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
             <div>
               <Eyebrow>Pricing</Eyebrow>
               <SectionHeading className="mt-4 max-w-[20ch]">Clear pricing. Custom quotes.</SectionHeading>
@@ -210,21 +221,25 @@ export default function HomePage() {
                 Check Availability
               </Button>
             </div>
-          </div>
+          </Reveal>
         </Container>
       </Section>
 
       <Section id="how-it-works">
         <Container>
-          <Eyebrow>How it works</Eyebrow>
-          <SectionHeading className="mt-4">Three steps to a real number.</SectionHeading>
+          <Reveal>
+            <Eyebrow>How it works</Eyebrow>
+            <SectionHeading className="mt-4">Three steps to a real number.</SectionHeading>
+          </Reveal>
           <ol className="mt-10 grid overflow-hidden rounded-card border border-border md:grid-cols-3">
             {[
               { n: "01", t: "Share the date", b: "Tell us what you're planning and where." },
               { n: "02", t: "Review your options", b: "Use the pricing menu to see the services that may fit your event." },
               { n: "03", t: "Get your quote", b: "Focus Lab confirms the event details, services and final price with you." },
-            ].map((item) => (
-              <li
+            ].map((item, index) => (
+              <Reveal
+                as="li"
+                index={index}
                 key={item.n}
                 className="border-b border-border bg-surface p-6 last:border-0 md:border-b-0 md:border-r md:last:border-r-0"
               >
@@ -233,7 +248,7 @@ export default function HomePage() {
                 </span>
                 <h3 className="mt-8 text-xl font-extrabold">{item.t}</h3>
                 <p className="mt-3 text-sm leading-6 text-ink-muted">{item.b}</p>
-              </li>
+              </Reveal>
             ))}
           </ol>
         </Container>
@@ -241,15 +256,17 @@ export default function HomePage() {
 
       <Section theme="alt" id="questions">
         <Container variant="reading">
-          <Eyebrow>Questions, answered</Eyebrow>
-          <SectionHeading className="mb-9 mt-4">Know what happens next.</SectionHeading>
-          <FAQList items={commonFaqs} />
+          <Reveal>
+            <Eyebrow>Questions, answered</Eyebrow>
+            <SectionHeading className="mb-9 mt-4">Know what happens next.</SectionHeading>
+          </Reveal>
+          <FAQList items={commonFaqs} stagger />
         </Container>
       </Section>
 
       <Section theme="brand" id="cta">
         <Container>
-          <div className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
+          <Reveal className="grid items-end gap-8 lg:grid-cols-[1fr_auto]">
             <div>
               <Eyebrow className="text-ink/70!">Start here</Eyebrow>
               <SectionHeading className="mt-4 max-w-[17ch]">One date is enough to start.</SectionHeading>
@@ -263,7 +280,7 @@ export default function HomePage() {
             >
               Check Availability <span className="ml-2" aria-hidden="true">→</span>
             </Button>
-          </div>
+          </Reveal>
         </Container>
       </Section>
     </>

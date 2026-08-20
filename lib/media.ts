@@ -56,7 +56,42 @@ export const desktopHeroCandidates = [
   },
 ] as const satisfies readonly DesktopHeroCandidate[];
 
-export const heroMobilePoster = "/images/hero/hero-wedding-mobile-poster.webp";
+/**
+ * Authentic mobile hero stills, pulled from the same approved desktop video
+ * candidates above (same `id`s, so a still can be traced back to its source
+ * clip). Mobile doesn't play video, so these rotate as static frames instead.
+ */
+export type MobileHeroCandidate = {
+  id: string;
+  label: string;
+  src: string;
+  truth: "authentic-approved";
+  source: { filename: string; timestamp: string };
+};
+
+export const mobileHeroCandidates = [
+  {
+    id: "selection-08",
+    label: "Dance and guest energy",
+    src: "/images/hero/mobile/focuslab-mobile-hero-selection-08.webp",
+    truth: "authentic-approved",
+    source: { filename: "DSC_0572.MOV", timestamp: "00:00:14.750" },
+  },
+  {
+    id: "selection-31",
+    label: "Bridal portrait",
+    src: "/images/hero/mobile/focuslab-mobile-hero-selection-31.webp",
+    truth: "authentic-approved",
+    source: { filename: "DSC_0250.MOV", timestamp: "00:00:02.000" },
+  },
+  {
+    id: "selection-43",
+    label: "Couple walking",
+    src: "/images/hero/mobile/focuslab-mobile-hero-selection-43.webp",
+    truth: "authentic-approved",
+    source: { filename: "DSC_0815.MOV", timestamp: "00:00:00.200" },
+  },
+] as const satisfies readonly MobileHeroCandidate[];
 export type MediaAsset = { id: string; src: string; alt: string; purpose: string; truth: MediaTruth; desktopAspect: string; mobileAspect: string; objectPosition?: string; priority?: "P0" | "P1" | "P2" };
 const generated = (id: string, src: string, alt: string, purpose: string, desktopAspect = "16/9", mobileAspect = "4/5", objectPosition = "center", priority: "P0" | "P1" | "P2" = "P1"): MediaAsset => ({ id, src, alt, purpose, truth: "ai-brand", desktopAspect, mobileAspect, objectPosition, priority });
 

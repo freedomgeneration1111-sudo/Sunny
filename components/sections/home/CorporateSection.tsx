@@ -1,4 +1,5 @@
 import { MediaFrame } from "@/components/media/MediaFrame";
+import { Reveal } from "@/components/motion/Reveal";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { corporateSection as content } from "@/lib/content/eventSections";
@@ -13,26 +14,26 @@ export function CorporateSection() {
   return (
     <Section theme="alt" id={content.anchor}>
       <Container>
-        <div className="grid gap-10 lg:grid-cols-[1.1fr_.9fr] lg:items-end lg:gap-16">
+        <Reveal className="grid gap-10 lg:grid-cols-[1.1fr_.9fr] lg:items-end lg:gap-16">
           <SectionIntro eyebrow={content.eyebrow} title={content.title} lead={content.lead} />
           <MediaFrame
             asset={content.media}
             sizes="(min-width:1024px) 44vw,100vw"
             aspectRatioOverride="16/10"
           />
-        </div>
+        </Reveal>
 
         <div className="mt-14 grid gap-px overflow-hidden rounded-media border border-border bg-border md:grid-cols-2 xl:grid-cols-3">
-          {content.jobs.map((job) => (
-            <article key={job.title} className="bg-canvas p-7">
+          {content.jobs.map((job, index) => (
+            <Reveal as="article" index={index} key={job.title} className="bg-canvas p-7">
               <span className="font-display text-2xl font-black text-brand-primary">{job.code}</span>
               <h3 className="mt-4 text-xl font-extrabold">{job.title}</h3>
               <p className="mt-3 leading-7 text-ink-muted">{job.body}</p>
-            </article>
+            </Reveal>
           ))}
         </div>
 
-        <div className="mt-14 rounded-media bg-ink p-7 text-on-brand md:p-10">
+        <Reveal className="mt-14 rounded-media bg-ink p-7 text-on-brand md:p-10">
           <h3 className="font-display text-3xl font-bold tracking-[-.03em]">{content.logistics.title}</h3>
           <ul className="mt-8 grid gap-x-10 gap-y-4 md:grid-cols-2">
             {content.logistics.items.map((item) => (
@@ -42,7 +43,7 @@ export function CorporateSection() {
               </li>
             ))}
           </ul>
-        </div>
+        </Reveal>
 
         <SectionActions
           pricing={content.pricing}
