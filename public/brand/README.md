@@ -15,3 +15,10 @@ sources in `/LOGOS`. The canonical originals must remain unchanged.
   small “Productions” line at compact sizes; the light version changes only the
   approved light/dark output color.
 - `focus-lab-mark.svg`: mark-only treatment for very narrow spaces.
+- `focus-lab-stacked-dark.svg` / `focus-lab-stacked-light.svg`: mark above the
+  wordmark with "— PRODUCTIONS —" beneath, for narrow vertical placements
+  (minimum width 90px).
+- `favicon.svg`: browser-tab icon, tuned for small-size legibility. Also the
+  source for the generated `public/favicon.ico` and `public/apple-touch-icon.png`
+  fallbacks (rendered via `rsvg-convert`/ImageMagick — regenerate the same way
+  if this file changes).

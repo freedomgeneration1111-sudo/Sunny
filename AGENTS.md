@@ -102,18 +102,19 @@ This file is the only required read. Everything below is reference material — 
 - `docs/03_VISUAL_SYSTEM_SPEC.md` — logo/brand asset source of truth
 - `docs/04_COMPONENT_SYSTEM.md`, `docs/05_PAGE_ART_DIRECTION.md`, `docs/08_MEDIA_TRUTH_AND_PUBLICATION.md`, `docs/09_RESPONSIVE_INTERACTION_REQUIREMENTS.md` — current
 - `docs/12_ONE_ANCHOR_DECISION.md` — current, settled IA decision
-- `docs/native-web-chat.md`, `docs/operations-foundation.md` — most accurate deployment/chat-backend detail in the repo; §3 above is the condensed version. Note: `native-web-chat.md`'s staging sequence references scripts/configs that live in the separate `operator-os` repo, not here.
+- `docs/native-web-chat.md` — most accurate chat-backend detail in the repo; §3 above is the condensed deployment version. Note: its staging sequence references scripts/configs that live in the separate `operator-os` repo, not here.
 - `docs/public-inquiry-security.md`, `docs/customer-email-continuity.md`, `docs/staff-web-push.md` — current
-- `docs/staff-authentication.md`, `docs/staff-user-guide.md` — current, explicitly not-yet-production
+- `docs/staff-authentication.md` — current, but note: `staff.focuslabproductions.com` (attached 2026-08-21) and its Cloudflare Access application are now live and deployed — the doc's "not yet configured/deployed" framing and its `staff.gofocuslab.com`/`api.gofocuslab.com` domain references are stale (fixed 2026-08-21 except the "same Worker serves both custom domains" architecture claim — flagged, not resolved, since the public site and staff app are actually two separate Workers, not one; confirm intent before trusting that section)
 - `docs/Focus_Lab_Master_Offer_and_Pricing_Decision_Source_2026-08-13.md` — current, pricing detail behind §6
 - `operations/README.md` — short but load-bearing: confirms the backend/CRM source lives in `/home/moses/projects/operator-os`, not here
 - `public/brand/README.md` — current
 
 **Stale — don't rely on for deployment mechanics:**
 - `docs/10_CODEX_EXECUTION_PROMPT.md`, `docs/11_BASELINE_CODEX_CONTEXT.md`, `docs/CODEBASE_BEGINNERS_GUIDE.md` — accurate for what they cover, but predate the staging Worker/chat feature. Use §3, not these, for deployment facts.
-- `README.md` (repo root) — describes an old Cloudflare Pages git-integration flow that no longer applies. Use §3.
 
-Two full-mirror handoff docs (`V2_1` and `v1_ARCHIVE`) were archived to `docs/archive/` on 2026-08-19 — full duplicates of the modular files above, superseded, not part of this map.
+`README.md` (repo root) was stale in the same way (old Cloudflare Pages flow) and was fixed 2026-08-21 to match §3 — no longer on this list.
+
+Archived to `docs/archive/`, superseded, not part of this map: `FOCUSLAB_REDESIGN_MASTER_HANDOFF_V2_1_ARCHIVE.md`/`_v1_ARCHIVE.md` (2026-08-19, full-mirror handoff docs, duplicates of the modular files above); `operations-foundation_ARCHIVE.md`, `staff-user-guide_ARCHIVE.md`, `messaging-system-audit-findings_ARCHIVE.md` (2026-08-21 — pre-repo-split monorepo layout and a since-resolved pre-work audit, respectively; see each file's archive banner for specifics).
 
 ## 19. Keeping this file honest — required, not optional
 

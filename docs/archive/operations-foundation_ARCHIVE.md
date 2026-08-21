@@ -1,3 +1,11 @@
+> **Archived 2026-08-21 — superseded.** Describes the pre-repo-split
+> monorepo layout (`operations/`, `operations/staff-app/`, `npm run ops:*`)
+> that no longer exists in this repo — the backend/CRM/staff-app source
+> moved to the separate `operator-os` repo (see `operations/README.md` for
+> the current boundary). Also references `staff.gofocuslab.com`, the wrong
+> domain (real domain: `focuslabproductions.com`). Kept for historical
+> design-rationale only; do not follow its setup commands.
+
 # Focus Lab Operations Foundation
 
 Status: operations workstream review draft. This document distinguishes implemented code from future decisions; it does not describe production resources as already provisioned.

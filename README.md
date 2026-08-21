@@ -1,9 +1,3 @@
-> **⚠ Deployment note (2026-08-19):** the "Cloudflare Workers Static Assets"
-> section below is out of date and describes the wrong deploy target
-> (`wrangler.jsonc` / `dfw-event-web` is a legacy, backend-less Worker — not
-> where this site is actually reviewed). See `AGENTS.md` §3 for current,
-> accurate deployment facts before deploying anything.
-
 # Focus Lab Productions — Website Prototype
 
 Next.js 15 static-export prototype for Focus Lab Productions, an event media,
@@ -41,19 +35,22 @@ npm run build      # static export to out/
 `npm run build` produces the entire public site in `out/`. There is no
 application server or `next start` deployment step.
 
-## Cloudflare Workers Static Assets
+## Deployment
 
-`wrangler.jsonc` is the deployment source of truth. It points the top-level
-Workers Static Assets project at `./out` and intentionally has no Worker
-script. The production workflow is:
+Two wrangler configs exist and are **not** interchangeable — see `AGENTS.md` §3
+for the full explanation. In short: `wrangler.jsonc` targets `dfw-event-web`, a
+legacy static-assets-only Worker with no backend wiring — do not deploy there.
+The real live site (`focuslabproductions.com`) is `wrangler.staging.jsonc`'s
+`focus-lab-public-staging` Worker ("staging" is a legacy name; treat it as
+production). Deploy only via the established script, never a bare
+`wrangler deploy`:
 
 ```bash
 npm ci
 npm run typecheck
 npm run lint
 npm test
-npm run build
-npx wrangler deploy
+npm run public:staging:deploy   # rebuilds from source, then deploys
 ```
 
 Do not deploy without explicit authorization. Keep `output: "export"`,
@@ -86,7 +83,7 @@ replaced.
 | Structural UX reference (not visual/pricing authority) | `docs/reference/Focuslab-One-Anchor-Wireframe.html` |
 | Media paths, alt text, crop intent, and truth class | `lib/media.ts` |
 | Generated-image prompts and provenance | `docs/07_IMAGE_ASSET_MANIFEST.json` |
-| Cloudflare deployment | `wrangler.jsonc` |
+| Cloudflare deployment (real live target) | `wrangler.staging.jsonc` |
 
 Runtime images live under `public/images/`; generated brand assets are grouped
 under `public/images/generated/`. Legacy proxy imagery remains available only

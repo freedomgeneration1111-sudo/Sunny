@@ -1,3 +1,10 @@
+> **Archived 2026-08-21 — superseded.** Its setup commands point at
+> `docs/operations-foundation.md`, itself archived — the backend/staff-app
+> source moved to the separate `operator-os` repo. For actual current staff
+> usage (install, sign in, notifications), see
+> `operator-os/docs/staff-app-manual.doc`. For local dev on the staff app,
+> use `operator-os`'s own scripts, not this repo's.
+
 # Focus Lab Staff Application — Development User Guide
 
 Status: internal development prototype. Authentication, messaging synchronization, and deployment are not production-ready.

@@ -1,11 +1,11 @@
 # Production staff authentication and authorization
 
-Status: code foundation implemented; Cloudflare dashboard resources and real staff mappings are not configured or deployed.
+Status: code foundation implemented. **Updated 2026-08-21:** the Cloudflare dashboard resources described below (Access self-hosted application, custom domain) are now configured and deployed — `staff.focuslabproductions.com` is live, Access-protected, and verified working end-to-end (unauthenticated requests 302 to the configured team-domain login). Real staff mappings remain a per-person administrative process (§ "Approved tester mapping").
 
 ## Architecture and trust boundaries
 
 ```text
-staff.gofocuslab.com (Cloudflare Access self-hosted application)
+staff.focuslabproductions.com (Cloudflare Access self-hosted application)
   -> explicit per-user identity allow policy
   -> Cf-Access-Jwt-Assertion
   -> same Worker serves static PWA and /v1/internal/*
@@ -60,16 +60,16 @@ Staging and production must configure non-secret variables independently:
 ```text
 ENVIRONMENT=staging | production
 STAFF_AUTH_MODE=access
-STAFF_HOSTNAME=staff-staging.gofocuslab.com | staff.gofocuslab.com
+STAFF_HOSTNAME=staff.focuslabproductions.com,focus-lab-operations-staging.freedomgeneration1111.workers.dev
 ACCESS_TEAM_DOMAIN=https://<team-name>.cloudflareaccess.com
 ACCESS_AUD=<Access application AUD tag>
 ```
 
 `ACCESS_TEAM_DOMAIN` and `ACCESS_AUD` are identifiers, not credentials, but must be exact. Do not place service tokens or private credentials in Vite variables. The staff production client uses same-origin requests with Access cookies and never asks staff to paste a token.
 
-## Same-origin decision: adopted
+## Same-origin decision: adopted (architecture note below — flagged, not resolved)
 
-Cloudflare [Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/) supports a Worker plus static assets as one deployment; `run_worker_first: true` ensures the Worker hostname gate runs before any staff asset is served. A custom domain invokes the same Worker for all hostname paths, as described in [Custom Domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/). Therefore the intended topology is:
+Cloudflare [Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/) supports a Worker plus static assets as one deployment; `run_worker_first: true` ensures the Worker hostname gate runs before any staff asset is served. A custom domain invokes the same Worker for all hostname paths, as described in [Custom Domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/). The originally intended topology was:
 
 ```text
 staff.gofocuslab.com/                  -> staff PWA assets
@@ -78,17 +78,21 @@ api.gofocuslab.com/v1/inquiries        -> public API
 api.gofocuslab.com/v1/chat/status      -> public status API
 ```
 
-The same operations Worker may own both custom domains; hostname gating prevents staff assets from being served on `api.gofocuslab.com`. Access protects `staff.gofocuslab.com/*`. The Worker still validates Access JWTs on every internal API request. This avoids cross-origin cookie/CORS ambiguity for installed PWAs without creating a second backend.
+...one operations Worker owning both a staff custom domain and a public API custom domain, gated by hostname.
+
+> **⚠ Flagged 2026-08-21 — doesn't match what was actually built.** The real deployed system is **two separate Workers**, not one: the public site (`focus-lab-public-staging`, bound to `focuslabproductions.com`) proxies specific `/v1/*` paths to the backend via an `OPERATIONS_API` **service binding**; the staff app (`focus-lab-operations-staging`, bound to `staff.focuslabproductions.com`) is a different Worker with its own `CHAT_API` service binding to the same backend. There is no separate public `api.*` custom domain — public API access goes through `focuslabproductions.com/v1/*` on the public Worker itself. The hostname-gating mechanism described above (`isStaffAssetHost`) is real and does run, but within the staff Worker only, not as a shared gate across two custom domains on one Worker. Whether this was a deliberate pivot from the original one-Worker plan or documentation that was never updated to match an implementation decision made along the way is unclear from the repo alone — confirm intent before rewriting this section further.
 
 ## Cloudflare dashboard configuration required
 
-1. Create a Zero Trust **Self-hosted** Access application for `staff.gofocuslab.com/*`.
+**Status 2026-08-21: complete for `staff.focuslabproductions.com`.** The checklist below is kept as a record of what was done and as the template for any future re-provisioning (e.g. a production-separate Access app).
+
+1. Create a Zero Trust **Self-hosted** Access application for `staff.focuslabproductions.com/*`.
 2. Attach only explicit approved staff identities or a narrowly maintained Access group. Do not use an everyone/public allow rule.
 3. Copy the Application Audience (AUD) tag into the Worker environment configuration.
 4. Set the exact team domain issuer, including `https://` and no trailing slash.
 5. Allow Google authentication where it is already configured, or enable Access email one-time PIN (OTP) as the low-friction fallback. Restrict application access with exact per-user email entries, regardless of login method.
 6. Use a 24-hour application/policy session for staging and initial production. Exercise reauthentication through explicit session revocation rather than shortening normal user sessions.
-7. Add `staff.gofocuslab.com` and `api.gofocuslab.com` as Worker custom domains only after staging review. Do not use `workers.dev` for production.
+7. `staff.focuslabproductions.com` is attached as a Worker custom domain (2026-08-21); the `workers.dev` route (`focus-lab-operations-staging.freedomgeneration1111.workers.dev`) is kept live alongside it during the transition, not disabled.
 8. Create real D1 responder mappings through a controlled administrative process before granting Access policy membership.
 9. Revoke test tokens/sessions after staging exercises.
 
@@ -159,7 +163,8 @@ Status as of 2026-08-11: the isolated Worker, D1 database, staff shell, and same
 | Resource | Value |
 |---|---|
 | Worker | `focus-lab-operations-staging` |
-| Temporary HTTPS hostname | `focus-lab-operations-staging.freedomgeneration1111.workers.dev` |
+| Custom domain (live 2026-08-21) | `staff.focuslabproductions.com` |
+| `workers.dev` hostname (still live, kept during transition) | `focus-lab-operations-staging.freedomgeneration1111.workers.dev` |
 | D1 database | `focuslab-crm-staging` |
 | D1 ID | `9a7e55cb-7b26-4521-b48d-bd607e1b207c` |
 | Auth mode | `access` (no development-token fallback) |

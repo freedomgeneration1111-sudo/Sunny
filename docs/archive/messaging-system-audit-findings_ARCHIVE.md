@@ -1,3 +1,11 @@
+> **Archived 2026-08-21 — superseded.** This was pre-work investigation
+> grounding ADR-0002 (conversation reply preferences/continuity). ADR-0002
+> shipped (see `adr-0002-implementation-report.md`) and the contradictions
+> flagged below (stale `native-web-chat.md` runbook, self-contradictory
+> "deferred"/"unmounted" chat-trigger language, the two inconsistent
+> offline-label definitions) were all resolved as part of that work. Kept
+> for historical reference only.
+
 # Messaging System Audit Findings
 
 **Type:** Read-only investigation (no code changes made).
