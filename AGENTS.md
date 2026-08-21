@@ -103,8 +103,9 @@ This file is the only required read. Everything below is reference material — 
 - `docs/04_COMPONENT_SYSTEM.md`, `docs/05_PAGE_ART_DIRECTION.md`, `docs/08_MEDIA_TRUTH_AND_PUBLICATION.md`, `docs/09_RESPONSIVE_INTERACTION_REQUIREMENTS.md` — current
 - `docs/12_ONE_ANCHOR_DECISION.md` — current, settled IA decision
 - `docs/native-web-chat.md` — most accurate chat-backend detail in the repo; §3 above is the condensed deployment version. Note: its staging sequence references scripts/configs that live in the separate `operator-os` repo, not here.
-- `docs/public-inquiry-security.md`, `docs/customer-email-continuity.md`, `docs/staff-web-push.md` — current
-- `docs/staff-authentication.md` — current, but note: `staff.focuslabproductions.com` (attached 2026-08-21) and its Cloudflare Access application are now live and deployed — the doc's "not yet configured/deployed" framing and its `staff.gofocuslab.com`/`api.gofocuslab.com` domain references are stale (fixed 2026-08-21 except the "same Worker serves both custom domains" architecture claim — flagged, not resolved, since the public site and staff app are actually two separate Workers, not one; confirm intent before trusting that section)
+- `docs/customer-email-continuity.md`, `docs/staff-web-push.md` — current
+- `docs/staff-authentication.md` — current (2026-08-21): domain references, status, and the same-origin architecture section all corrected to match what's actually deployed (two separate Workers — public site and staff app — not one Worker gated across two domains as originally drafted)
+- `docs/public-inquiry-security.md` — current (2026-08-21): "staging" is the real live inquiry-submission path (`focuslabproductions.com`), not a distinct pre-production tier; its "production activation checklist" is kept only as reference for a hypothetical future separate environment, not an active To-Do
 - `docs/Focus_Lab_Master_Offer_and_Pricing_Decision_Source_2026-08-13.md` — current, pricing detail behind §6
 - `operations/README.md` — short but load-bearing: confirms the backend/CRM source lives in `/home/moses/projects/operator-os`, not here
 - `public/brand/README.md` — current

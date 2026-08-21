@@ -45,7 +45,11 @@ NEXT_PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA
 
 Use Cloudflare's official always-pass test secret only in `operations/.dev.vars` for local automated testing. Staging/production must use their real widget secret. `TURNSTILE_TEST_BYPASS` is accepted only when `ENVIRONMENT=development`; staging and production cannot fall back to it.
 
-## Production activation checklist
+## Production status
+
+**Updated 2026-08-21.** This checklist originally assumed "staging" and "production" would be two separate deployments, activated in sequence. That's not what happened: `focus-lab-public-staging` is bound to the real live domain (`focuslabproductions.com`, attached 2026-08-20) and has been taking real customer inquiries against `focuslab-crm-staging` D1 and the `focuslab-inquiry-staging` Turnstile widget since then — "staging" is a legacy name at this point, not a distinct pre-launch environment. No separate production Worker, D1, or Turnstile widget exists or is currently planned.
+
+The checklist below is kept as reference for if/when a genuinely separate production environment (distinct from what real customers hit today) is ever wanted — e.g. for a true pre-release testing tier ahead of a future major change. It is not an active To-Do.
 
 1. Create a separate managed production Turnstile widget restricted to the approved production public hostname.
 2. Provision/confirm a separate production API Worker and production D1; never bind production to staging D1.
@@ -54,7 +58,6 @@ Use Cloudflare's official always-pass test secret only in `operations/.dev.vars`
 5. Build the approved public site with the production API URL, public site key, and submission switch.
 6. Verify CORS, honeypot, Turnstile failure, rate limiting, idempotent retry, generic failure UX, and one synthetic persisted inquiry.
 7. Review Worker logs/alerts, privacy/retention language, and launch authorization.
-8. Only then enable production submission. No production activation was performed in this phase.
 
 ## Official references
 

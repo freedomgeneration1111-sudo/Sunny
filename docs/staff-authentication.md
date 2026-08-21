@@ -67,20 +67,23 @@ ACCESS_AUD=<Access application AUD tag>
 
 `ACCESS_TEAM_DOMAIN` and `ACCESS_AUD` are identifiers, not credentials, but must be exact. Do not place service tokens or private credentials in Vite variables. The staff production client uses same-origin requests with Access cookies and never asks staff to paste a token.
 
-## Same-origin decision: adopted (architecture note below — flagged, not resolved)
+## Same-origin decision: adopted, within each Worker
 
-Cloudflare [Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/) supports a Worker plus static assets as one deployment; `run_worker_first: true` ensures the Worker hostname gate runs before any staff asset is served. A custom domain invokes the same Worker for all hostname paths, as described in [Custom Domains](https://developers.cloudflare.com/workers/configuration/routing/custom-domains/). The originally intended topology was:
+**Corrected 2026-08-21 to match what's actually deployed** (the original draft of this section described a single Worker owning two custom domains — that was never what got built; see git history if the earlier text is needed).
+
+The real topology is **two separate Workers**, each independently same-origin, not one Worker gated by hostname across two domains:
 
 ```text
-staff.gofocuslab.com/                  -> staff PWA assets
-staff.gofocuslab.com/v1/internal/*     -> protected internal API
-api.gofocuslab.com/v1/inquiries        -> public API
-api.gofocuslab.com/v1/chat/status      -> public status API
+focuslabproductions.com/               -> public marketing site (Worker: focus-lab-public-staging)
+focuslabproductions.com/v1/*           -> proxied via OPERATIONS_API service binding, same origin
+
+staff.focuslabproductions.com/         -> staff PWA assets (Worker: focus-lab-operations-staging)
+staff.focuslabproductions.com/v1/internal/* -> protected internal API, same Worker
 ```
 
-...one operations Worker owning both a staff custom domain and a public API custom domain, gated by hostname.
+`focus-lab-operations-staging` (the staff Worker) uses Cloudflare [Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/) with `run_worker_first: true`, so its own hostname gate (`isStaffAssetHost`) runs before any staff asset is served — this part of the original design is real and in effect, just scoped to one Worker rather than shared across two custom domains on a single Worker. `focus-lab-public-staging` (the public site) is a distinct Worker with its own `OPERATIONS_API` service binding to the backend (`focus-lab-api-staging`); it never serves staff assets and has no hostname-gating logic of its own to bypass. Both Workers reach the same backend D1/CRM, just through separate service bindings (`OPERATIONS_API` vs `CHAT_API`) — see `docs/native-web-chat.md`'s "Staging topology" section for the full binding map.
 
-> **⚠ Flagged 2026-08-21 — doesn't match what was actually built.** The real deployed system is **two separate Workers**, not one: the public site (`focus-lab-public-staging`, bound to `focuslabproductions.com`) proxies specific `/v1/*` paths to the backend via an `OPERATIONS_API` **service binding**; the staff app (`focus-lab-operations-staging`, bound to `staff.focuslabproductions.com`) is a different Worker with its own `CHAT_API` service binding to the same backend. There is no separate public `api.*` custom domain — public API access goes through `focuslabproductions.com/v1/*` on the public Worker itself. The hostname-gating mechanism described above (`isStaffAssetHost`) is real and does run, but within the staff Worker only, not as a shared gate across two custom domains on one Worker. Whether this was a deliberate pivot from the original one-Worker plan or documentation that was never updated to match an implementation decision made along the way is unclear from the repo alone — confirm intent before rewriting this section further.
+This still achieves the original goal (no cross-origin cookie/CORS ambiguity for the installed staff PWA, Access protecting only the staff surface) — it's just implemented as two same-origin Workers instead of one hostname-gated Worker.
 
 ## Cloudflare dashboard configuration required
 
