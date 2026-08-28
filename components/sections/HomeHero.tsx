@@ -36,7 +36,7 @@ export function HomeHero({ asset }: HomeHeroProps) {
           </p>
           <h1
             id="home-hero-title"
-            className="mt-5 max-w-[10ch] font-display text-[clamp(3.35rem,7vw,6.9rem)] font-extrabold italic leading-[.88] tracking-[-.055em] text-balance"
+            className="mt-8 max-w-[10ch] font-display text-[clamp(3.35rem,7vw,6.9rem)] font-extrabold italic leading-[.88] tracking-[-.055em] text-balance"
           >
             One event. One crew. Zero handoffs.
           </h1>

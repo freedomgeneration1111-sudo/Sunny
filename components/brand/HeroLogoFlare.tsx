@@ -45,7 +45,15 @@ export function HeroLogoFlare({
   const p = PLACEMENT[lockup];
 
   return (
-    <span className="relative block">
+    // `h-full` re-exports the header's logo-slot height (set on the ancestor
+    // `<span>` in Header.tsx — same mechanism the compact/scrolled header uses)
+    // down to this wrapper, so the child `<img class="h-full">` and this
+    // element's `.hero-flare` (`inset: 0`) both resolve their percentages
+    // against the intended slot height instead of collapsing to `auto` and
+    // letting the artwork render at intrinsic size. `w-fit` shrink-wraps the
+    // box to the sized artwork so the flare placement percentages stay
+    // anchored to the logo, not to the full width of the nav row.
+    <span className="relative block h-full w-fit">
       {children}
       <span
         aria-hidden="true"
