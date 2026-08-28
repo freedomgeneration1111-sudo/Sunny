@@ -11,7 +11,7 @@
     "test": "npm run check:svg && npm run test:lib && npm run test:operations-client && npm run test:public",
     "test:public": "playwright test",
     "test:operations-client": "vitest run --config operations/vitest.config.mts",
-    "public:staging:build": "NEXT_PUBLIC_INQUIRY_API_URL=https://focuslabproductions.com next build",
+    "public:staging:build": "NEXT_PUBLIC_INQUIRY_API_URL=https://focuslabproductions.com NEXT_PUBLIC_INQUIRY_SUBMISSION_ENABLED=true NEXT_PUBLIC_TURNSTILE_SITE_KEY=0x4AAAAAAEM89GpptQay8UJg next build",
     "public:staging:deploy": "npm run public:staging:build && wrangler deploy --config wrangler.staging.jsonc",
     "test:lib": "vitest run --config vitest.config.mts",
     "check:svg": "node scripts/check-svg-bounds.mjs"
