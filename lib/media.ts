@@ -146,7 +146,7 @@ export const media = {
   eventWedding: authentic(
     "HOME-EVENT-WEDDING-01",
     "/images/authentic/focus-lab-wedding-bridal-portrait-001.webp",
-    "A bride in an ornate red lehenga reclines with hands raised, showing mehndi and jewelry",
+    "A bride in a white ball gown before a sunlit cathedral tower, with the groom standing behind her",
     "Wedding event path",
     "4/5",
     "4/5",
@@ -161,7 +161,7 @@ export const media = {
   eventParty: authentic(
     "HOME-EVENT-PARTY-01",
     "/images/authentic/focus-lab-party-dance-floor-portrait-001.webp",
-    "A guest in white sunglasses dances among a crowded reception floor",
+    "A crowd of guests dance and laugh together at a lively reception",
     "Party event path",
     "4/5",
     "4/5",
