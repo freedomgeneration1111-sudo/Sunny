@@ -38,9 +38,9 @@ export function CinematicHeroMedia({
         sizes="100vw"
         className={`cinematic-poster object-cover ${hasMobilePosters ? "hidden md:block" : ""}`}
         style={{
-          objectPosition: asset.objectPosition,
+          objectPosition: initialCandidate?.desktopFocal.objectPosition ?? asset.objectPosition,
           transform: initialCandidate
-            ? `translateX(${initialCandidate.desktopFocal.translateXPercent}%) scale(${initialCandidate.desktopFocal.scale})`
+            ? `translateX(${initialCandidate.desktopFocal.translateXPercent}%) translateY(${initialCandidate.desktopFocal.translateYPercent ?? 0}%) scale(${initialCandidate.desktopFocal.scale})`
             : undefined,
           transformOrigin: initialCandidate
             ? `${initialCandidate.desktopFocal.originXPercent}% 50%`

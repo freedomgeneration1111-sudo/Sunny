@@ -17,46 +17,34 @@ export type DesktopHeroCandidate = {
   poster: string;
   truth: "authentic-approved";
   source: { filename: string; start: string; end: string };
+  playbackRate?: number;
   desktopFocal: {
     scale: number;
     translateXPercent: number;
+    translateYPercent?: number;
+    objectPosition?: string;
     originXPercent: number;
   };
 };
 
 export const desktopHeroCandidates = [
   {
-    id: "selection-08",
-    label: "Dance and guest energy",
-    alt: "Two young girls in formal gowns twirl down a flower-decorated wedding stage runway",
-    mp4: "/video/approved/focuslab-desktop-hero-selection-08.mp4",
-    webm: "/video/approved/focuslab-desktop-hero-selection-08.webm",
-    poster: "/images/hero/approved/focuslab-desktop-hero-selection-08-poster.jpg",
+    id: "flp-v002",
+    label: "Wedding couple portrait",
+    alt: "A smiling couple in red and white wedding attire embrace beneath warm lights",
+    mp4: "/video/approved/focuslab-desktop-hero-flp-v002.mp4",
+    webm: "/video/approved/focuslab-desktop-hero-flp-v002.webm",
+    poster: "/images/hero/approved/focuslab-desktop-hero-flp-v002-poster.jpg",
     truth: "authentic-approved",
-    source: { filename: "DSC_0572.MOV", start: "00:00:02.200", end: "00:00:18.800" },
-    desktopFocal: { scale: 1.11, translateXPercent: 12, originXPercent: 0 },
-  },
-  {
-    id: "selection-31",
-    label: "Arrival and couple moment",
-    alt: "A close-up portrait of a woman in a bright pink embroidered veil and floral garland",
-    mp4: "/video/approved/focuslab-desktop-hero-selection-31.mp4",
-    webm: "/video/approved/focuslab-desktop-hero-selection-31.webm",
-    poster: "/images/hero/approved/focuslab-desktop-hero-selection-31-poster.jpg",
-    truth: "authentic-approved",
-    source: { filename: "DSC_0250.MOV", start: "00:00:00.250", end: "00:00:05.000" },
-    desktopFocal: { scale: 1.16, translateXPercent: 18, originXPercent: 0 },
-  },
-  {
-    id: "selection-43",
-    label: "Blue atmospheric couple moment",
-    alt: "A bride and groom walk arm-in-arm outdoors at night, lit by strings of blue lights",
-    mp4: "/video/approved/focuslab-desktop-hero-selection-43.mp4",
-    webm: "/video/approved/focuslab-desktop-hero-selection-43.webm",
-    poster: "/images/hero/approved/focuslab-desktop-hero-selection-43-poster.jpg",
-    truth: "authentic-approved",
-    source: { filename: "DSC_0815.MOV", start: "00:00:00.300", end: "00:00:06.400" },
-    desktopFocal: { scale: 1.14, translateXPercent: 24, originXPercent: 0 },
+    source: { filename: "couple.mp4", start: "00:00:00.250", end: "00:00:04.750" },
+    playbackRate: 0.5,
+    desktopFocal: {
+      scale: 1.11,
+      translateXPercent: 16,
+      translateYPercent: 4,
+      objectPosition: "center top",
+      originXPercent: 0,
+    },
   },
 ] as const satisfies readonly DesktopHeroCandidate[];
 
@@ -64,6 +52,8 @@ export const desktopHeroCandidates = [
  * Authentic mobile hero stills, pulled from the same approved desktop video
  * candidates above (same `id`s, so a still can be traced back to its source
  * clip). Mobile doesn't play video, so these rotate as static frames instead.
+ * Empty while the sole desktop candidate (flp-v002) has no mobile still of
+ * its own — CinematicHeroMedia falls back to the desktop poster on mobile.
  */
 export type MobileHeroCandidate = {
   id: string;
@@ -74,52 +64,225 @@ export type MobileHeroCandidate = {
   source: { filename: string; timestamp: string };
 };
 
-export const mobileHeroCandidates = [
-  {
-    id: "selection-08",
-    label: "Dance and guest energy",
-    alt: "A young girl in a purple ruffled gown twirls on a flower-decorated wedding stage",
-    src: "/images/hero/mobile/focuslab-mobile-hero-selection-08.webp",
-    truth: "authentic-approved",
-    source: { filename: "DSC_0572.MOV", timestamp: "00:00:14.750" },
-  },
-  {
-    id: "selection-31",
-    label: "Bridal portrait",
-    alt: "A close-up portrait of a woman in an ornate red and pink headscarf with a marigold flower in her hair",
-    src: "/images/hero/mobile/focuslab-mobile-hero-selection-31.webp",
-    truth: "authentic-approved",
-    source: { filename: "DSC_0250.MOV", timestamp: "00:00:02.000" },
-  },
-  {
-    id: "selection-43",
-    label: "Couple walking",
-    alt: "A bride in a veil and a groom in a pink suit stand close together at night, lit by blue string lights",
-    src: "/images/hero/mobile/focuslab-mobile-hero-selection-43.webp",
-    truth: "authentic-approved",
-    source: { filename: "DSC_0815.MOV", timestamp: "00:00:00.200" },
-  },
-] as const satisfies readonly MobileHeroCandidate[];
-export type MediaAsset = { id: string; src: string; alt: string; purpose: string; truth: MediaTruth; desktopAspect: string; mobileAspect: string; objectPosition?: string; priority?: "P0" | "P1" | "P2" };
-const generated = (id: string, src: string, alt: string, purpose: string, desktopAspect = "16/9", mobileAspect = "4/5", objectPosition = "center", priority: "P0" | "P1" | "P2" = "P1"): MediaAsset => ({ id, src, alt, purpose, truth: "ai-brand", desktopAspect, mobileAspect, objectPosition, priority });
+export const mobileHeroCandidates = [] as const satisfies readonly MobileHeroCandidate[];
+export type MediaAsset = {
+  id: string;
+  src: string;
+  alt: string;
+  purpose: string;
+  truth: MediaTruth;
+  desktopAspect: string;
+  mobileAspect: string;
+  objectPosition?: string;
+  priority?: "P0" | "P1" | "P2";
+  source?: {
+    candidateId: string;
+    master: string;
+    transformation: string;
+  };
+};
+
+const generated = (
+  id: string,
+  src: string,
+  alt: string,
+  purpose: string,
+  desktopAspect = "16/9",
+  mobileAspect = "4/5",
+  objectPosition = "center",
+  priority: "P0" | "P1" | "P2" = "P1",
+): MediaAsset => ({
+  id,
+  src,
+  alt,
+  purpose,
+  truth: "ai-brand",
+  desktopAspect,
+  mobileAspect,
+  objectPosition,
+  priority,
+});
+
+const authentic = (
+  id: string,
+  src: string,
+  alt: string,
+  purpose: string,
+  desktopAspect: string,
+  mobileAspect: string,
+  objectPosition: string,
+  priority: "P0" | "P1" | "P2",
+  source: NonNullable<MediaAsset["source"]>,
+): MediaAsset => ({
+  id,
+  src,
+  alt,
+  purpose,
+  truth: "authentic-approved",
+  desktopAspect,
+  mobileAspect,
+  objectPosition,
+  priority,
+  source,
+});
 
 export const media = {
   homeHero: generated("HOME-HERO-01", "/images/hero/hero-wedding-desktop-poster.webp", "A bride in a red lehenga on her wedding day", "Home hero", "16/10", "4/5", "center", "P0"),
-  eventAsianWedding: generated("HOME-EVENT-SA-01", "/images/generated/home-event-sa-01.webp", "Henna-covered hands and gold bangles resting in candlelight", "Asian wedding event path", "4/5", "4/5", "center", "P0"),
-  eventWedding: generated("HOME-EVENT-WEDDING-01", "/images/generated/home-event-wedding-01.webp", "A couple sharing a first dance in silhouette against warm amber light", "Wedding event path", "4/5", "4/5", "center", "P0"),
-  eventParty: generated("HOME-EVENT-PARTY-01", "/images/generated/home-event-party-01.webp", "Raised hands on a dance floor under amber and magenta light", "Party event path", "4/5", "4/5", "center", "P0"),
-  eventCorporate: generated("HOME-EVENT-CORP-01", "/images/generated/home-event-corp-01.webp", "A speaker in silhouette at a lectern facing a darkened ballroom", "Corporate event path", "4/5", "4/5", "center", "P0"),
-  capture: generated("HOME-CAPTURE-01", "/images/generated/home-capture-01.webp", "Close-up of a professional camera lens against warm gold bokeh", "Photo and video capability", "3/2", "4/3"),
-  production: generated("HOME-PRODUCTION-01", "/images/generated/home-production-01.webp", "Hands on a DJ mixing console under purple stage lighting", "Entertainment and production capability", "3/2", "4/3"),
-  weddingsHero: generated("WEDDINGS-HERO-01", "/images/generated/weddings-hero-01.webp", "A candlelit banquet hall set for a wedding beneath string lights", "Weddings hero", "16/9", "4/5", "center right", "P0"),
-  weddingCoordination: generated("WEDDINGS-COORDINATION-01", "/images/generated/weddings-coordination-01.webp", "A microphone resting on a printed run-of-show sheet", "Wedding coordination", "3/2", "4/3"),
-  asianWeddingHero: generated("SA-HERO-01", "/images/generated/south-asian-hero-01.webp", "An ornate wedding stage with gold drapery, chandelier and candles", "Asian weddings hero", "16/9", "4/5", "center right", "P0"),
+  eventAsianWedding: authentic(
+    "HOME-EVENT-SA-01",
+    "/images/authentic/focus-lab-asian-wedding-couple-001.webp",
+    "A smiling couple in red and white wedding attire embrace beneath warm lights",
+    "Asian wedding event path",
+    "4/5",
+    "4/5",
+    "center",
+    "P0",
+    {
+      candidateId: "FLP-P001",
+      master: "artifacts/media-review/processed-master/stills/FLP-P001-master-retouched-full-srgb.tif",
+      transformation: "461x576 portrait crop from the full-frame retouched master; no resampling",
+    },
+  ),
+  eventWedding: authentic(
+    "HOME-EVENT-WEDDING-01",
+    "/images/authentic/focus-lab-wedding-bridal-portrait-001.webp",
+    "A bride in an ornate red lehenga reclines with hands raised, showing mehndi and jewelry",
+    "Wedding event path",
+    "4/5",
+    "4/5",
+    "center",
+    "P0",
+    {
+      candidateId: "FLP-P008",
+      master: "artifacts/media-review/processed-master/stills/FLP-P008-master-crop-clean-srgb.tif",
+      transformation: "461x576 portrait crop from the clean master; no resampling",
+    },
+  ),
+  eventParty: authentic(
+    "HOME-EVENT-PARTY-01",
+    "/images/authentic/focus-lab-party-dance-floor-portrait-001.webp",
+    "A guest in white sunglasses dances among a crowded reception floor",
+    "Party event path",
+    "4/5",
+    "4/5",
+    "center",
+    "P0",
+    {
+      candidateId: "FLP-P018",
+      master: "artifacts/media-review/processed-master/stills/FLP-P018-master-full-srgb.tif",
+      transformation: "256x320 portrait crop from the full-frame master; no resampling",
+    },
+  ),
+  eventCorporate: generated("HOME-EVENT-CORP-01", "/images/generated/home-event-corp-01.webp", "A speaker addresses a full seated audience from a lectern in a conference hall", "Corporate event path", "4/5", "4/5", "center", "P0"),
+  capture: authentic(
+    "HOME-CAPTURE-01",
+    "/images/authentic/focus-lab-wedding-editorial-portrait-001.webp",
+    "A bride in a full ball gown stands before a sunset-lit cathedral with the groom behind her",
+    "Photo and video capability",
+    "3/2",
+    "4/3",
+    "center",
+    "P1",
+    {
+      candidateId: "FLP-P005",
+      master: "artifacts/media-review/processed-master/stills/FLP-P005-master-crop-clean-srgb.tif",
+      transformation: "864x576 landscape crop from the clean master; no resampling",
+    },
+  ),
+  production: authentic(
+    "HOME-PRODUCTION-01",
+    "/images/authentic/focus-lab-event-mc-001.webp",
+    "An event host speaking into a microphone beside a lectern",
+    "Entertainment and production capability",
+    "3/2",
+    "4/3",
+    "62% center",
+    "P1",
+    {
+      candidateId: "FLP-P014",
+      master: "artifacts/media-review/processed-master/stills/FLP-P014-master-full-srgb.tif",
+      transformation: "1067x711 landscape crop from the full-frame master; no resampling",
+    },
+  ),
+  weddingsHero: authentic(
+    "WEDDINGS-HERO-01",
+    "/images/authentic/focus-lab-wedding-architecture-couple-001.webp",
+    "A bride and groom embrace on white architectural steps beneath a pale sky",
+    "Weddings hero",
+    "16/9",
+    "4/5",
+    "58% center",
+    "P0",
+    {
+      candidateId: "FLP-P011",
+      master: "artifacts/media-review/processed-master/stills/FLP-P011-master-crop-clean-srgb.tif",
+      transformation: "884x497 landscape crop from the clean master; no resampling",
+    },
+  ),
+  weddingCoordination: authentic(
+    "WEDDINGS-COORDINATION-01",
+    "/images/authentic/focus-lab-wedding-intimate-couple-001.webp",
+    "A bride and groom dance together, her lehenga skirt flaring, outside an illuminated venue at night",
+    "Wedding coordination",
+    "3/2",
+    "4/3",
+    "center",
+    "P1",
+    {
+      candidateId: "FLP-P004",
+      master: "artifacts/media-review/processed-master/stills/FLP-P004-master-crop-clean-srgb.tif",
+      transformation: "768x576 4:3 crop from the clean master; no resampling",
+    },
+  ),
+  asianWeddingHero: authentic(
+    "SA-HERO-01",
+    "/images/authentic/focus-lab-asian-wedding-couple-landscape-001.webp",
+    "A smiling couple in red and white wedding attire embrace beneath warm lights",
+    "Asian weddings hero",
+    "16/9",
+    "4/5",
+    "center",
+    "P0",
+    {
+      candidateId: "FLP-P001",
+      master: "artifacts/media-review/processed-master/stills/FLP-P001-master-retouched-full-srgb.tif",
+      transformation: "Full 1024x576 retouched master converted to WebP; no crop or resampling",
+    },
+  ),
   asianWeddingBaraat: generated("SA-BARAAT-01", "/images/generated/sa-baraat-01.webp", "A dhol player leading a baraat procession at dusk", "Asian wedding event sequence", "3/2", "4/5"),
   asianWeddingMehndi: generated("SA-MEHNDI-01", "/images/generated/sa-mehndi-01.webp", "Henna being applied to a hand beside gold bangles in candlelight", "Asian wedding event sequence", "3/2", "4/5"),
   asianWeddingReception: generated("SA-RECEPTION-01", "/images/generated/sa-reception-01.webp", "An opulent reception hall with a chandelier and candlelit tables", "Asian wedding production", "16/10", "4/5"),
-  partyHero: generated("PARTY-HERO-01", "/images/generated/party-hero-01.webp", "A glowing dance floor lit in amber and magenta before guests arrive", "Parties hero", "16/9", "4/5", "center right", "P0"),
+  partyHero: authentic(
+    "PARTY-HERO-01",
+    "/images/authentic/focus-lab-party-dance-floor-landscape-001.webp",
+    "Guests dance together on a crowded reception floor",
+    "Parties hero",
+    "16/10",
+    "4/5",
+    "center",
+    "P0",
+    {
+      candidateId: "FLP-P018",
+      master: "artifacts/media-review/processed-master/stills/FLP-P018-master-full-srgb.tif",
+      transformation: "512x320 landscape crop from the full-frame master; no resampling",
+    },
+  ),
   corporateHero: generated("CORP-HERO-01", "/images/generated/corporate-hero-01.webp", "An empty conference ballroom with a lit stage, lectern and screen", "Corporate hero", "16/9", "4/5", "center right", "P0"),
-  photoVideoHero: generated("PHOTO-VIDEO-HERO-01", "/images/generated/photo-video-hero-01.webp", "A cinema camera on a tripod at an event venue", "Photo video hero", "16/9", "4/5", "center right", "P0"),
+  photoVideoHero: authentic(
+    "PHOTO-VIDEO-HERO-01",
+    "/images/authentic/focus-lab-wedding-overhead-portrait-001.webp",
+    "An overhead wedding portrait of a bride and groom on dark stone steps",
+    "Photo video hero",
+    "16/9",
+    "4/5",
+    "38% center",
+    "P0",
+    {
+      candidateId: "FLP-P006",
+      master: "artifacts/media-review/processed-master/stills/FLP-P006-master-crop-clean-srgb.tif",
+      transformation: "884x497 landscape crop from the clean master; no resampling",
+    },
+  ),
   photoVideoDetail: generated("PHOTO-VIDEO-DETAIL-01", "/images/generated/photo-video-detail-01.webp", "A camera body, spare lens and memory cards on a dark surface", "Photo video detail", "3/2", "4/3"),
   productionHero: generated("PRODUCTION-HERO-01", "/images/generated/production-hero-01.webp", "An ornate draped stage with a chandelier and candlelight", "Production hero", "16/9", "4/5", "center right", "P0"),
   productionEffects: generated("PRODUCTION-EFFECTS-01", "/images/generated/production-effects-01.webp", "A dance floor filled with low haze cut by warm light beams", "Production effects", "3/2", "4/5"),
