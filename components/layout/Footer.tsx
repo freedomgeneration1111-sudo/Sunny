@@ -35,6 +35,11 @@ const columns = [
     links: [
       { href: "/about", label: "Our Approach" },
       { href: "/check-availability", label: "Check Availability" },
+      {
+        href: "https://g.page/r/CZVCYEE7zoHjEBM/review",
+        label: "👉 Leave a Google Review for Focus Lab Productions",
+        external: true,
+      },
     ],
   },
 ] as const;
@@ -65,9 +70,20 @@ export function Footer() {
               <ul className="mt-4 space-y-1 text-sm">
                 {column.links.map((link) => (
                   <li key={link.href}>
-                    <Link href={link.href} className={linkClass}>
-                      {link.label}
-                    </Link>
+                    {"external" in link && link.external ? (
+                      <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={linkClass}
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link href={link.href} className={linkClass}>
+                        {link.label}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>
