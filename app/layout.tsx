@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ChatTeaser } from "@/components/operations/ChatTeaser";
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <ChatTeaser />
           </PlanProvider>
         </PublicChatProvider>
+        <GoogleAnalytics gaId="G-9T3S01EDXH" />
       </body>
     </html>
   );
