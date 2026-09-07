@@ -83,3 +83,26 @@ window.dataLayer: [
 ```
 
 Both routes: (a) fired the expected `googletagmanager.com/gtag/js?id=G-9T3S01EDXH` network request, (b) populated `window.dataLayer` with a `config` entry for `G-9T3S01EDXH`, confirming the root-layout tag applies sitewide, not per-page.
+
+## Step 4 — Commit evidence
+
+```
+commit 0611ad1806664302178daf802c3357494623081c
+Author: freedomgeneration1111-sudo <freedomgeneration1111@gmail.com>
+Date:   Mon Sep 7 10:13:36 2026 -0700
+
+    feat: add GA4 tracking (G-9T3S01EDXH) via @next/third-parties
+    
+    Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+    Claude-Session: https://claude.ai/code/session_01Ak54bnzNBoUc1PGmKeCzon
+```
+
+```
+On branch feat/check-availability-google-calendar
+Your branch is ahead of 'origin/feat/check-availability-google-calendar' by 4 commits.
+  (use "git push" to publish your local commits)
+
+nothing to commit, working tree clean
+```
+
+Per instructions, this commit was not pushed.
