@@ -1,0 +1,8 @@
+import { createHash } from "node:crypto";
+import { describe,expect,it } from "vitest";
+import pricing from "@/lib/content/servicePricing.json";
+import faqs from "@/lib/content/faqs.json";
+import { parseFocusCmsSnapshot,snapshotCore,stableStringify } from "./cmsSnapshot";
+
+function snapshot(){const core={schemaVersion:1 as const,business:"focus" as const,exportedAt:"2026-09-28T12:00:00.000Z",documents:{pricing:{revisionId:"pricing_test",schemaVersion:1 as const,content:{schemaVersion:1 as const,values:pricing.values}},faqs:{revisionId:"faqs_test",schemaVersion:1 as const,content:{schemaVersion:1 as const,...faqs}}}};const hash=createHash("sha256").update(stableStringify(core)).digest("hex");return{...core,integrity:{algorithm:"SHA-256" as const,hash:`sha256-${hash}`}};}
+describe("Focus CMS snapshot",()=>{it("accepts the checked-in inventory and produces the same integrity input used by the build",()=>{const parsed=parseFocusCmsSnapshot(snapshot());const digest=createHash("sha256").update(stableStringify(snapshotCore(parsed))).digest("hex");expect(parsed.integrity.hash).toBe(`sha256-${digest}`);expect(parsed.documents.pricing.content.values.party3h!.amount).toBe(675);});it("rejects incompatible or structurally incomplete snapshots",()=>{const invalid=snapshot() as unknown as {schemaVersion:number;documents:{pricing:{content:{values:Record<string,unknown>}}}};invalid.schemaVersion=2;expect(()=>parseFocusCmsSnapshot(invalid)).toThrow(/incompatible/);const missing=snapshot();delete (missing.documents.pricing.content.values as Record<string,unknown>).party3h;expect(()=>parseFocusCmsSnapshot(missing)).toThrow(/identifiers/);});});

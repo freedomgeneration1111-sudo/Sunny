@@ -14,7 +14,9 @@
     "public:staging:build": "NEXT_PUBLIC_PUBLICATION_STAGE=review next build",
     "public:staging:deploy": "wrangler deploy --config wrangler.staging.jsonc",
     "test:lib": "vitest run --config vitest.config.mts",
-    "check:svg": "node scripts/check-svg-bounds.mjs"
+    "check:svg": "node scripts/check-svg-bounds.mjs",
+    "cms:initialize": "node scripts/focus-cms.mjs initialize",
+    "cms:export": "node scripts/focus-cms.mjs export"
   },
   "dependencies": {
     "next": "^15.5.23",

@@ -1,4 +1,6 @@
 import type { MediaAsset } from "@/lib/media";
+import faqSource from "@/lib/content/faqs.json";
+import { cmsBuildContent } from "@/lib/content/cmsContent";
 import { media } from "@/lib/media";
 import type { PlanItemId } from "@/lib/plan";
 
@@ -23,67 +25,8 @@ export type CommercialPageContent = {
   cta: { title: string; body: string; event?: string };
 };
 
-export const commonFaqs: readonly FAQ[] = [
-  {
-    question: "Can I book just one service?",
-    answer:
-      "Yes. Take photo only, DJ only, or any combination that fits your event. Booking more than one service simply means they are planned on the same timeline.",
-  },
-  {
-    question: "Are the prices on your pricing page final?",
-    answer:
-      "The pricing menu shows what each service costs to start. Your quote is prepared around your actual date, venue, hours, and the services you want, so the final number can differ.",
-  },
-  {
-    question: "Which languages can you support?",
-    answer:
-      "Our team can communicate in English, Urdu, Hindi, and Punjabi. Tell us what language support would be useful for your event and we will plan around it.",
-  },
-  {
-    question: "Do you handle multi-event celebrations?",
-    answer:
-      "Yes. Multi-event celebrations are quoted around the schedule your family is planning — however many events that is, in whatever order they happen.",
-  },
-  {
-    question: "How far ahead should we get in touch?",
-    answer:
-      "Earlier is easier, especially for peak Saturdays and holiday weekends. If your date is soon, ask anyway — we will tell you honestly whether we can cover it.",
-  },
-  {
-    question: "Do you travel outside Dallas–Fort Worth?",
-    answer:
-      "Often, yes. Travel outside the metroplex is quoted with the event, so include the location when you get in touch.",
-  },
-];
-
-export const pricingFaqs: readonly FAQ[] = [
-  {
-    question: "Is the price I see what I pay?",
-    answer:
-      "It is the starting point. Services marked “From” move with hours, venue, travel, and crew. Services with a flat price are the price shown for that time block.",
-  },
-  {
-    question: "Why do some services say Custom Quote?",
-    answer:
-      "Larger production, multi-event celebrations, and unusual venues vary too much to carry one number honestly. Tell us what you are planning and we will put a real figure to it.",
-  },
-  {
-    question: "Can I combine services from different categories?",
-    answer:
-      "Yes, and it is common. Photo from one category and DJ from another are planned together on one timeline rather than quoted as separate bookings.",
-  },
-  {
-    question: "How do I get an actual quote?",
-    answer:
-      "Send us your date, venue or city, and the services you have in mind through Check Availability. Our team prepares the quote and confirms the details with you.",
-  },
-  {
-    question: "Do you require a deposit?",
-    answer:
-      "A date is held once a signed agreement and deposit are in place. The specifics are confirmed with your quote.",
-  },
-];
-
+export const commonFaqs:readonly FAQ[]=(cmsBuildContent?.faqs.common??faqSource.common).map(({question,answer})=>({question,answer}));
+export const pricingFaqs:readonly FAQ[]=(cmsBuildContent?.faqs.pricing??faqSource.pricing).map(({question,answer})=>({question,answer}));
 
 export const commercialPages = {
   photoVideo: {

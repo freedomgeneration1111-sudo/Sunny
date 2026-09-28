@@ -6,6 +6,7 @@ import { usePlan } from "@/components/planning/PlanProvider";
 import { track } from "@/lib/analytics";
 import { config } from "@/lib/config";
 import { planItems, type PlanItemId } from "@/lib/plan";
+import { pricingLabel } from "@/lib/pricing";
 
 /**
  * The complete Focus Lab service menu.
@@ -112,8 +113,8 @@ function PlanSummary() {
         <ul className="mt-6 grid gap-2 sm:grid-cols-2">
           {selected.map((id) => (
             <li key={id} className="flex items-center justify-between gap-4 rounded-control border border-on-brand/15 bg-on-brand/[.05] px-4 py-3">
-              <span className="text-sm font-bold">{planItems[id].label}</span>
-              <button type="button" onClick={() => remove(id)} aria-label={`Remove ${planItems[id].label}`} className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-xl text-on-brand/65 hover:bg-on-brand/10 hover:text-on-brand">×</button>
+              <span className="text-sm font-bold">{pricingLabel(planItems[id].priceKey)}</span>
+              <button type="button" onClick={() => remove(id)} aria-label={`Remove ${pricingLabel(planItems[id].priceKey)}`} className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-xl text-on-brand/65 hover:bg-on-brand/10 hover:text-on-brand">×</button>
             </li>
           ))}
         </ul>

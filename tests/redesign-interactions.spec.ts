@@ -1,4 +1,14 @@
 import { expect, test } from "@playwright/test";
+import { readFileSync } from "node:fs";
+
+function expectedPartyPrice(): string {
+  const snapshotPath = process.env.FOCUS_CMS_SNAPSHOT_PATH;
+  if (!snapshotPath) return "$675";
+  const snapshot = JSON.parse(readFileSync(snapshotPath, "utf8")) as {
+    documents: { pricing: { content: { values: { party3h: { amount: number } } } } };
+  };
+  return `$${snapshot.documents.pricing.content.values.party3h.amount.toLocaleString("en-US")}`;
+}
 
 test("the pricing page is one complete visible menu without tabs", async ({ page }) => {
   await page.goto("/pricing/");
@@ -10,7 +20,7 @@ test("the pricing page is one complete visible menu without tabs", async ({ page
 
   // Every service in the inventory is on the page, in its natural price mode.
   await expect(page.getByRole("article")).toHaveCount(32);
-  await expect(page.getByText("$675", { exact: true })).toBeVisible();
+  await expect(page.getByText(expectedPartyPrice(), { exact: true })).toBeVisible();
   await expect(page.getByText("From $1,700", { exact: true })).toBeVisible();
   await expect(page.getByText("$175/hour", { exact: true })).toBeVisible();
   await expect(page.getByText("Custom Quote").first()).toBeVisible();

@@ -55,3 +55,27 @@ Do not present AI brand imagery as documentary evidence. The site need not plast
 ## SEO / alt text
 
 Alt text describes what is visible and useful to the user; it must not say "Focus Lab photographed..." for AI assets.
+
+
+## Build-time CMS snapshots
+
+Pricing and common/pricing FAQs can be supplied by an immutable Operator-OS snapshot at build time. Normal builds keep using `lib/content/servicePricing.json` and `lib/content/faqs.json`. An explicit snapshot build is strict:
+
+```bash
+FOCUS_CMS_SNAPSHOT_PATH=artifacts/focus-cms-snapshot.json npm run build
+```
+
+`next.config.ts` reads the local file, validates schema version 1 and the complete stable pricing-key inventory, recomputes its SHA-256 integrity hash, and fails the build on any mismatch. It embeds only the public content and revision IDs; no CMS URL, credential, Access token, or draft-fetch endpoint is added to the browser bundle. All pricing cards, dormant quote calculations, homepage/service common FAQs, and pricing FAQs use the same adapter.
+
+Local end-to-end preview:
+
+```bash
+# Operator-OS terminals: apply CMS migrations and run wrangler dev.
+OPERATOR_OS_TOKEN=<local-token> OPERATOR_OS_RESPONDER_ID=<manager-id> npm run cms:initialize -- --api http://127.0.0.1:8787
+# Save a draft in the staff Website area, then:
+OPERATOR_OS_TOKEN=<local-token> OPERATOR_OS_RESPONDER_ID=<manager-id> npm run cms:export -- --api http://127.0.0.1:8787 --out artifacts/focus-cms-snapshot.json
+FOCUS_CMS_SNAPSHOT_PATH=artifacts/focus-cms-snapshot.json npm run build
+npx serve out
+```
+
+This is a local preview workflow, not publication. The public custom domain currently serves the same HTML as `focus-lab-public-staging.freedomgeneration1111.workers.dev` (verified 2026-09-28), while that custom-domain attachment is not declared in either checked-in Wrangler configuration. No deployment is performed by the CMS scripts.

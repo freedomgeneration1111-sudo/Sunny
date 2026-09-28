@@ -1,0 +1,17 @@
+{
+  "common": [
+    {"id":"common_single_service","question":"Can I book just one service?","answer":"Yes. Take photo only, DJ only, or any combination that fits your event. Booking more than one service simply means they are planned on the same timeline."},
+    {"id":"common_final_prices","question":"Are the prices on your pricing page final?","answer":"The pricing menu shows what each service costs to start. Your quote is prepared around your actual date, venue, hours, and the services you want, so the final number can differ."},
+    {"id":"common_languages","question":"Which languages can you support?","answer":"Our team can communicate in English, Urdu, Hindi, and Punjabi. Tell us what language support would be useful for your event and we will plan around it."},
+    {"id":"common_multi_event","question":"Do you handle multi-event celebrations?","answer":"Yes. Multi-event celebrations are quoted around the schedule your family is planning — however many events that is, in whatever order they happen."},
+    {"id":"common_lead_time","question":"How far ahead should we get in touch?","answer":"Earlier is easier, especially for peak Saturdays and holiday weekends. If your date is soon, ask anyway — we will tell you honestly whether we can cover it."},
+    {"id":"common_travel","question":"Do you travel outside Dallas–Fort Worth?","answer":"Often, yes. Travel outside the metroplex is quoted with the event, so include the location when you get in touch."}
+  ],
+  "pricing": [
+    {"id":"pricing_shown_price","question":"Is the price I see what I pay?","answer":"It is the starting point. Services marked “From” move with hours, venue, travel, and crew. Services with a flat price are the price shown for that time block."},
+    {"id":"pricing_custom_quote","question":"Why do some services say Custom Quote?","answer":"Larger production, multi-event celebrations, and unusual venues vary too much to carry one number honestly. Tell us what you are planning and we will put a real figure to it."},
+    {"id":"pricing_combine","question":"Can I combine services from different categories?","answer":"Yes, and it is common. Photo from one category and DJ from another are planned together on one timeline rather than quoted as separate bookings."},
+    {"id":"pricing_actual_quote","question":"How do I get an actual quote?","answer":"Send us your date, venue or city, and the services you have in mind through Check Availability. Our team prepares the quote and confirms the details with you."},
+    {"id":"pricing_deposit","question":"Do you require a deposit?","answer":"A date is held once a signed agreement and deposit are in place. The specifics are confirmed with your quote."}
+  ]
+}

@@ -30,7 +30,7 @@ npm run public:staging:deploy  # wrangler deploy --config wrangler.staging.jsonc
 
 The chat/CRM backend Worker (`focus-lab-api-staging`) and its source live in a **separate repo**: `/home/moses/projects/operator-os`. This repo contains only the public-facing proxy/binding, not the backend itself. Do not attempt to build or modify the backend from inside this repo.
 
-Custom domain `focuslabproductions.com`: DNS currently unattached to anything. Do not attach without explicit instruction — confirm noindex is intact on whichever Worker first.
+Custom domain `focuslabproductions.com`: as verified on 2026-09-28, it returns `200` and serves HTML byte-identical to `focus-lab-public-staging.freedomgeneration1111.workers.dev`. That custom-domain attachment is not represented in either checked-in Wrangler config, so treat it as live externally configured state and do not change or reattach it without explicit instruction. The staff domain remains Access-protected.
 
 ## 4. Highest-level rule
 
