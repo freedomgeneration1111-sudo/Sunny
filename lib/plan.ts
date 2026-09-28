@@ -1,4 +1,4 @@
-import { servicePricing } from "@/lib/pricing";
+import { pricingLabel, servicePricing } from "@/lib/pricing";
 import type { PricingKey } from "@/lib/pricing";
 
 export type PlanCategory =
@@ -254,6 +254,16 @@ export const planItemIds = Object.keys(planItems) as PlanItemId[];
 
 export function planItemsByCategory(category: PlanCategory): PlanItemId[] {
   return planItemIds.filter((id) => planItems[id].category === category);
+}
+
+/** Customer-facing label for a stable plan item id. */
+export function planItemLabel(id: PlanItemId): string {
+  const item: PlanItem = planItems[id];
+  return item.priceKey ? pricingLabel(item.priceKey) : item.label;
+}
+
+export function planItemLabels(ids: readonly PlanItemId[]): string[] {
+  return ids.map(planItemLabel);
 }
 
 /* ── Quote-builder logic ──────────────────────────────────────────────

@@ -7,7 +7,7 @@ import { usePlan } from "@/components/planning/PlanProvider";
 import { config } from "@/lib/config";
 import { track } from "@/lib/analytics";
 import { customerInquiryError, inquirySubmissionEnabled, submitInquiry, turnstileSiteKey } from "@/lib/operations-api";
-import { isPlanItemId, planItems } from "@/lib/plan";
+import { isPlanItemId, planItemLabel, planItemLabels } from "@/lib/plan";
 
 type State = { eventType:string;date:string;location:string;services:string[];guests:string;budget:string;name:string;email:string;phone:string;contact:string;note:string };
 type SubmissionState = { kind:"idle"|"demo"|"submitting"|"success"|"error";message?:string };
@@ -22,10 +22,10 @@ export function CheckAvailabilityForm() {
   const { selected, remove } = usePlan();
   const queryIds = useMemo(() => params.getAll("interest").filter(isPlanItemId), [params]);
   const carriedIds = useMemo(() => [...new Set([...queryIds, ...selected])], [queryIds, selected]);
-  const carriedLabels = useMemo(() => carriedIds.map((id) => planItems[id].label), [carriedIds]);
+  const carriedLabels = useMemo(() => planItemLabels(carriedIds), [carriedIds]);
   const [removedQueryIds,setRemovedQueryIds] = useState<string[]>([]);
   const visibleCarriedIds = useMemo(() => carriedIds.filter((id) => !removedQueryIds.includes(id)), [carriedIds, removedQueryIds]);
-  const visibleCarriedLabels = useMemo(() => visibleCarriedIds.map((id) => planItems[id].label), [visibleCarriedIds]);
+  const visibleCarriedLabels = useMemo(() => planItemLabels(visibleCarriedIds), [visibleCarriedIds]);
   const [step,setStep] = useState<1|2|3>(1);
   const [form,setForm] = useState<State>(() => ({ ...base, eventType: params.get("event") ?? "", services: carriedLabels }));
   const [submission,setSubmission] = useState<SubmissionState>({ kind:"idle" });
@@ -45,7 +45,7 @@ export function CheckAvailabilityForm() {
   const removeCarried = (id: (typeof carriedIds)[number]) => {
     remove(id);
     setRemovedQueryIds((current) => current.includes(id) ? current : [...current, id]);
-    setForm((current) => ({ ...current, services: current.services.filter((service) => service !== planItems[id].label) }));
+    setForm((current) => ({ ...current, services: current.services.filter((service) => service !== planItemLabel(id)) }));
   };
   const next = (nextStep:2|3) => { track("inquiry_step_complete",{ step:nextStep-1 }); setStep(nextStep); };
   const toggle = (service:string) => setForm((current) => ({ ...current, services: current.services.includes(service) ? current.services.filter((item) => item!==service) : [...current.services,service] }));
@@ -70,7 +70,7 @@ export function CheckAvailabilityForm() {
   return (
     <div className="max-w-4xl">
       {!inquirySubmissionEnabled ? <div className="mb-8 rounded-card border-2 border-brand-primary bg-brand-primary/10 p-4 text-sm font-extrabold">Online submissions are being set up. Please reach us through chat in the meantime.</div> : null}
-      {config.quoteBuilderEnabled && visibleCarriedIds.length ? <aside className="mb-8 rounded-card border border-border bg-surface p-5"><p className="text-xs font-extrabold uppercase tracking-[.14em] text-brand-primary">Services you selected</p><ul className="mt-3 flex flex-wrap gap-2">{visibleCarriedIds.map((id) => <li key={id} className="inline-flex items-center gap-2 rounded-full bg-canvas-alt pl-3 text-xs font-bold"><span>{planItems[id].label}</span><button type="button" onClick={() => removeCarried(id)} aria-label={`Remove ${planItems[id].label}`} className="grid h-10 w-10 place-items-center rounded-full text-lg text-ink-muted hover:bg-border hover:text-ink">×</button></li>)}</ul></aside> : null}
+      {config.quoteBuilderEnabled && visibleCarriedIds.length ? <aside className="mb-8 rounded-card border border-border bg-surface p-5"><p className="text-xs font-extrabold uppercase tracking-[.14em] text-brand-primary">Services you selected</p><ul className="mt-3 flex flex-wrap gap-2">{visibleCarriedIds.map((id) => <li key={id} className="inline-flex items-center gap-2 rounded-full bg-canvas-alt pl-3 text-xs font-bold"><span>{planItemLabel(id)}</span><button type="button" onClick={() => removeCarried(id)} aria-label={`Remove ${planItemLabel(id)}`} className="grid h-10 w-10 place-items-center rounded-full text-lg text-ink-muted hover:bg-border hover:text-ink">×</button></li>)}</ul></aside> : null}
       <div role="progressbar" aria-label="Inquiry progress" aria-valuemin={1} aria-valuemax={3} aria-valuenow={step} className="mb-10 grid grid-cols-3 gap-2">{[1,2,3].map((item) => <span key={item} className={`h-2 rounded-full ${item<=step?"bg-brand-primary":"bg-border"}`}/>)}</div>
       <form onSubmit={submit}>
         {step===1 ? <fieldset className="space-y-7"><legend className="text-3xl font-extrabold">Start with the event.</legend>

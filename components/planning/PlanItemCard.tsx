@@ -3,8 +3,8 @@
 import { usePlan } from "@/components/planning/PlanProvider";
 import { track } from "@/lib/analytics";
 import { config } from "@/lib/config";
-import { planItems, type PlanItem, type PlanItemId } from "@/lib/plan";
-import { formatPrice,pricingLabel } from "@/lib/pricing";
+import { planItemLabel, planItems, type PlanItem, type PlanItemId } from "@/lib/plan";
+import { formatPrice } from "@/lib/pricing";
 
 /**
  * A single service: name, what it covers, and its price.
@@ -51,7 +51,7 @@ export function PlanItemCard({
       ) : null}
 
       <h3 className={`${compact ? "text-lg" : "text-2xl"} font-extrabold leading-tight`}>
-        {item.priceKey?pricingLabel(item.priceKey):item.label}
+        {planItemLabel(id)}
       </h3>
       <p className="mt-3 text-sm leading-6 text-ink-muted">{item.detail}</p>
 
