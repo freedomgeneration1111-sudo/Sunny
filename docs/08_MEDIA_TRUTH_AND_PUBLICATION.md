@@ -99,15 +99,21 @@ Required secret/variable contract:
 - `WORKERS_CI_BUILD_UUID` and `WORKERS_CI_COMMIT_SHA`: supplied by Cloudflare Workers Builds; the latter is recorded as the actual Sunny source SHA.
 - `CMS_DEPLOY_HOOK_URL`: stored only on Operator-OS, never in this repository's public build environment.
 
-The build command claims the queued release whose recorded hook UUID equals `WORKERS_CI_BUILD_UUID`, writes `.cms-release/snapshot.json`, and runs `npm run build` with `FOCUS_CMS_SNAPSHOT_PATH` and publication stage `production`. The existing `next.config.ts` adapter strictly validates the snapshot schema, complete pricing inventory, and SHA-256 integrity. Claim retries are bounded to cover the hook-response race and can never fall through to a later release.
+The build command claims the queued release whose recorded hook UUID equals `WORKERS_CI_BUILD_UUID` and writes `.cms-release/snapshot.json`. Publish runs `npm run build` with `FOCUS_CMS_SNAPSHOT_PATH` and publication stage `production`; the existing `next.config.ts` adapter strictly validates the snapshot schema, complete pricing inventory, and SHA-256 integrity. Rollback deliberately does not build new site output because it restores a recorded historical Worker version. Claim retries are bounded to cover the hook-response race and can never fall through to a later release.
 
-The deploy command reads `.cms-release/operation.json`, reports `deploying`, and runs the checked-in `wrangler.staging.jsonc` target. It sets `WRANGLER_OUTPUT_FILE_PATH` and reads NDJSON for the exact Worker version and target metadata rather than scraping console prose. For rollback operations it runs the installed Wrangler 4.120 form:
+The deploy command reads `.cms-release/operation.json`, reports `deploying`, and runs the checked-in `wrangler.staging.jsonc` target. Publish sets `WRANGLER_OUTPUT_FILE_PATH` and reads NDJSON for its newly deployed version rather than scraping console prose. Wrangler 4.120.1's `rollback` handler does not call its structured-output writer, so rollback instead uses the supported exact single-version deployment form:
 
 ```bash
-npx wrangler rollback <recorded-version-id> --config wrangler.staging.jsonc --message "CMS rollback <release-id>" --yes
+npx wrangler versions deploy <recorded-version-id>@100% --config wrangler.staging.jsonc --message "CMS rollback <release-id>" --yes
 ```
 
-Build/deploy failures are reported to Operator-OS and leave the prior live pointer unchanged. A successful deployment's final callback is retried idempotently; if every callback attempt fails, the operation intentionally remains `deploying` and blocks another release rather than falsely reporting a failed deployment when the public Worker may already have changed. Runner unit tests stub all commands and network calls; no test deploys or rolls back remotely.
+After either mutating command exits successfully, the runner invokes read-only `wrangler deployments list --config wrangler.staging.jsonc --json`. It reports `live` only when the newest deployment contains exactly the expected Worker version at 100% traffic. Publish expects the version from structured deploy output; rollback already knows the historical version it targeted.
+
+The remote-mutation boundary is strict. A build failure or mutating command failure before successful command exit may report `failed`. After successful exit, missing/malformed output, missing metadata, inconclusive active-version verification, or exhausted final callbacks leaves the operation `deploying`; no `failed` callback is sent and Operator-OS retains `active_slot`. This blocks another release until the potentially changed public state is reconciled.
+
+`source_git_sha` remains the SHA represented by the deployed release. `runner_source_git_sha` records the current `WORKERS_CI_COMMIT_SHA` that orchestrated the operation. Publish normally records the same value for both. Rollback preserves the historical release's source SHA (including explicit null when unknown) and records the current runner separately.
+
+Runner unit tests stub all commands and network calls; no test deploys or rolls back remotely.
 
 Local simulated runner verification:
 
@@ -127,3 +133,5 @@ Workers.dev can therefore stay non-indexable while the same Worker serves the ex
 Read-only inspection on 2026-09-28 established that both hostnames returned `200`, byte-identical HTML, and no current `X-Robots-Tag`; the active `focus-lab-public-staging` version was `75917371-275b-4304-a9cd-c3010bf92923`. The source-controlled Worker had been poised to add blanket noindex on its next deploy; the explicit hostname rule prevents that future regression. The custom-domain attachment itself remains external to both Wrangler files. `dfw-event-web` was absent from the authenticated account and remains a legacy/orphaned config target.
 
 Wrangler 4.120 has no command that reveals Workers Builds Git repository/branch or deploy hooks, and an authenticated dashboard browser was unavailable. Before enabling publication, manually verify the existing Workers Builds project (if any), repository, branch, commands, deploy hook, and custom-domain attachment. Then configure the Operator-OS CMS D1 binding/migrations, `CMS_ENABLED`, hook secret, runner secret, and build variables. Do not rename `focus-lab-public-staging`, create a second deployment path, or attach DNS as part of that verification.
+
+Immediately before first production activation, re-read and record the then-current active Focus public Worker version as the emergency pre-CMS rollback target. Do not hard-code the version observed during development because it may change. Initialize the CMS from verified current checked-in content, then perform a supervised no-content-change baseline publication before routine staff publishing is enabled. Reconfirm the external custom-domain attachment and the relationship between the custom domain and workers.dev endpoint during that activation.

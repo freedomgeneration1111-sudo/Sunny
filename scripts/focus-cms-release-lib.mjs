@@ -8,30 +8,33 @@ export function releasePaths(root=process.cwd()){
 
 export async function buildRelease(options={}){
   const environment=options.env??process.env;const fetchImpl=options.fetchImpl??fetch;const command=options.runCommand??runCommand;const root=options.root??process.cwd();const paths=releasePaths(root);
-  const api=required(environment,"OPERATOR_OS_API_URL").replace(/\/$/,"");const token=required(environment,"CMS_RUNNER_TOKEN");const buildId=required(environment,"WORKERS_CI_BUILD_UUID");const sourceGitSha=required(environment,"WORKERS_CI_COMMIT_SHA");let release;
+  const api=required(environment,"OPERATOR_OS_API_URL").replace(/\/$/,"");const token=required(environment,"CMS_RUNNER_TOKEN");const buildId=required(environment,"WORKERS_CI_BUILD_UUID");const runnerSourceGitSha=required(environment,"WORKERS_CI_COMMIT_SHA");let release;
   try{
-    const claimed=await claimWithRetry(fetchImpl,`${api}/v1/cms-runner/releases/claim`,token,{buildId,sourceGitSha},options.wait);release=claimed.release;if(!release?.releaseId||!release.snapshot)throw new Error("Runner claim did not return an immutable release snapshot");
-    await mkdir(paths.directory,{recursive:true});await writeFile(paths.snapshot,`${JSON.stringify(release.snapshot,null,2)}\n`);await writeFile(paths.operation,`${JSON.stringify({api,buildId,sourceGitSha,releaseId:release.releaseId,operationType:release.operationType,rollbackSourceVersionId:release.rollbackSourceVersionId,paths},null,2)}\n`);
-    await command("npm",["run","build"],{cwd:root,env:{...environment,NEXT_PUBLIC_PUBLICATION_STAGE:"production",FOCUS_CMS_SNAPSHOT_PATH:paths.snapshot}});
+    const claimed=await claimWithRetry(fetchImpl,`${api}/v1/cms-runner/releases/claim`,token,{buildId,runnerSourceGitSha},options.wait);release=claimed.release;if(!release?.releaseId||!release.snapshot)throw new Error("Runner claim did not return an immutable release snapshot");
+    await mkdir(paths.directory,{recursive:true});await writeFile(paths.snapshot,`${JSON.stringify(release.snapshot,null,2)}\n`);await writeFile(paths.operation,`${JSON.stringify({api,buildId,runnerSourceGitSha,releaseId:release.releaseId,operationType:release.operationType,rollbackSourceVersionId:release.rollbackSourceVersionId,paths},null,2)}\n`);
+    if(release.operationType!=="rollback")await command("npm",["run","build"],{cwd:root,env:{...environment,NEXT_PUBLIC_PUBLICATION_STAGE:"production",FOCUS_CMS_SNAPSHOT_PATH:paths.snapshot}});
     return{releaseId:release.releaseId,paths};
-  }catch(error){if(release?.releaseId)await reportFailure(fetchImpl,api,token,release.releaseId,buildId,sourceGitSha,"build_failed",error);throw error;}
+  }catch(error){if(release?.releaseId)await reportFailure(fetchImpl,api,token,release.releaseId,buildId,runnerSourceGitSha,"build_failed",error);throw error;}
 }
 
 export async function deployRelease(options={}){
-  const environment=options.env??process.env;const fetchImpl=options.fetchImpl??fetch;const command=options.runCommand??runCommand;const root=options.root??process.cwd();const paths=releasePaths(root);const operation=JSON.parse(await readFile(paths.operation,"utf8"));const token=required(environment,"CMS_RUNNER_TOKEN");let deploymentCompleted=false;
-  const common={buildId:operation.buildId,sourceGitSha:operation.sourceGitSha};
+  const environment=options.env??process.env;const fetchImpl=options.fetchImpl??fetch;const command=options.runCommand??runCommand;const root=options.root??process.cwd();const paths=releasePaths(root);const operation=JSON.parse(await readFile(paths.operation,"utf8"));const token=required(environment,"CMS_RUNNER_TOKEN");let remoteMutationSucceeded=false;
+  const common={buildId:operation.buildId,runnerSourceGitSha:operation.runnerSourceGitSha};
   try{
     await requestJson(fetchImpl,`${operation.api}/v1/cms-runner/releases/${encodeURIComponent(operation.releaseId)}/status`,token,{status:"deploying",...common});
     const childEnv={...environment,WRANGLER_OUTPUT_FILE_PATH:paths.wranglerOutput};
+    let output={versionId:"",urls:[],target:{}};let workerVersionId="";
     if(operation.operationType==="rollback"){
       if(!operation.rollbackSourceVersionId)throw new Error("Rollback release has no recorded source Worker version");
-      await command("npx",["wrangler","rollback",operation.rollbackSourceVersionId,"--config","wrangler.staging.jsonc","--message",`CMS rollback ${operation.releaseId}`,"--yes"],{cwd:root,env:childEnv});
-    }else await command("npx",["wrangler","deploy","--config","wrangler.staging.jsonc"],{cwd:root,env:childEnv});
-    const output=await parseWranglerOutput(paths.wranglerOutput);const workerVersionId=operation.operationType==="rollback"?operation.rollbackSourceVersionId:output.versionId;
+      await command("npx",["wrangler","versions","deploy",`${operation.rollbackSourceVersionId}@100%`,"--config","wrangler.staging.jsonc","--message",`CMS rollback ${operation.releaseId}`,"--yes"],{cwd:root,env:childEnv});remoteMutationSucceeded=true;workerVersionId=operation.rollbackSourceVersionId;output.target={commandType:"version-deploy"};
+    }else{
+      await command("npx",["wrangler","deploy","--config","wrangler.staging.jsonc"],{cwd:root,env:childEnv});remoteMutationSucceeded=true;output=await parseWranglerOutput(paths.wranglerOutput);workerVersionId=output.versionId;
+    }
     if(!workerVersionId)throw new Error("Structured Wrangler output did not include a Worker version ID");
-    deploymentCompleted=true;await callbackWithRetry(fetchImpl,`${operation.api}/v1/cms-runner/releases/${encodeURIComponent(operation.releaseId)}/status`,token,{status:"live",...common,workerVersionId,deploymentUrls:output.urls,deploymentTarget:output.target},options.wait);
+    const verified=await verifyActiveVersion(command,root,childEnv,workerVersionId,options.wait);const deploymentTarget={...output.target,...verified};
+    await callbackWithRetry(fetchImpl,`${operation.api}/v1/cms-runner/releases/${encodeURIComponent(operation.releaseId)}/status`,token,{status:"live",...common,workerVersionId,deploymentUrls:output.urls,deploymentTarget},options.wait);
     return{releaseId:operation.releaseId,workerVersionId,deploymentUrls:output.urls};
-  }catch(error){if(!deploymentCompleted)await reportFailure(fetchImpl,operation.api,token,operation.releaseId,operation.buildId,operation.sourceGitSha,"deploy_failed",error);throw error;}
+  }catch(error){if(!remoteMutationSucceeded)await reportFailure(fetchImpl,operation.api,token,operation.releaseId,operation.buildId,operation.runnerSourceGitSha,"deploy_failed",error);throw error;}
 }
 
 export async function parseWranglerOutput(path){
@@ -40,13 +43,22 @@ export async function parseWranglerOutput(path){
   return{versionId,urls:[...urls],target};
 }
 
-export async function runCommand(command,args,options){
-  await new Promise((resolvePromise,reject)=>{const child=spawn(command,args,{cwd:options.cwd,env:options.env,stdio:"inherit"});child.once("error",reject);child.once("exit",(code,signal)=>code===0?resolvePromise():reject(new Error(`${command} ${args.join(" ")} failed (${signal??code})`)));});
+export function parseActiveDeployment(text,expectedVersionId){
+  let deployments;try{deployments=JSON.parse(text);}catch{throw new Error("Wrangler deployments list returned invalid JSON");}
+  if(!Array.isArray(deployments)||deployments.length===0)throw new Error("Wrangler deployments list returned no deployments");
+  const latest=[...deployments].sort((left,right)=>String(left?.created_on??"").localeCompare(String(right?.created_on??""))).at(-1);const versions=latest?.versions;
+  if(!Array.isArray(versions)||versions.length!==1||versions[0]?.version_id!==expectedVersionId||Number(versions[0]?.percentage)!==100)throw new Error(`Expected Worker version ${expectedVersionId} is not the sole active version at 100% traffic`);
+  const target={activeVersionId:expectedVersionId,activePercentage:100};if(typeof latest.id==="string")target.activeDeploymentId=latest.id;if(typeof latest.created_on==="string")target.activeDeploymentCreatedAt=latest.created_on;if(typeof latest.source==="string")target.activeDeploymentSource=latest.source;return target;
 }
 
-async function reportFailure(fetchImpl,api,token,releaseId,buildId,sourceGitSha,code,error){try{await requestJson(fetchImpl,`${api}/v1/cms-runner/releases/${encodeURIComponent(releaseId)}/status`,token,{status:"failed",buildId,sourceGitSha,failureCode:code,failureMessage:safeMessage(error)});}catch(reportError){throw new AggregateError([error,reportError],"Release failed and the failure callback could not be recorded");}}
+export async function runCommand(command,args,options){
+  return new Promise((resolvePromise,reject)=>{const capture=options.captureOutput===true;const child=spawn(command,args,{cwd:options.cwd,env:options.env,stdio:capture?["inherit","pipe","inherit"]:"inherit"});let stdout="";if(capture)child.stdout?.on("data",(chunk)=>{stdout+=String(chunk);});child.once("error",reject);child.once("exit",(code,signal)=>code===0?resolvePromise({stdout}):reject(new Error(`${command} ${args.join(" ")} failed (${signal??code})`)));});
+}
+
+async function reportFailure(fetchImpl,api,token,releaseId,buildId,runnerSourceGitSha,code,error){try{await requestJson(fetchImpl,`${api}/v1/cms-runner/releases/${encodeURIComponent(releaseId)}/status`,token,{status:"failed",buildId,runnerSourceGitSha,failureCode:code,failureMessage:safeMessage(error)});}catch(reportError){throw new AggregateError([error,reportError],"Release failed and the failure callback could not be recorded");}}
 async function claimWithRetry(fetchImpl,url,token,body,wait=defaultWait){for(let attempt=0;attempt<13;attempt+=1){try{return await requestJson(fetchImpl,url,token,body);}catch(error){if(!(error instanceof RunnerHttpError)||error.code!=="release_not_claimable"||attempt===12)throw error;await wait(2_500);}}throw new Error("Release claim retry limit exhausted");}
 async function callbackWithRetry(fetchImpl,url,token,body,wait=defaultWait){for(let attempt=0;attempt<5;attempt+=1){try{return await requestJson(fetchImpl,url,token,body);}catch(error){if(error instanceof RunnerHttpError&&error.status<500)throw error;if(attempt===4)throw error;await wait(2_500);}}throw new Error("Release callback retry limit exhausted");}
+async function verifyActiveVersion(command,root,environment,expectedVersionId,wait=defaultWait){let lastError;for(let attempt=0;attempt<5;attempt+=1){try{const result=await command("npx",["wrangler","deployments","list","--config","wrangler.staging.jsonc","--json"],{cwd:root,env:environment,captureOutput:true});return parseActiveDeployment(result?.stdout??"",expectedVersionId);}catch(error){lastError=error;if(attempt<4)await wait(2_500);}}throw new Error(`Could not verify active Worker version after successful mutation: ${safeMessage(lastError)}`);}
 class RunnerHttpError extends Error{constructor(message,status,code){super(message);this.status=status;this.code=code;}}
 async function requestJson(fetchImpl,url,token,body){const response=await fetchImpl(url,{method:"POST",headers:{Authorization:`Bearer ${token}`,"Content-Type":"application/json"},body:JSON.stringify(body)});const value=await response.json().catch(()=>null);if(!response.ok)throw new RunnerHttpError(errorMessage(value,`Operator-OS returned HTTP ${response.status}`),response.status,value&&typeof value==="object"&&value.error&&typeof value.error.code==="string"?value.error.code:undefined);return value;}
 function errorMessage(value,fallback){return value&&typeof value==="object"&&value.error&&typeof value.error.message==="string"?value.error.message:fallback;}
