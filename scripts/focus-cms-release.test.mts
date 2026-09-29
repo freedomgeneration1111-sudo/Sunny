@@ -1,8 +1,8 @@
-import { mkdtemp,readFile,writeFile } from "node:fs/promises";
+import { mkdir,mkdtemp,readFile,writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe,expect,it,vi } from "vitest";
-import { buildRelease,deployRelease,releasePaths } from "./focus-cms-release-lib.mjs";
+import { buildRelease,deployRelease,reconcileRelease,releasePaths } from "./focus-cms-release-lib.mjs";
 
 const environment={
   OPERATOR_OS_API_URL:"https://operator.example.test",
@@ -75,9 +75,9 @@ describe("Focus CMS release runner",()=>{
     });
     const result=await deployRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:command});
     expect(result.workerVersionId).toBe("version-exact");
-    expect(command).toHaveBeenNthCalledWith(1,"npx",["wrangler","deploy","--config","wrangler.staging.jsonc"],expect.any(Object));
+    expect(command).toHaveBeenNthCalledWith(1,"npx",["wrangler","deploy","--config","wrangler.staging.jsonc","--message","CMS publish release-exact"],expect.any(Object));
     expect(command).toHaveBeenNthCalledWith(2,"npx",["wrangler","deployments","list","--config","wrangler.staging.jsonc","--json"],expect.objectContaining({captureOutput:true}));
-    expect(mock.calls.slice(-2).map((call)=>call.body.status)).toEqual(["deploying","live"]);
+    expect(mock.calls.slice(-3).map((call)=>call.body.status)).toEqual(["deploying","version_observed","live"]);
     expect(mock.calls.at(-1)?.body).toMatchObject({workerVersionId:"version-exact",runnerSourceGitSha:"abcdef1234567890",deploymentTarget:{activeVersionId:"version-exact",activePercentage:100,activeDeploymentId:"deployment-active"}});
     expect(paths.operation).toContain(".cms-release");
   });
@@ -102,7 +102,7 @@ describe("Focus CMS release runner",()=>{
       return{stdout:activeDeployment("different-version")};
     });
     await expect(deployRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:command,wait})).rejects.toThrow("Could not verify active Worker version");
-    expect(command).toHaveBeenCalledTimes(6);expectNoFailedCallback(mock.calls);expect(mock.calls.map((call)=>call.body.status).filter(Boolean)).toEqual(["deploying"]);
+    expect(command).toHaveBeenCalledTimes(6);expectNoFailedCallback(mock.calls);expect(mock.calls.map((call)=>call.body.status).filter(Boolean)).toEqual(["deploying","version_observed"]);
   });
 
   it("keeps the release active when every final live callback fails",async()=>{
@@ -120,6 +120,37 @@ describe("Focus CMS release runner",()=>{
     await buildRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:async()=>{}});
     await expect(deployRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:async()=>{throw new Error("deploy command failed");}})).rejects.toThrow("deploy command failed");
     expect(mock.calls.at(-1)?.body).toMatchObject({status:"failed",failureCode:"deploy_failed"});
+  });
+
+  it("reconciles a publish after its post-mutation version callback fails without redeploying",async()=>{
+    const root=await mkdtemp(join(tmpdir(),"sunny-cms-reconcile-publish-"));const paths=releasePaths(root);await mkdir(paths.directory,{recursive:true});await writeFile(paths.operation,JSON.stringify({api:environment.OPERATOR_OS_API_URL,buildId:"build-exact",runnerSourceGitSha:environment.WORKERS_CI_COMMIT_SHA,releaseId:"release-exact",operationType:"publish",rollbackSourceVersionId:null,paths}));
+    let reconciling=false;let active={releaseId:"release-exact",operationType:"publish",status:"deploying",runnerBuildId:"build-exact",runnerSourceGitSha:environment.WORKERS_CI_COMMIT_SHA,workerVersionId:null,rollbackSourceVersionId:null,deploymentUrls:[],deploymentTarget:null};const calls:Array<{url:string;method:string;body:Record<string,unknown>|null}>=[];
+    const fetchImpl=vi.fn(async(url:string|URL|Request,init:RequestInit={})=>{const body=init.body?JSON.parse(String(init.body)) as Record<string,unknown>:null;calls.push({url:String(url),method:String(init.method),body});if(String(init.method)==="GET")return Response.json({ok:true,release:active});if(body?.status==="version_observed"&&!reconciling)return Response.json({ok:false,error:{code:"temporary",message:"callback unavailable"}},{status:503});if(body?.status==="version_observed")active={...active,workerVersionId:String(body.workerVersionId)};if(body?.status==="live")active=null as never;return Response.json({ok:true});});
+    const command=vi.fn(async(_command:string,args:string[],options:{env:Record<string,string>})=>{if(args[1]==="deploy"){await writeFile(options.env.WRANGLER_OUTPUT_FILE_PATH!,`${JSON.stringify({type:"deploy",version_id:"version-exact"})}\n`);return{stdout:""};}if(args[1]==="versions")return{stdout:JSON.stringify([{id:"version-exact",annotations:{"workers/message":"CMS publish release-exact"}}])};if(args[1]==="deployments")return{stdout:activeDeployment("version-exact")};throw new Error(`Unexpected command: ${args.join(" ")}`);});const wait=vi.fn().mockResolvedValue(undefined);
+    await expect(deployRelease({root,env:environment,fetchImpl,runCommand:command,wait})).rejects.toThrow("callback unavailable");expectNoFailedCallback(calls.filter((call)=>call.body).map((call)=>({body:call.body!})));expect(active.workerVersionId).toBeNull();
+    reconciling=true;const result=await reconcileRelease({root,env:environment,fetchImpl,runCommand:command,wait});expect(result).toEqual({releaseId:"release-exact",workerVersionId:"version-exact"});expect(active).toBeNull();
+    expect(command.mock.calls.filter(([,args])=>args[1]==="deploy")).toHaveLength(1);expect(command.mock.calls.some(([,args])=>args[1]==="versions"&&args[2]==="list")).toBe(true);expect(calls.filter((call)=>call.body?.status==="live")).toHaveLength(1);
+  });
+
+  it("rejects reconciliation when the associated publish version is not the sole active version",async()=>{
+    const release={releaseId:"release-exact",operationType:"publish",status:"deploying",runnerBuildId:"build-exact",runnerSourceGitSha:environment.WORKERS_CI_COMMIT_SHA,workerVersionId:"version-exact",rollbackSourceVersionId:null,deploymentUrls:[],deploymentTarget:{}};const callbacks:Array<Record<string,unknown>>=[];
+    const fetchImpl=vi.fn(async(_url:string|URL|Request,init:RequestInit={})=>{if(init.method==="GET")return Response.json({ok:true,release});const body=JSON.parse(String(init.body)) as Record<string,unknown>;callbacks.push(body);return Response.json({ok:true});});const command=vi.fn(async()=>({stdout:activeDeployment("wrong-version")}));const wait=vi.fn().mockResolvedValue(undefined);
+    await expect(reconcileRelease({env:environment,fetchImpl,runCommand:command,wait})).rejects.toThrow("not the sole active version");expect(callbacks).toEqual([]);expect(command).toHaveBeenCalledTimes(5);
+  });
+
+  it.each([
+    ["missing",[]],
+    ["ambiguous",[{id:"version-one",annotations:{"workers/message":"CMS publish release-exact"}},{id:"version-two",annotations:{"workers/message":"CMS publish release-exact"}}]],
+  ])("leaves an unassociated publish active when its version evidence is %s",async(_label,versions)=>{
+    const release={releaseId:"release-exact",operationType:"publish",status:"deploying",runnerBuildId:"build-exact",runnerSourceGitSha:environment.WORKERS_CI_COMMIT_SHA,workerVersionId:null,rollbackSourceVersionId:null,deploymentUrls:[],deploymentTarget:null};const callbacks:Array<Record<string,unknown>>=[];
+    const fetchImpl=vi.fn(async(_url:string|URL|Request,init:RequestInit={})=>{if(init.method==="GET")return Response.json({ok:true,release});callbacks.push(JSON.parse(String(init.body)) as Record<string,unknown>);return Response.json({ok:true});});const command=vi.fn(async()=>({stdout:JSON.stringify(versions)}));
+    await expect(reconcileRelease({env:environment,fetchImpl,runCommand:command})).rejects.toThrow(_label==="missing"?"No recent Worker version":"refusing to guess");expect(callbacks).toEqual([]);expect(release.status).toBe("deploying");
+  });
+
+  it("reconciles rollback only to its recorded historical version without builds, mutations, or draft requests",async()=>{
+    let active:{status:string;workerVersionId:string|null}|null={status:"deploying",workerVersionId:null};const release={releaseId:"release-rollback",operationType:"rollback",status:"deploying",runnerBuildId:"build-exact",runnerSourceGitSha:environment.WORKERS_CI_COMMIT_SHA,workerVersionId:null,rollbackSourceVersionId:"version-prior",deploymentUrls:[],deploymentTarget:null};const calls:Array<{url:string;body:Record<string,unknown>|null}>=[];
+    const fetchImpl=vi.fn(async(url:string|URL|Request,init:RequestInit={})=>{const body=init.body?JSON.parse(String(init.body)) as Record<string,unknown>:null;calls.push({url:String(url),body});if(init.method==="GET")return Response.json({ok:true,release:{...release,...active}});if(body?.status==="version_observed"&&active)active={...active,workerVersionId:String(body.workerVersionId)};if(body?.status==="live")active=null;return Response.json({ok:true});});const command=vi.fn(async(_command:string,args:string[])=>{expect(args.slice(0,2)).toEqual(["wrangler","deployments"]);return{stdout:activeDeployment("version-prior")};});
+    const result=await reconcileRelease({env:environment,fetchImpl,runCommand:command});expect(result.workerVersionId).toBe("version-prior");expect(active).toBeNull();expect(calls.map((call)=>call.body?.status).filter(Boolean)).toEqual(["version_observed","live"]);expect(calls.every((call)=>call.url.includes("/v1/cms-runner/releases/"))).toBe(true);expect(command).toHaveBeenCalledTimes(1);
   });
 
   it("restores the exact historical version without building new site output or depending on rollback output metadata",async()=>{

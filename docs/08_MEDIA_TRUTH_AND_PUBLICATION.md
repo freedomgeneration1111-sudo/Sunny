@@ -107,9 +107,27 @@ The deploy command reads `.cms-release/operation.json`, reports `deploying`, and
 npx wrangler versions deploy <recorded-version-id>@100% --config wrangler.staging.jsonc --message "CMS rollback <release-id>" --yes
 ```
 
+Publish supplies `--message "CMS publish <release-id>"`. Wrangler stores that message in the version's `workers/message` annotation, providing a durable recovery association if the structured-output callback is interrupted. As soon as the runner safely identifies the exact version, it records it on the still-`deploying` operation; this is not a live transition.
+
 After either mutating command exits successfully, the runner invokes read-only `wrangler deployments list --config wrangler.staging.jsonc --json`. It reports `live` only when the newest deployment contains exactly the expected Worker version at 100% traffic. Publish expects the version from structured deploy output; rollback already knows the historical version it targeted.
 
 The remote-mutation boundary is strict. A build failure or mutating command failure before successful command exit may report `failed`. After successful exit, missing/malformed output, missing metadata, inconclusive active-version verification, or exhausted final callbacks leaves the operation `deploying`; no `failed` callback is sent and Operator-OS retains `active_slot`. This blocks another release until the potentially changed public state is reconciled.
+
+Machine initialization, publication, and reconciliation are distinct operations. After the remote Focus CMS database, binding, flag, and shared runner secret exist, initialize from the reviewed checked-in pricing and FAQ content without a human Access session:
+
+```bash
+OPERATOR_OS_API_URL=https://<focus-api-origin> CMS_RUNNER_TOKEN=<runner-secret> npm run cms:initialize
+```
+
+This narrow route uses the existing CMS validation and insert-missing-only behavior, records `system:cms-bootstrap`, and never overwrites a draft. The existing `OPERATOR_OS_TOKEN` plus `OPERATOR_OS_RESPONDER_ID` command remains the local-development path.
+
+If a successful public mutation remains `deploying` after an interrupted verification or callback, reconcile it without rebuilding or redeploying:
+
+```bash
+OPERATOR_OS_API_URL=https://<focus-api-origin> CMS_RUNNER_TOKEN=<runner-secret> npm run cms:release:reconcile
+```
+
+The command fetches the one authenticated active operation. Publish uses its assigned runner-recorded version when present; otherwise it requires exactly one recent version whose annotation is `CMS publish <release-id>`. Rollback uses only its recorded historical target version. It then uses read-only `wrangler deployments list --json` and requires that exact version to be the sole active version at 100% traffic before sending the ordinary authenticated `live` callback. Missing, conflicting, or ambiguous evidence produces a diagnostic and leaves the release active; it never runs a build, deployment, rollback, failure callback, or draft mutation. Direct D1 edits are not the normal recovery mechanism.
 
 `source_git_sha` remains the SHA represented by the deployed release. `runner_source_git_sha` records the current `WORKERS_CI_COMMIT_SHA` that orchestrated the operation. Publish normally records the same value for both. Rollback preserves the historical release's source SHA (including explicit null when unknown) and records the current runner separately.
 
