@@ -4,6 +4,10 @@
   "compatibility_date": "2026-08-10",
   "main": "operations/src/public-site.ts",
   "workers_dev": true,
+  "vars": {
+    "PUBLIC_SITE_PRODUCTION_HOSTNAMES": "focuslabproductions.com",
+    "PUBLIC_SITE_REVIEW_HOSTNAMES": "focus-lab-public-staging.freedomgeneration1111.workers.dev"
+  },
   "assets": {
     "directory": "./out",
     "binding": "ASSETS",

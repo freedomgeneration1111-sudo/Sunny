@@ -16,7 +16,9 @@
     "test:lib": "vitest run --config vitest.config.mts",
     "check:svg": "node scripts/check-svg-bounds.mjs",
     "cms:initialize": "node scripts/focus-cms.mjs initialize",
-    "cms:export": "node scripts/focus-cms.mjs export"
+    "cms:export": "node scripts/focus-cms.mjs export",
+    "cms:release:build": "node scripts/focus-cms-release.mjs build",
+    "cms:release:deploy": "node scripts/focus-cms-release.mjs deploy"
   },
   "dependencies": {
     "next": "^15.5.23",
