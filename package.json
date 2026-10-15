@@ -19,7 +19,8 @@
     "cms:export": "node scripts/focus-cms.mjs export",
     "cms:release:build": "node scripts/focus-cms-release.mjs build",
     "cms:release:deploy": "node scripts/focus-cms-release.mjs deploy",
-    "cms:release:reconcile": "node scripts/focus-cms-release.mjs reconcile"
+    "cms:release:reconcile": "node scripts/focus-cms-release.mjs reconcile",
+    "cms:activation:parity": "node scripts/focus-cms-parity.mjs"
   },
   "dependencies": {
     "next": "^15.5.23",

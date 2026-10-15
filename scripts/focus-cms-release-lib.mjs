@@ -8,13 +8,21 @@ export function releasePaths(root=process.cwd()){
 
 export async function buildRelease(options={}){
   const environment=options.env??process.env;const fetchImpl=options.fetchImpl??fetch;const command=options.runCommand??runCommand;const root=options.root??process.cwd();const paths=releasePaths(root);
-  const api=required(environment,"OPERATOR_OS_API_URL").replace(/\/$/,"");const token=required(environment,"CMS_RUNNER_TOKEN");const buildId=required(environment,"WORKERS_CI_BUILD_UUID");const runnerSourceGitSha=required(environment,"WORKERS_CI_COMMIT_SHA");let release;
+  const api=required(environment,"OPERATOR_OS_API_URL").replace(/\/$/,"");const token=required(environment,"CMS_RUNNER_TOKEN");const buildId=required(environment,"WORKERS_CI_BUILD_UUID");const runnerSourceGitSha=await resolveRunnerSourceGitSha(environment,root,command);let release;
   try{
     const claimed=await claimWithRetry(fetchImpl,`${api}/v1/cms-runner/releases/claim`,token,{buildId,runnerSourceGitSha},options.wait);release=claimed.release;if(!release?.releaseId||!release.snapshot)throw new Error("Runner claim did not return an immutable release snapshot");
     await mkdir(paths.directory,{recursive:true});await writeFile(paths.snapshot,`${JSON.stringify(release.snapshot,null,2)}\n`);await writeFile(paths.operation,`${JSON.stringify({api,buildId,runnerSourceGitSha,releaseId:release.releaseId,operationType:release.operationType,rollbackSourceVersionId:release.rollbackSourceVersionId,paths},null,2)}\n`);
     if(release.operationType!=="rollback")await command("npm",["run","build"],{cwd:root,env:{...environment,NEXT_PUBLIC_PUBLICATION_STAGE:"production",FOCUS_CMS_SNAPSHOT_PATH:paths.snapshot}});
     return{releaseId:release.releaseId,paths};
   }catch(error){if(release?.releaseId)await reportFailure(fetchImpl,api,token,release.releaseId,buildId,runnerSourceGitSha,"build_failed",error);throw error;}
+}
+
+export async function resolveRunnerSourceGitSha(environment,root,command=runCommand){
+  const result=await command("git",["rev-parse","HEAD"],{cwd:root,env:environment,captureOutput:true});const head=String(result?.stdout??"").trim();
+  if(!isGitSha(head))throw new Error("git rev-parse HEAD did not return a 40-character hexadecimal commit SHA");
+  const cloudflare=typeof environment.WORKERS_CI_COMMIT_SHA==="string"?environment.WORKERS_CI_COMMIT_SHA.trim():"";
+  if(isGitSha(cloudflare)&&cloudflare.toLowerCase()!==head.toLowerCase())throw new Error(`WORKERS_CI_COMMIT_SHA does not match the checked-out Git HEAD ${head.toLowerCase()}`);
+  return head.toLowerCase();
 }
 
 export async function deployRelease(options={}){
@@ -93,6 +101,7 @@ class RunnerHttpError extends Error{constructor(message,status,code){super(messa
 async function requestJson(fetchImpl,url,token,body,method="POST"){const response=await fetchImpl(url,{method,headers:{Authorization:`Bearer ${token}`,...(body===undefined?{}:{"Content-Type":"application/json"})},body:body===undefined?undefined:JSON.stringify(body)});const value=await response.json().catch(()=>null);if(!response.ok)throw new RunnerHttpError(errorMessage(value,`Operator-OS returned HTTP ${response.status}`),response.status,value&&typeof value==="object"&&value.error&&typeof value.error.code==="string"?value.error.code:undefined);return value;}
 function errorMessage(value,fallback){return value&&typeof value==="object"&&value.error&&typeof value.error.message==="string"?value.error.message:fallback;}
 function required(environment,key){const value=environment[key];if(typeof value!=="string"||!value.trim())throw new Error(`${key} is required`);return value.trim();}
+function isGitSha(value){return/^[0-9a-f]{40}$/i.test(value);}
 function safeMessage(error){return(error instanceof Error?error.message:"Release runner failed").slice(0,1000);}
 function defaultWait(milliseconds){return new Promise((resolvePromise)=>setTimeout(resolvePromise,milliseconds));}
 function walk(value){const entries=[];if(!value||typeof value!=="object")return entries;for(const [key,item] of Object.entries(value)){entries.push([key,item]);if(item&&typeof item==="object")entries.push(...walk(item));}return entries;}

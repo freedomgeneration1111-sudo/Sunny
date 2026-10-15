@@ -4,11 +4,12 @@ import { join } from "node:path";
 import { describe,expect,it,vi } from "vitest";
 import { buildRelease,deployRelease,reconcileRelease,releasePaths } from "./focus-cms-release-lib.mjs";
 
+const gitHeadSha="0123456789abcdef0123456789abcdef01234567";
 const environment={
   OPERATOR_OS_API_URL:"https://operator.example.test",
   CMS_RUNNER_TOKEN:"runner-secret",
   WORKERS_CI_BUILD_UUID:"build-exact",
-  WORKERS_CI_COMMIT_SHA:"abcdef1234567890",
+  WORKERS_CI_COMMIT_SHA:gitHeadSha,
 };
 const snapshot={
   schemaVersion:1,
@@ -43,31 +44,59 @@ function expectNoFailedCallback(calls:Array<{body:Record<string,unknown>}>){
   expect(calls.filter((call)=>call.body.status==="failed")).toEqual([]);
 }
 
+type CommandOptions={cwd:string;env:Record<string,string|undefined>;captureOutput?:boolean};
+function gitAwareCommand(handler:(command:string,args:string[],options:CommandOptions)=>unknown|Promise<unknown>=async()=>({stdout:""}),head=gitHeadSha){
+  return vi.fn(async(command:string,args:string[],options:CommandOptions)=>{if(command==="git"){expect(args).toEqual(["rev-parse","HEAD"]);return{stdout:`${head}\n`};}return handler(command,args,options);});
+}
+
 describe("Focus CMS release runner",()=>{
   it("claims one exact build, materializes its snapshot, and invokes the strict snapshot build",async()=>{
-    const root=await mkdtemp(join(tmpdir(),"sunny-cms-build-"));const mock=fetchMock();const command=vi.fn().mockResolvedValue(undefined);
+    const root=await mkdtemp(join(tmpdir(),"sunny-cms-build-"));const mock=fetchMock();const command=gitAwareCommand();
     await buildRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:command});
-    expect(mock.calls[0]).toMatchObject({body:{buildId:"build-exact",runnerSourceGitSha:"abcdef1234567890"},authorization:"Bearer runner-secret"});
+    expect(mock.calls[0]).toMatchObject({body:{buildId:"build-exact",runnerSourceGitSha:gitHeadSha},authorization:"Bearer runner-secret"});
     expect(JSON.parse(await readFile(releasePaths(root).snapshot,"utf8"))).toEqual(snapshot);
     expect(command).toHaveBeenCalledWith("npm",["run","build"],expect.objectContaining({cwd:root,env:expect.objectContaining({FOCUS_CMS_SNAPSHOT_PATH:releasePaths(root).snapshot,NEXT_PUBLIC_PUBLICATION_STAGE:"production"})}));
   });
 
+  it.each([
+    ["missing",undefined],
+    ["empty",""],
+    ["branch name","feat/focus-cms-foundation"],
+  ])("uses the checked-out Git HEAD when the Cloudflare commit variable is %s",async(_label,cloudflareSha)=>{
+    const root=await mkdtemp(join(tmpdir(),"sunny-cms-provenance-"));const mock=fetchMock();const env={...environment,WORKERS_CI_COMMIT_SHA:cloudflareSha};
+    await buildRelease({root,env,fetchImpl:mock.implementation,runCommand:gitAwareCommand()});
+    expect(mock.calls[0]?.body).toMatchObject({runnerSourceGitSha:gitHeadSha});
+    expect(mock.calls[0]?.body.runnerSourceGitSha).not.toBe("feat/focus-cms-foundation");
+  });
+
+  it("rejects a conflicting valid Cloudflare SHA before claiming or mutating a release",async()=>{
+    const root=await mkdtemp(join(tmpdir(),"sunny-cms-conflict-"));const fetchImpl=vi.fn();const command=gitAwareCommand(undefined,"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    await expect(buildRelease({root,env:{...environment,WORKERS_CI_COMMIT_SHA:"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"},fetchImpl,runCommand:command})).rejects.toThrow("does not match the checked-out Git HEAD");
+    expect(fetchImpl).not.toHaveBeenCalled();expect(command).toHaveBeenCalledTimes(1);
+  });
+
+  it("fails before claiming or mutating a release when git rev-parse HEAD fails",async()=>{
+    const root=await mkdtemp(join(tmpdir(),"sunny-cms-git-fail-"));const fetchImpl=vi.fn();const command=vi.fn(async()=>{throw new Error("git unavailable");});
+    await expect(buildRelease({root,env:environment,fetchImpl,runCommand:command})).rejects.toThrow("git unavailable");
+    expect(fetchImpl).not.toHaveBeenCalled();expect(command).toHaveBeenCalledWith("git",["rev-parse","HEAD"],expect.objectContaining({captureOutput:true}));
+  });
+
   it("reports a build failure without attempting deployment",async()=>{
     const root=await mkdtemp(join(tmpdir(),"sunny-cms-fail-"));const mock=fetchMock();
-    await expect(buildRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:async()=>{throw new Error("snapshot build failed");}})).rejects.toThrow("snapshot build failed");
-    expect(mock.calls.at(-1)?.body).toMatchObject({status:"failed",failureCode:"build_failed",buildId:"build-exact",runnerSourceGitSha:"abcdef1234567890"});
+    await expect(buildRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:gitAwareCommand(async()=>{throw new Error("snapshot build failed");})})).rejects.toThrow("snapshot build failed");
+    expect(mock.calls.at(-1)?.body).toMatchObject({status:"failed",failureCode:"build_failed",buildId:"build-exact",runnerSourceGitSha:gitHeadSha});
   });
 
   it("retries only until the deploy hook build UUID is attached, then claims that exact release",async()=>{
     const root=await mkdtemp(join(tmpdir(),"sunny-cms-race-"));let attempts=0;const wait=vi.fn().mockResolvedValue(undefined);
     const fetchImpl=vi.fn(async()=>{attempts+=1;if(attempts===1)return Response.json({ok:false,error:{code:"release_not_claimable",message:"not attached yet"}},{status:409});return Response.json({ok:true,release:{releaseId:"release-exact",operationType:"publish",rollbackSourceVersionId:null,snapshot}});});
-    await buildRelease({root,env:environment,fetchImpl,wait,runCommand:async()=>{}});
+    await buildRelease({root,env:environment,fetchImpl,wait,runCommand:gitAwareCommand()});
     expect(fetchImpl).toHaveBeenCalledTimes(2);expect(wait).toHaveBeenCalledWith(2500);
   });
 
   it("verifies the exact active publish version before reporting live",async()=>{
     const root=await mkdtemp(join(tmpdir(),"sunny-cms-deploy-"));const paths=releasePaths(root);const mock=fetchMock();
-    await buildRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:async()=>{}});
+    await buildRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:gitAwareCommand()});
     const command=vi.fn(async(_command:string,args:string[],options:{env:Record<string,string>})=>{
       if(args[1]==="deploy"){await writeFile(options.env.WRANGLER_OUTPUT_FILE_PATH!,`${JSON.stringify({type:"deploy",version_id:"version-exact",worker_name:"focus-lab-public-staging",targets:[{url:"https://focuslabproductions.com"}]})}\n`);return{stdout:""};}
       if(args[1]==="deployments")return{stdout:activeDeployment("version-exact")};
@@ -78,7 +107,7 @@ describe("Focus CMS release runner",()=>{
     expect(command).toHaveBeenNthCalledWith(1,"npx",["wrangler","deploy","--config","wrangler.staging.jsonc","--message","CMS publish release-exact"],expect.any(Object));
     expect(command).toHaveBeenNthCalledWith(2,"npx",["wrangler","deployments","list","--config","wrangler.staging.jsonc","--json"],expect.objectContaining({captureOutput:true}));
     expect(mock.calls.slice(-3).map((call)=>call.body.status)).toEqual(["deploying","version_observed","live"]);
-    expect(mock.calls.at(-1)?.body).toMatchObject({workerVersionId:"version-exact",runnerSourceGitSha:"abcdef1234567890",deploymentTarget:{activeVersionId:"version-exact",activePercentage:100,activeDeploymentId:"deployment-active"}});
+    expect(mock.calls.at(-1)?.body).toMatchObject({workerVersionId:"version-exact",runnerSourceGitSha:gitHeadSha,deploymentTarget:{activeVersionId:"version-exact",activePercentage:100,activeDeploymentId:"deployment-active"}});
     expect(paths.operation).toContain(".cms-release");
   });
 
@@ -88,7 +117,7 @@ describe("Focus CMS release runner",()=>{
     ["missing version metadata",async(path:string)=>{await writeFile(path,`${JSON.stringify({type:"deploy",worker_name:"focus-lab-public-staging"})}\n`);},"version ID"],
   ])("keeps the release active when publish command succeeds with %s",async(_label,writeOutput,expectedError)=>{
     const root=await mkdtemp(join(tmpdir(),"sunny-cms-ambiguous-"));const paths=releasePaths(root);const mock=fetchMock();
-    await buildRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:async()=>{}});
+    await buildRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:gitAwareCommand()});
     const command=vi.fn(async()=>{await writeOutput(paths.wranglerOutput);return{stdout:""};});
     await expect(deployRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:command})).rejects.toThrow(expectedError);
     expect(mock.calls.map((call)=>call.body.status).filter(Boolean)).toEqual(["deploying"]);expectNoFailedCallback(mock.calls);
@@ -96,7 +125,7 @@ describe("Focus CMS release runner",()=>{
 
   it("keeps the release active when exact active-version verification is inconclusive",async()=>{
     const root=await mkdtemp(join(tmpdir(),"sunny-cms-verify-"));const mock=fetchMock();const wait=vi.fn().mockResolvedValue(undefined);
-    await buildRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:async()=>{}});
+    await buildRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:gitAwareCommand()});
     const command=vi.fn(async(_command:string,args:string[],options:{env:Record<string,string>})=>{
       if(args[1]==="deploy"){await writeFile(options.env.WRANGLER_OUTPUT_FILE_PATH!,`${JSON.stringify({type:"deploy",version_id:"version-exact"})}\n`);return{stdout:""};}
       return{stdout:activeDeployment("different-version")};
@@ -107,7 +136,7 @@ describe("Focus CMS release runner",()=>{
 
   it("keeps the release active when every final live callback fails",async()=>{
     const root=await mkdtemp(join(tmpdir(),"sunny-cms-callback-"));const setup=fetchMock();
-    await buildRelease({root,env:environment,fetchImpl:setup.implementation,runCommand:async()=>{}});
+    await buildRelease({root,env:environment,fetchImpl:setup.implementation,runCommand:gitAwareCommand()});
     const calls:Array<Record<string,unknown>>=[];const fetchImpl=vi.fn(async(_url:string|URL|Request,init:RequestInit)=>{const body=JSON.parse(String(init.body)) as Record<string,unknown>;calls.push(body);if(body.status==="live")return Response.json({ok:false,error:{code:"temporary",message:"retry"}},{status:503});return Response.json({ok:true});});
     const command=vi.fn(async(_command:string,args:string[],options:{env:Record<string,string>})=>{if(args[1]==="deploy"){await writeFile(options.env.WRANGLER_OUTPUT_FILE_PATH!,`${JSON.stringify({type:"deploy",version_id:"version-exact"})}\n`);return{stdout:""};}return{stdout:activeDeployment("version-exact")};});
     const wait=vi.fn().mockResolvedValue(undefined);
@@ -117,7 +146,7 @@ describe("Focus CMS release runner",()=>{
 
   it("reports failed when the remote-mutating command itself fails",async()=>{
     const root=await mkdtemp(join(tmpdir(),"sunny-cms-command-fail-"));const mock=fetchMock();
-    await buildRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:async()=>{}});
+    await buildRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:gitAwareCommand()});
     await expect(deployRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:async()=>{throw new Error("deploy command failed");}})).rejects.toThrow("deploy command failed");
     expect(mock.calls.at(-1)?.body).toMatchObject({status:"failed",failureCode:"deploy_failed"});
   });
@@ -154,8 +183,8 @@ describe("Focus CMS release runner",()=>{
   });
 
   it("restores the exact historical version without building new site output or depending on rollback output metadata",async()=>{
-    const root=await mkdtemp(join(tmpdir(),"sunny-cms-rollback-success-"));const paths=releasePaths(root);const mock=fetchMock("rollback","version-prior");const buildCommand=vi.fn().mockResolvedValue(undefined);
-    await buildRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:buildCommand});expect(buildCommand).not.toHaveBeenCalled();
+    const root=await mkdtemp(join(tmpdir(),"sunny-cms-rollback-success-"));const paths=releasePaths(root);const mock=fetchMock("rollback","version-prior");const buildCommand=gitAwareCommand();
+    await buildRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:buildCommand});expect(buildCommand).toHaveBeenCalledTimes(1);expect(buildCommand).toHaveBeenCalledWith("git",["rev-parse","HEAD"],expect.objectContaining({captureOutput:true}));
     const command=vi.fn(async(_command:string,args:string[],options:{env:Record<string,string>})=>{
       if(args[1]==="versions"){await writeFile(options.env.WRANGLER_OUTPUT_FILE_PATH!,"malformed-but-irrelevant\n");return{stdout:""};}
       if(args[1]==="deployments")return{stdout:activeDeployment("version-prior")};
@@ -166,14 +195,14 @@ describe("Focus CMS release runner",()=>{
     expect(command).toHaveBeenNthCalledWith(1,"npx",["wrangler","versions","deploy","version-prior@100%","--config","wrangler.staging.jsonc","--message","CMS rollback release-exact","--yes"],expect.any(Object));
     expect(command).toHaveBeenNthCalledWith(2,"npx",["wrangler","deployments","list","--config","wrangler.staging.jsonc","--json"],expect.objectContaining({captureOutput:true}));
     expect(command.mock.calls.some(([,args])=>args[1]==="deploy")).toBe(false);
-    expect(mock.calls.at(-1)?.body).toMatchObject({status:"live",workerVersionId:"version-prior",runnerSourceGitSha:"abcdef1234567890",deploymentTarget:{activeVersionId:"version-prior",activePercentage:100}});
+    expect(mock.calls.at(-1)?.body).toMatchObject({status:"live",workerVersionId:"version-prior",runnerSourceGitSha:gitHeadSha,deploymentTarget:{activeVersionId:"version-prior",activePercentage:100}});
     expect(mock.calls.at(-1)?.body).not.toHaveProperty("sourceGitSha");
     expect(paths.operation).toContain(".cms-release");
   });
 
   it("reports rollback command failure before remote mutation as failed",async()=>{
     const root=await mkdtemp(join(tmpdir(),"sunny-cms-rollback-fail-"));const mock=fetchMock("rollback","version-prior");
-    await buildRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:async()=>{}});
+    await buildRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:gitAwareCommand()});
     const command=vi.fn(async()=>{throw new Error("rollback command failed");});
     await expect(deployRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:command})).rejects.toThrow("rollback command failed");
     expect(command).toHaveBeenCalledWith("npx",["wrangler","versions","deploy","version-prior@100%","--config","wrangler.staging.jsonc","--message","CMS rollback release-exact","--yes"],expect.any(Object));

@@ -96,7 +96,8 @@ Required secret/variable contract:
 
 - `CMS_RUNNER_TOKEN`: Workers Builds secret matching Operator-OS `CMS_RUNNER_SECRET`.
 - `OPERATOR_OS_API_URL`: Focus API origin, available to the build process only.
-- `WORKERS_CI_BUILD_UUID` and `WORKERS_CI_COMMIT_SHA`: supplied by Cloudflare Workers Builds; the latter is recorded as the actual Sunny source SHA.
+- `WORKERS_CI_BUILD_UUID`: supplied by Cloudflare Workers Builds and retained as the exact release-assignment boundary.
+- `WORKERS_CI_COMMIT_SHA`: advisory only. The runner derives authoritative provenance from `git rev-parse HEAD`, requires a 40-character hexadecimal SHA, and rejects a conflicting Cloudflare value when Cloudflare supplies a valid SHA. Empty values, branch names, and other non-SHA values are never stored as provenance.
 - `CMS_DEPLOY_HOOK_URL`: stored only on Operator-OS, never in this repository's public build environment.
 
 The build command claims the queued release whose recorded hook UUID equals `WORKERS_CI_BUILD_UUID` and writes `.cms-release/snapshot.json`. Publish runs `npm run build` with `FOCUS_CMS_SNAPSHOT_PATH` and publication stage `production`; the existing `next.config.ts` adapter strictly validates the snapshot schema, complete pricing inventory, and SHA-256 integrity. Rollback deliberately does not build new site output because it restores a recorded historical Worker version. Claim retries are bounded to cover the hook-response race and can never fall through to a later release.
@@ -129,7 +130,7 @@ OPERATOR_OS_API_URL=https://<focus-api-origin> CMS_RUNNER_TOKEN=<runner-secret> 
 
 The command fetches the one authenticated active operation. Publish uses its assigned runner-recorded version when present; otherwise it requires exactly one recent version whose annotation is `CMS publish <release-id>`. Rollback uses only its recorded historical target version. It then uses read-only `wrangler deployments list --json` and requires that exact version to be the sole active version at 100% traffic before sending the ordinary authenticated `live` callback. Missing, conflicting, or ambiguous evidence produces a diagnostic and leaves the release active; it never runs a build, deployment, rollback, failure callback, or draft mutation. Direct D1 edits are not the normal recovery mechanism.
 
-`source_git_sha` remains the SHA represented by the deployed release. `runner_source_git_sha` records the current `WORKERS_CI_COMMIT_SHA` that orchestrated the operation. Publish normally records the same value for both. Rollback preserves the historical release's source SHA (including explicit null when unknown) and records the current runner separately.
+`source_git_sha` remains the SHA represented by the deployed release. `runner_source_git_sha` records the checked-out `git rev-parse HEAD` that orchestrated the operation. Publish normally records the same value for both. Rollback preserves the historical release's source SHA (including explicit null when unknown) and records the current runner separately. A failed or non-SHA Git lookup stops before the runner claims a release or runs any Worker mutation.
 
 Runner unit tests stub all commands and network calls; no test deploys or rolls back remotely.
 
@@ -155,5 +156,18 @@ Activation Phase 1 connected existing Worker `focus-lab-public-staging` (tag `42
 Build variable `OPERATOR_OS_API_URL` points to the Focus API. The matching runner credential is stored as masked Builds secret `CMS_RUNNER_TOKEN` and Operator-OS secret `CMS_RUNNER_SECRET`; the hook URL is stored only as Operator-OS secret `CMS_DEPLOY_HOOK_URL`. The hook has never been triggered, no public build or deploy occurred in Phase 1, and the CMS release table/live pointer remain empty. Pricing and FAQ drafts were machine-initialized exactly from this branch's checked-in content.
 
 Do not rename `focus-lab-public-staging`, create a second public Worker, attach DNS, or use “Save and Deploy” during setup. Routine publication remains disabled operationally until the supervised baseline below succeeds.
+
+## First-activation candidate/live parity gate
+
+Before repeating the supervised baseline, materialize the exact saved CMS snapshot and build the candidate in production publication mode, then compare every exported HTML route with the currently live custom domain:
+
+```bash
+NEXT_PUBLIC_PUBLICATION_STAGE=production FOCUS_CMS_SNAPSHOT_PATH=/absolute/path/to/focus-cms-snapshot.json npm run build
+npm run cms:activation:parity -- --candidate out --live-origin https://focuslabproductions.com --report artifacts/focus-cms-parity.json --report-only
+```
+
+The parity report enumerates each exported public HTML route once and compares normalized customer-visible text, ordered links (including external-target and rel behavior), title/description/robots/canonical metadata, and image/video/source references. It ignores script, style, SVG, template, and hydration payloads because build hashes and serialized framework data are nondeterministic implementation metadata. The report never deploys or mutates CMS data.
+
+For the activation baseline, review and classify every reported difference before publication. Any unintended difference blocks publication; expected CMS-foundation behavior such as the deliberate production/review indexing distinction must be accepted explicitly in the activation handoff. This is a one-time activation safety gate, not a rule that later approved editorial releases must match the old site.
 
 Immediately before first production activation, re-read and record the then-current active Focus public Worker version as the emergency pre-CMS rollback target. Do not hard-code the version observed during development because it may change. Initialize the CMS from verified current checked-in content, then perform a supervised no-content-change baseline publication before routine staff publishing is enabled. Reconfirm the external custom-domain attachment and the relationship between the custom domain and workers.dev endpoint during that activation.
