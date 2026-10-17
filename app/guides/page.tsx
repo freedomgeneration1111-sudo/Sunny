@@ -5,10 +5,11 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { Eyebrow, Lead, SectionHeading } from "@/components/ui/Typography";
 import { guides } from "@/lib/content/guides";
+import { socialMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Event Planning Guides",
-  description: "Practical planning checklists for DFW weddings, Asian celebrations, corporate AV, photo and video, and venue approvals.", alternates: { canonical: "/guides/" } };
+const title = "Event Planning Guides";
+const description = "Practical planning checklists for DFW weddings, Asian celebrations, corporate AV, photo and video, and venue approvals.";
+export const metadata: Metadata = { title, description, alternates: { canonical: "/guides/" }, ...socialMetadata(title, description) };
 
 export default function GuidesPage() {
   return (

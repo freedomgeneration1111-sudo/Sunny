@@ -5,7 +5,7 @@ async function openReadyForm(page:Page){
   await page.goto("/check-availability/");
   await page.getByRole("button",{name:"Wedding",exact:true}).click();
   await page.locator('input[type="date"]').fill("2027-04-17");
-  await page.getByRole("button",{name:"Continue"}).click();
+  await expect(page.getByRole("progressbar",{name:"Inquiry progress"})).toHaveAttribute("aria-valuemax","2");
   await page.getByRole("button",{name:"Continue"}).click();
   await page.getByLabel("Name").fill("Synthetic Browser Customer");
   await page.getByLabel("Email",{exact:true}).fill("browser@example.test");
@@ -15,6 +15,14 @@ async function openReadyForm(page:Page){
 test("configured inquiry UI reports success only after API success",async({page})=>{
   await page.route("https://api.example.test/v1/inquiries",async route=>{const request=route.request();expect(request.headers()["idempotency-key"]).toBeTruthy();const body=request.postDataJSON();expect(body.turnstileToken).toBe("browser-test-token");expect(body.website).toBe("");await route.fulfill({status:201,contentType:"application/json",body:JSON.stringify({ok:true,inquiryId:"inq_synthetic",eventId:"evt_synthetic",createdAt:"2026-08-11T00:00:00.000Z",status:"received_for_review",message:"Your inquiry was received for human review. This is not an availability confirmation."})});});
   await openReadyForm(page);await page.getByRole("button",{name:"Send Inquiry"}).click();await expect(page.getByText("Thanks — we have your inquiry.",{exact:true})).toBeVisible();
+});
+
+test("check availability preserves the live two-step customer flow",async({page})=>{
+  await page.goto("/check-availability/");
+  await expect(page.getByRole("heading",{level:1,name:"Start with the event."})).toBeVisible();
+  await expect(page.getByText("Two short steps.")).toBeVisible();
+  await expect(page.getByText("Three short steps.")).toHaveCount(0);
+  await expect(page.getByText("Start Here",{exact:true})).toHaveCount(0);
 });
 
 test("configured inquiry UI shows a safe failure and preserves entries",async({page})=>{

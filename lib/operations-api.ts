@@ -1,7 +1,7 @@
 export type InquirySubmission = {
   eventType: string; date: string; location: string; services: string[]; guests: string;
   budget: string; name: string; email: string; phone: string; contact: string; note: string;
-  turnstileToken: string; website: string;
+  turnstileToken: string; website: string; availabilityChecked?: boolean;
 };
 export type InquirySubmissionResult = {
   ok: true; inquiryId: string; eventId: string; createdAt: string;

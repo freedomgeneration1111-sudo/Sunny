@@ -55,7 +55,7 @@ describe("Focus CMS release runner",()=>{
     await buildRelease({root,env:environment,fetchImpl:mock.implementation,runCommand:command});
     expect(mock.calls[0]).toMatchObject({body:{buildId:"build-exact",runnerSourceGitSha:gitHeadSha},authorization:"Bearer runner-secret"});
     expect(JSON.parse(await readFile(releasePaths(root).snapshot,"utf8"))).toEqual(snapshot);
-    expect(command).toHaveBeenCalledWith("npm",["run","build"],expect.objectContaining({cwd:root,env:expect.objectContaining({FOCUS_CMS_SNAPSHOT_PATH:releasePaths(root).snapshot,NEXT_PUBLIC_PUBLICATION_STAGE:"production"})}));
+    expect(command).toHaveBeenCalledWith("npm",["run","build"],expect.objectContaining({cwd:root,env:expect.objectContaining({FOCUS_CMS_SNAPSHOT_PATH:releasePaths(root).snapshot,NEXT_PUBLIC_PUBLICATION_STAGE:"production",NEXT_PUBLIC_INQUIRY_API_URL:"https://focuslabproductions.com",NEXT_PUBLIC_INQUIRY_SUBMISSION_ENABLED:"true",NEXT_PUBLIC_TURNSTILE_SITE_KEY:"0x4AAAAAAEM89GpptQay8UJg"})}));
   });
 
   it.each([

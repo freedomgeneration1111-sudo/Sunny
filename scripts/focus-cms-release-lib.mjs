@@ -12,7 +12,7 @@ export async function buildRelease(options={}){
   try{
     const claimed=await claimWithRetry(fetchImpl,`${api}/v1/cms-runner/releases/claim`,token,{buildId,runnerSourceGitSha},options.wait);release=claimed.release;if(!release?.releaseId||!release.snapshot)throw new Error("Runner claim did not return an immutable release snapshot");
     await mkdir(paths.directory,{recursive:true});await writeFile(paths.snapshot,`${JSON.stringify(release.snapshot,null,2)}\n`);await writeFile(paths.operation,`${JSON.stringify({api,buildId,runnerSourceGitSha,releaseId:release.releaseId,operationType:release.operationType,rollbackSourceVersionId:release.rollbackSourceVersionId,paths},null,2)}\n`);
-    if(release.operationType!=="rollback")await command("npm",["run","build"],{cwd:root,env:{...environment,NEXT_PUBLIC_PUBLICATION_STAGE:"production",FOCUS_CMS_SNAPSHOT_PATH:paths.snapshot}});
+    if(release.operationType!=="rollback")await command("npm",["run","build"],{cwd:root,env:{...environment,NEXT_PUBLIC_PUBLICATION_STAGE:"production",NEXT_PUBLIC_INQUIRY_API_URL:"https://focuslabproductions.com",NEXT_PUBLIC_INQUIRY_SUBMISSION_ENABLED:"true",NEXT_PUBLIC_TURNSTILE_SITE_KEY:"0x4AAAAAAEM89GpptQay8UJg",FOCUS_CMS_SNAPSHOT_PATH:paths.snapshot}});
     return{releaseId:release.releaseId,paths};
   }catch(error){if(release?.releaseId)await reportFailure(fetchImpl,api,token,release.releaseId,buildId,runnerSourceGitSha,"build_failed",error);throw error;}
 }

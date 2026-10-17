@@ -7,6 +7,7 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { Eyebrow, Lead, SectionHeading } from "@/components/ui/Typography";
 import { getGuide, guides } from "@/lib/content/guides";
+import { socialMetadata } from "@/lib/seo";
 
 export function generateStaticParams() {
   return guides.map((guide) => ({ slug: guide.slug }));
@@ -19,6 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         title: guide.title,
         description: guide.description,
         alternates: { canonical: `/guides/${guide.slug}/` },
+        ...socialMetadata(guide.title, guide.description),
       }
     : {};
 }

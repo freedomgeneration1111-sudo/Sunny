@@ -141,8 +141,17 @@ test("every indexable route declares a self-referencing canonical", async ({ pag
   for (const route of indexableRoutes) {
     await page.goto(route);
     await expect(page.locator("link[rel=canonical]"), route + " should declare one canonical").toHaveCount(1);
-    await expect(page.locator("link[rel=canonical]")).toHaveAttribute("href", new RegExp(`${route}$`));
+    await expect(page.locator("link[rel=canonical]")).toHaveAttribute("href", new URL(route,"https://focuslabproductions.com").toString());
+    await expect(page.locator("link[rel=canonical]")).not.toHaveAttribute("href",/gofocuslab\.com/);
   }
+});
+
+test("the branded unknown-route page remains a non-indexable HTTP 404",async({page})=>{
+  const response=await page.goto("/__focus-cms-parity-not-found__");
+  expect(response?.status()).toBe(404);
+  await expect(page.locator("body")).toContainText("This page could not be found");
+  await expect(page.locator("meta[name=robots]")).toHaveAttribute("content",/noindex/i);
+  await expect(page.locator("link[rel=canonical]")).toHaveCount(0);
 });
 
 test("the duplicate event routes no longer publish a second copy", async ({ request }) => {

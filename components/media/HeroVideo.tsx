@@ -5,6 +5,7 @@ import type { DesktopHeroCandidate } from "@/lib/media";
 
 const DESKTOP_QUERY = "(min-width: 768px)";
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+const REPLAY_PAUSE_MS = 20_000;
 
 function usePlaybackEnvironment() {
   const [environment, setEnvironment] = useState({ ready: false, desktop: false, reduced: true });
@@ -34,15 +35,48 @@ function usePlaybackEnvironment() {
 export function HeroVideo({ candidates }: { candidates: readonly DesktopHeroCandidate[] }) {
   const environment = usePlaybackEnvironment();
   const videoRef = useRef<HTMLVideoElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
   const [paused, setPaused] = useState(false);
-  const active = candidates[activeIndex] ?? candidates[0];
+  const active = candidates[0];
 
   useEffect(() => {
-    if (!environment.desktop || environment.reduced || !videoRef.current) return;
+    if (!environment.desktop || environment.reduced || !videoRef.current || !active) return;
+
+    let cancelled = false;
+    const video = videoRef.current;
+    const playbackRate = active.playbackRate ?? 1;
+    video.defaultPlaybackRate = playbackRate;
+    video.playbackRate = playbackRate;
+
+    const play = () => {
+      void video
+        .play()
+        .then(() => {
+          if (!cancelled) setPaused(false);
+        })
+        .catch(() => {
+          if (!cancelled) setPaused(true);
+        });
+    };
+
+    let replayTimer: ReturnType<typeof setTimeout> | undefined;
+    const handleEnded = () => {
+      replayTimer = setTimeout(() => {
+        if (cancelled) return;
+        video.currentTime = 0;
+        play();
+      }, REPLAY_PAUSE_MS);
+    };
+    video.addEventListener("ended", handleEnded);
+
     setPaused(false);
-    void videoRef.current.play().catch(() => setPaused(true));
-  }, [activeIndex, environment.desktop, environment.reduced]);
+    play();
+
+    return () => {
+      cancelled = true;
+      if (replayTimer) clearTimeout(replayTimer);
+      video.removeEventListener("ended", handleEnded);
+    };
+  }, [active, environment.desktop, environment.reduced]);
 
   if (!environment.ready || !environment.desktop || environment.reduced || !active) return null;
 
@@ -66,12 +100,12 @@ export function HeroVideo({ candidates }: { candidates: readonly DesktopHeroCand
         data-candidate={active.id}
         className="cinematic-video absolute inset-0 hidden h-full w-full object-cover md:block"
         style={{
-          transform: `translateX(${active.desktopFocal.translateXPercent}%) scale(${active.desktopFocal.scale})`,
+          transform: `translateX(${active.desktopFocal.translateXPercent}%) translateY(${active.desktopFocal.translateYPercent ?? 0}%) scale(${active.desktopFocal.scale})`,
           transformOrigin: `${active.desktopFocal.originXPercent}% 50%`,
+          objectPosition: active.desktopFocal.objectPosition ?? "center",
         }}
         autoPlay
         muted
-        loop
         playsInline
         controls={false}
         preload="metadata"
@@ -84,24 +118,9 @@ export function HeroVideo({ candidates }: { candidates: readonly DesktopHeroCand
       </video>
       <div
         className="absolute bottom-5 right-5 z-20 hidden items-center gap-2 rounded-full border border-white/20 bg-black/55 p-1.5 text-white shadow-lg backdrop-blur-sm md:flex"
-        aria-label="Desktop hero video candidates"
+        aria-label="Desktop hero video controls"
         data-testid="desktop-hero-controls"
       >
-        {candidates.map((candidate, index) => (
-          <button
-            key={candidate.id}
-            type="button"
-            className={`min-h-9 rounded-full px-3 text-xs font-bold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ${
-              index === activeIndex ? "bg-white text-ink" : "text-white hover:bg-white/15"
-            }`}
-            aria-pressed={index === activeIndex}
-            aria-label={`Show ${candidate.label}`}
-            onClick={() => setActiveIndex(index)}
-          >
-            {index + 1}
-          </button>
-        ))}
-        <span className="h-5 w-px bg-white/25" aria-hidden="true" />
         <button
           type="button"
           className="min-h-9 rounded-full px-3 text-xs font-bold text-white transition-colors hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"

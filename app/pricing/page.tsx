@@ -8,12 +8,17 @@ import { Section } from "@/components/ui/Section";
 import { Eyebrow, Lead, SectionHeading } from "@/components/ui/Typography";
 import { pricingFaqs } from "@/lib/content/commercial";
 import { servicePricing } from "@/lib/pricing";
+import { socialMetadata } from "@/lib/seo";
+
+const title = "Pricing";
+const description =
+  "Focus Lab Productions pricing for DFW weddings, Asian wedding celebrations, parties, and corporate events — photo, video, DJ/MC, sound, lighting, and production.";
 
 export const metadata: Metadata = {
-  title: "Pricing",
-  description:
-    "Focus Lab Productions pricing for DFW weddings, Asian wedding celebrations, parties, and corporate events — photo, video, DJ/MC, sound, lighting, and production.",
+  title,
+  description,
   alternates: { canonical: "/pricing/" },
+  ...socialMetadata(title, description),
 };
 
 const whatShapesAQuote = [

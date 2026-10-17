@@ -40,7 +40,7 @@ test("mobile hero navigation remains usable in both identity states", async ({ p
 test("reduced motion uses a static hero poster", async ({ page }) => {
   const videoRequests: string[] = [];
   page.on("request", (request) => {
-    if (/focuslab-desktop-hero-selection-\d+\.(mp4|webm)$/.test(request.url())) {
+    if (/focuslab-desktop-hero-flp-v002\.(mp4|webm)$/.test(request.url())) {
       videoRequests.push(request.url());
     }
   });
@@ -50,8 +50,9 @@ test("reduced motion uses a static hero poster", async ({ page }) => {
   const media = page.locator("[data-reduced-motion-fallback=poster]");
   await expect(media).toBeVisible();
 
-  // The hero ships a landscape and a portrait still; exactly one is shown.
-  await expect(media.locator(".cinematic-poster")).toHaveCount(2);
+  // With no mobile stills for the sole candidate, the desktop poster is the
+  // only `.cinematic-poster` element and doubles as the mobile fallback.
+  await expect(media.locator(".cinematic-poster")).toHaveCount(1);
   const shown = media.locator(".cinematic-poster:visible");
   await expect(shown).toHaveCount(1);
   await expect(shown).toHaveCSS("animation-name", "none");
@@ -59,11 +60,11 @@ test("reduced motion uses a static hero poster", async ({ page }) => {
   expect(videoRequests).toEqual([]);
 });
 
-test("desktop hero loads only the selected looping candidate", async ({ page }) => {
+test("desktop hero plays the single flp-v002 candidate at half speed", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   const videoRequests: string[] = [];
   page.on("request", (request) => {
-    if (/focuslab-desktop-hero-selection-\d+\.(mp4|webm)$/.test(request.url())) {
+    if (/focuslab-desktop-hero-flp-v002\.(mp4|webm)$/.test(request.url())) {
       videoRequests.push(request.url());
     }
   });
@@ -72,32 +73,25 @@ test("desktop hero loads only the selected looping candidate", async ({ page }) 
   const hero = page.locator("#hero");
   const initialHeroBox = await hero.boundingBox();
   await expect(video).toHaveCount(1);
-  await expect(video).toHaveAttribute("data-candidate", "selection-08");
-  await expect(video).toHaveAttribute("style", /scale\(1\.11\)/);
-  expect(await video.evaluate((el: HTMLVideoElement) => el.loop)).toBe(true);
+  await expect(video).toHaveAttribute("data-candidate", "flp-v002");
+  await expect(video).toHaveAttribute("style", /translateY\(4%\).*scale\(1\.11\).*object-position: center top/);
+  expect(await video.evaluate((el: HTMLVideoElement) => el.loop)).toBe(false);
+  expect(await video.evaluate((el: HTMLVideoElement) => el.playbackRate)).toBe(0.5);
   expect(await video.evaluate((el: HTMLVideoElement) => el.muted)).toBe(true);
   await expect(video).toHaveAttribute("playsinline", "");
-  await expect(video).toHaveAttribute("poster", /selection-08-poster\.jpg$/);
+  await expect(video).toHaveAttribute("poster", /flp-v002-poster\.jpg$/);
 
   const sourceUrls = await video.locator("source").evaluateAll((sources) =>
     sources.map((source) => source.getAttribute("src")),
   );
-  expect(sourceUrls.every((url) => url?.includes("selection-08"))).toBe(true);
+  expect(sourceUrls.every((url) => url?.includes("flp-v002"))).toBe(true);
   await expect(page.getByRole("heading", { name: "One event. One crew. Zero handoffs." })).toBeVisible();
   await expect.poll(() => videoRequests.length).toBeGreaterThan(0);
-  expect(videoRequests.every((url) => url.includes("selection-08"))).toBe(true);
-
-  await page.getByRole("button", { name: "Show Arrival and couple moment" }).click();
-  await expect(video).toHaveAttribute("data-candidate", "selection-31");
-  await expect(video).toHaveAttribute("style", /scale\(1\.16\)/);
-  await expect(video.locator("source").first()).toHaveAttribute("src", /selection-31\.webm$/);
-
-  await page.getByRole("button", { name: "Show Blue atmospheric couple moment" }).click();
-  await expect(video).toHaveAttribute("data-candidate", "selection-43");
-  await expect(video).toHaveAttribute("style", /scale\(1\.14\)/);
-  await expect(video).toHaveAttribute("poster", /selection-43-poster\.jpg$/);
-  await expect(video.locator("source").first()).toHaveAttribute("src", /selection-43\.webm$/);
+  expect(videoRequests.every((url) => url.includes("flp-v002"))).toBe(true);
   expect(await hero.boundingBox()).toEqual(initialHeroBox);
+
+  // No candidate switcher when there's only one video to switch between.
+  await expect(page.getByRole("button", { name: /^Show / })).toHaveCount(0);
 
   const pause = page.getByRole("button", { name: "Pause hero video" });
   await pause.click();
@@ -105,11 +99,33 @@ test("desktop hero loads only the selected looping candidate", async ({ page }) 
   expect(await video.evaluate((el: HTMLVideoElement) => el.paused)).toBe(true);
 });
 
+test("desktop hero pauses on end and replays only after a 20-second gap", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto("/");
+  const video = page.getByTestId("desktop-hero-video");
+  await expect(video).toHaveAttribute("data-candidate", "flp-v002");
+
+  await page.clock.install();
+  await video.evaluate((el: HTMLVideoElement) => {
+    el.pause();
+    el.currentTime = 1; // marker so a later reset to 0 is observable
+    el.dispatchEvent(new Event("ended"));
+  });
+
+  await page.clock.fastForward(19_000);
+  expect(await video.evaluate((el: HTMLVideoElement) => el.currentTime)).toBe(1);
+
+  await page.clock.fastForward(2_000);
+  await expect
+    .poll(() => video.evaluate((el: HTMLVideoElement) => el.currentTime))
+    .toBeLessThan(1);
+});
+
 test("mobile mounts no desktop player and requests no approved video", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   const videoRequests: string[] = [];
   page.on("request", (request) => {
-    if (/focuslab-desktop-hero-selection-\d+\.(mp4|webm)$/.test(request.url())) {
+    if (/focuslab-desktop-hero-flp-v002\.(mp4|webm)$/.test(request.url())) {
       videoRequests.push(request.url());
     }
   });

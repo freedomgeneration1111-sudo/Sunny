@@ -7,12 +7,17 @@ import { Section } from "@/components/ui/Section";
 import { Eyebrow, Lead, SectionHeading } from "@/components/ui/Typography";
 import { config } from "@/lib/config";
 import { media } from "@/lib/media";
+import { socialMetadata } from "@/lib/seo";
+
+const title = "Our Approach";
+const description =
+  "Focus Lab Productions is a Dallas–Fort Worth event company covering photo, video, DJ/MC, sound, lighting and production — planned together around your event.";
 
 export const metadata: Metadata = {
-  title: "Our Approach",
-  description:
-    "Focus Lab Productions is a Dallas–Fort Worth event company covering photo, video, DJ/MC, sound, lighting and production — planned together around your event.",
+  title,
+  description,
   alternates: { canonical: "/about/" },
+  ...socialMetadata(title, description),
 };
 
 const howWeWork = [
